@@ -1,65 +1,229 @@
-// --- APPLICATION STATE & INITIALIZATION ---
+// --- STORAGE KEYS ---
 const LOCAL_STORAGE_KEY = 'takhasus_quran_evaluations_v1';
-let evaluations = [];
+const MASTER_SANTRI_KEY = 'takhasus_master_santri_v1';
+const MASTER_PENGUJI_KEY = 'takhasus_master_penguji_v1';
 
-// Sample initial data
-const sampleData = [
-    {
-        id: 'eval_1710000000001',
-        namaSantri: 'Muhammad Al-Fatih',
-        nisSantri: 'TKH-2026-012',
-        kelompokSantri: "Takhasus 'Ulya (Tingkat Lanjut)",
-        juzUjian: 'Juz 30 (An-Naba - An-Nas)',
-        tglEvaluasi: '2026-10-10',
-        namaPenguji: 'Ust. Ahmad Dahlan, M.Ag',
-        hafalan: { kelancaran: 90, tajwid: 88, urutan: 92, kemandirian: 95 },
-        totalHafalan: 90.5,
-        adab: { allah: 19, guru: 15, quran: 15, teman: 10, tanggungjawab: 10, lingkungan: 9, kejujuran: 10, kemandirian: 5, emosi: 5 },
-        totalAdab: 97,
-        catatan: 'MasyaAllah hafalan sangat mutqan dan tartil. Pertahankan adab tawadhu.'
-    },
-    {
-        id: 'eval_1710000000002',
-        namaSantri: 'Aisyah Humaira',
-        nisSantri: 'TKH-2026-045',
-        kelompokSantri: 'Takhasus Wustha (Tingkat Menengah)',
-        juzUjian: 'Juz 29 (Al-Mulk - Al-Mursalat)',
-        tglEvaluasi: '2026-10-12',
-        namaPenguji: 'Ustadzah Fatimah, S.Pd.I',
-        hafalan: { kelancaran: 78, tajwid: 82, urutan: 75, kemandirian: 80 },
-        totalHafalan: 78.8,
-        adab: { allah: 18, guru: 14, quran: 14, teman: 9, tanggungjawab: 8, lingkungan: 9, kejujuran: 9, kemandirian: 4, emosi: 4 },
-        totalAdab: 89,
-        catatan: 'Perlu murajaah ulang pada Surah Al-Maarij dan Al-Haqqah sebelum tes ulang.'
-    }
+let evaluations = [];
+let masterSantri = [];
+let masterPenguji = [];
+
+// Sample Master Data Default
+const defaultSantri = [
+    { id: 's_1', nama: 'Muhammad Al-Fatih', nis: 'TKH-2026-012', kelompok: "Takhasus 'Ulya (Tingkat Lanjut)" },
+    { id: 's_2', nama: 'Aisyah Humaira', nis: 'TKH-2026-045', kelompok: 'Takhasus Wustha (Tingkat Menengah)' },
+    { id: 's_3', nama: 'Abdullah Azzam', nis: 'TKH-2026-001', kelompok: 'Takhasus Ula (Tingkat Dasar)' }
+];
+
+const defaultPenguji = [
+    { id: 'p_1', nama: 'Ust. Ahmad Dahlan, M.Ag' },
+    { id: 'p_2', nama: 'Ustadzah Fatimah, S.Pd.I' },
+    { id: 'p_3', nama: 'Ust. Ahmad Fauzi, Lc.' }
 ];
 
 window.onload = function() {
     const tglInput = document.getElementById('tglEvaluasi');
     if (tglInput) tglInput.value = new Date().toISOString().split('T')[0];
 
+    loadMasterData();
     loadDataFromStorage();
 
-    if (window.lucide) {
-        lucide.createIcons();
-    }
+    if (window.lucide) lucide.createIcons();
 
     calculateHafalanScore();
     calculateAdabScore();
 };
 
-// --- DATA STORAGE FUNCTIONS ---
+// --- PREDIKAT AL-QUR'AN HELPER ---
+function getPredikatQuran(score) {
+    if (score >= 90) {
+        return {
+            title: 'Mumtaz (Istimewa)',
+            badge: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+            statusText: 'Lanjut Juz Berikutnya',
+            code: 'MUMTAZ'
+        };
+    } else if (score >= 80) {
+        return {
+            title: 'Jayyid Jiddan (Sangat Baik)',
+            badge: 'bg-teal-100 text-teal-800 border-teal-300',
+            statusText: 'Lanjut Juz (Pemantapan Mandiri)',
+            code: 'JAYYID_JIDDAN'
+        };
+    } else if (score >= 70) {
+        return {
+            title: 'Jayyid (Baik)',
+            badge: 'bg-amber-100 text-amber-800 border-amber-300',
+            statusText: 'Remedial Bagian Belum Kuat',
+            code: 'JAYYID'
+        };
+    } else if (score >= 60) {
+        return {
+            title: 'Maqbul (Cukup)',
+            badge: 'bg-orange-100 text-orange-800 border-orange-300',
+            statusText: 'Remedial & Tes Ulang',
+            code: 'MAQBUL'
+        };
+    } else {
+        return {
+            title: 'Rasib (Mengulang)',
+            badge: 'bg-rose-100 text-rose-800 border-rose-300',
+            statusText: 'Bimbingan Intensif Sebelum Tes Ulang',
+            code: 'RASIB'
+        };
+    }
+}
+
+// --- MASTER DATA FUNCTIONS ---
+function loadMasterData() {
+    const santriStored = localStorage.getItem(MASTER_SANTRI_KEY);
+    masterSantri = santriStored ? JSON.parse(santriStored) : defaultSantri;
+    if (!santriStored) localStorage.setItem(MASTER_SANTRI_KEY, JSON.stringify(masterSantri));
+
+    const pengujiStored = localStorage.getItem(MASTER_PENGUJI_KEY);
+    masterPenguji = pengujiStored ? JSON.parse(pengujiStored) : defaultPenguji;
+    if (!pengujiStored) localStorage.setItem(MASTER_PENGUJI_KEY, JSON.stringify(masterPenguji));
+
+    populateMasterDropdowns();
+    renderMasterTables();
+}
+
+function populateMasterDropdowns() {
+    const selSantri = document.getElementById('selectSantri');
+    const selPenguji = document.getElementById('selectPenguji');
+
+    if (selSantri) {
+        selSantri.innerHTML = '<option value="">-- Pilih Santri --</option>';
+        masterSantri.forEach(s => {
+            selSantri.innerHTML += `<option value="${s.id}">${s.nama} (${s.nis})</option>`;
+        });
+    }
+
+    if (selPenguji) {
+        selPenguji.innerHTML = '<option value="">-- Pilih Penguji --</option>';
+        masterPenguji.forEach(p => {
+            selPenguji.innerHTML += `<option value="${p.nama}">${p.nama}</option>`;
+        });
+    }
+}
+
+function onSantriSelected(santriId) {
+    const santri = masterSantri.find(s => s.id === santriId);
+    if (santri) {
+        document.getElementById('namaSantri').value = santri.nama;
+        document.getElementById('nisSantri').value = santri.nis;
+        document.getElementById('kelompokSantri').value = santri.kelompok;
+    } else {
+        document.getElementById('namaSantri').value = '';
+        document.getElementById('nisSantri').value = '';
+        document.getElementById('kelompokSantri').value = '';
+    }
+}
+
+function openMasterModal() {
+    document.getElementById('masterModal').classList.remove('hidden');
+    renderMasterTables();
+}
+
+function closeMasterModal() {
+    document.getElementById('masterModal').classList.add('hidden');
+}
+
+function switchMasterTab(tab) {
+    if (tab === 'santri') {
+        document.getElementById('view-master-santri').classList.remove('hidden');
+        document.getElementById('view-master-penguji').classList.add('hidden');
+        document.getElementById('tab-master-santri').className = 'px-4 py-2 border-b-2 border-emerald-600 text-emerald-700';
+        document.getElementById('tab-master-penguji').className = 'px-4 py-2 text-slate-500 hover:text-slate-700';
+    } else {
+        document.getElementById('view-master-santri').classList.add('hidden');
+        document.getElementById('view-master-penguji').classList.remove('hidden');
+        document.getElementById('tab-master-santri').className = 'px-4 py-2 text-slate-500 hover:text-slate-700';
+        document.getElementById('tab-master-penguji').className = 'px-4 py-2 border-b-2 border-emerald-600 text-emerald-700';
+    }
+}
+
+function addMasterSantri(e) {
+    e.preventDefault();
+    const nama = document.getElementById('newNamaSantri').value.trim();
+    const nis = document.getElementById('newNisSantri').value.trim();
+    const kelompok = document.getElementById('newKelompokSantri').value;
+
+    masterSantri.unshift({ id: 's_' + Date.now(), nama, nis, kelompok });
+    localStorage.setItem(MASTER_SANTRI_KEY, JSON.stringify(masterSantri));
+
+    document.getElementById('newNamaSantri').value = '';
+    document.getElementById('newNisSantri').value = '';
+
+    populateMasterDropdowns();
+    renderMasterTables();
+    showToast('Santri berhasil ditambahkan.', 'success');
+}
+
+function deleteMasterSantri(id) {
+    masterSantri = masterSantri.filter(s => s.id !== id);
+    localStorage.setItem(MASTER_SANTRI_KEY, JSON.stringify(masterSantri));
+    populateMasterDropdowns();
+    renderMasterTables();
+}
+
+function addMasterPenguji(e) {
+    e.preventDefault();
+    const nama = document.getElementById('newNamaPenguji').value.trim();
+    masterPenguji.unshift({ id: 'p_' + Date.now(), nama });
+    localStorage.setItem(MASTER_PENGUJI_KEY, JSON.stringify(masterPenguji));
+    document.getElementById('newNamaPenguji').value = '';
+    populateMasterDropdowns();
+    renderMasterTables();
+    showToast('Penguji berhasil ditambahkan.', 'success');
+}
+
+function deleteMasterPenguji(id) {
+    masterPenguji = masterPenguji.filter(p => p.id !== id);
+    localStorage.setItem(MASTER_PENGUJI_KEY, JSON.stringify(masterPenguji));
+    populateMasterDropdowns();
+    renderMasterTables();
+}
+
+function renderMasterTables() {
+    const tbSantri = document.getElementById('masterSantriTable');
+    const tbPenguji = document.getElementById('masterPengujiTable');
+
+    if (tbSantri) {
+        tbSantri.innerHTML = masterSantri.map(s => `
+            <tr>
+                <td class="p-2 font-semibold">${escapeHtml(s.nama)}</td>
+                <td class="p-2">${escapeHtml(s.nis)}</td>
+                <td class="p-2 text-slate-500">${escapeHtml(s.kelompok)}</td>
+                <td class="p-2 text-center">
+                    <button onclick="deleteMasterSantri('${s.id}')" class="text-rose-600 hover:text-rose-800"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    if (tbPenguji) {
+        tbPenguji.innerHTML = masterPenguji.map(p => `
+            <tr>
+                <td class="p-2 font-semibold">${escapeHtml(p.nama)}</td>
+                <td class="p-2 text-center">
+                    <button onclick="deleteMasterPenguji('${p.id}')" class="text-rose-600 hover:text-rose-800"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    if (window.lucide) lucide.createIcons();
+}
+
+// --- EVALUATIONS DATA STORAGE ---
 function loadDataFromStorage() {
     const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (stored) {
         try {
             evaluations = JSON.parse(stored);
         } catch(e) {
-            evaluations = sampleData;
+            evaluations = [];
         }
-    } else {
-        evaluations = sampleData;
-        saveDataToStorage();
     }
     renderTable();
     populateRaporSelect();
@@ -95,9 +259,7 @@ function switchTab(tabKey) {
         if (sel && sel.value) loadRaporView(sel.value);
     }
 
-    if (window.lucide) {
-        lucide.createIcons();
-    }
+    if (window.lucide) lucide.createIcons();
 }
 
 // --- REAL-TIME CALCULATIONS ---
@@ -129,32 +291,16 @@ function updateStatusIndicator(score) {
 
     if (!badgeContainer || !descContainer) return;
 
-    if (score >= 85) {
-        badgeContainer.innerHTML = `
-            <span class="inline-flex items-center gap-1 bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 px-3 py-1 rounded-full text-xs font-bold">
-                <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Lulus Ujian
-            </span>
-        `;
-        descContainer.innerHTML = `<span class="text-emerald-300 font-semibold">&bull; Rekomendasi:</span> dapat Melanjutkan ke juz berikutnya.`;
-    } else if (score >= 75) {
-        badgeContainer.innerHTML = `
-            <span class="inline-flex items-center gap-1 bg-amber-500/20 text-amber-300 border border-amber-400/30 px-3 py-1 rounded-full text-xs font-bold">
-                <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Perlu Remedial
-            </span>
-        `;
-        descContainer.innerHTML = `<span class="text-amber-300 font-semibold">&bull; Rekomendasi:</span> Remedial pada bagian yang belum kuat, lalu tes ulang.`;
-    } else {
-        badgeContainer.innerHTML = `
-            <span class="inline-flex items-center gap-1 bg-rose-500/20 text-rose-300 border border-rose-400/30 px-3 py-1 rounded-full text-xs font-bold">
-                <i data-lucide="x-circle" class="w-3.5 h-3.5"></i> Bimbingan Intensif
-            </span>
-        `;
-        descContainer.innerHTML = `<span class="text-rose-300 font-semibold">&bull; Rekomendasi:</span> Penguatan hafalan & Bimbingan Intensif Sebelum tes ulang.`;
-    }
+    const pred = getPredikatQuran(score);
 
-    if (window.lucide) {
-        lucide.createIcons();
-    }
+    badgeContainer.innerHTML = `
+        <span class="inline-flex items-center gap-1 ${pred.badge} border px-3 py-1 rounded-full text-xs font-bold">
+            ${pred.title}
+        </span>
+    `;
+    descContainer.innerHTML = `<span class="text-amber-300 font-semibold">&bull; Status:</span> ${pred.statusText}`;
+
+    if (window.lucide) lucide.createIcons();
 }
 
 function calculateAdabScore() {
@@ -163,8 +309,7 @@ function calculateAdabScore() {
 
     fields.forEach(f => {
         const el = document.getElementById('adab_' + f);
-        const val = parseInt(el?.value) || 0;
-        total += val;
+        total += parseInt(el?.value) || 0;
     });
 
     if (document.getElementById('totalAdabDisplay')) document.getElementById('totalAdabDisplay').innerText = total;
@@ -203,14 +348,24 @@ function handleFormSubmit(e) {
         sumAdab += v;
     });
 
+    const namaSantri = document.getElementById('namaSantri').value;
+    const nisSantri = document.getElementById('nisSantri').value;
+    const kelompokSantri = document.getElementById('kelompokSantri').value;
+    const namaPenguji = document.getElementById('selectPenguji').value;
+
+    if (!namaSantri) {
+        showToast('Pilih Santri terlebih dahulu!', 'warning');
+        return;
+    }
+
     const evalObj = {
         id: editId ? editId : 'eval_' + Date.now(),
-        namaSantri: document.getElementById('namaSantri').value.trim(),
-        nisSantri: document.getElementById('nisSantri').value.trim(),
-        kelompokSantri: document.getElementById('kelompokSantri').value,
+        namaSantri: namaSantri,
+        nisSantri: nisSantri,
+        kelompokSantri: kelompokSantri,
         juzUjian: document.getElementById('juzUjian').value.trim(),
         tglEvaluasi: document.getElementById('tglEvaluasi').value,
-        namaPenguji: document.getElementById('namaPenguji').value.trim(),
+        namaPenguji: namaPenguji,
         hafalan: {
             kelancaran: parseFloat(document.getElementById('hafalan_kelancaran').value) || 0,
             tajwid: parseFloat(document.getElementById('hafalan_tajwid').value) || 0,
@@ -240,6 +395,7 @@ function handleFormSubmit(e) {
 function resetForm() {
     document.getElementById('edit-id').value = '';
     document.getElementById('evaluationForm').reset();
+    document.getElementById('namaSantri').value = '';
     document.getElementById('tglEvaluasi').value = new Date().toISOString().split('T')[0];
     calculateHafalanScore();
     calculateAdabScore();
@@ -258,16 +414,15 @@ function renderTable() {
     let filtered = evaluations.filter(item => {
         const matchSearch = item.namaSantri.toLowerCase().includes(search) || item.nisSantri.toLowerCase().includes(search);
         let matchStatus = true;
-        if (filter === 'LANJUT') matchStatus = item.totalHafalan >= 85;
-        if (filter === 'REMEDIAL') matchStatus = item.totalHafalan >= 75 && item.totalHafalan < 85;
-        if (filter === 'INTENSIF') matchStatus = item.totalHafalan < 75;
+        const pred = getPredikatQuran(item.totalHafalan);
+        if (filter !== 'ALL') matchStatus = pred.code === filter;
 
         return matchSearch && matchStatus;
     });
 
     if (document.getElementById('statTotalSantri')) document.getElementById('statTotalSantri').innerText = evaluations.length;
-    const countLulus = evaluations.filter(i => i.totalHafalan >= 85).length;
-    const countRemedial = evaluations.filter(i => i.totalHafalan >= 75 && i.totalHafalan < 85).length;
+    const countLulus = evaluations.filter(i => i.totalHafalan >= 80).length;
+    const countRemedial = evaluations.filter(i => i.totalHafalan < 80 && i.totalHafalan >= 60).length;
     const avgHafalan = evaluations.length > 0 ? (evaluations.reduce((acc, curr) => acc + curr.totalHafalan, 0) / evaluations.length).toFixed(1) : '0.0';
 
     if (document.getElementById('statLulus')) document.getElementById('statLulus').innerText = countLulus;
@@ -288,18 +443,7 @@ function renderTable() {
     }
 
     filtered.forEach(item => {
-        let statusBadge = '';
-        let statusText = '';
-        if (item.totalHafalan >= 85) {
-            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">Lanjut Juz</span>';
-            statusText = 'Dapat Melanjutkan ke Juz Berikutnya';
-        } else if (item.totalHafalan >= 75) {
-            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800">Remedial</span>';
-            statusText = 'Remedial bagian belum kuat, tes ulang';
-        } else {
-            statusBadge = '<span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-100 text-rose-800">Intensif</span>';
-            statusText = 'Bimbingan Intensif sebelum tes ulang';
-        }
+        const pred = getPredikatQuran(item.totalHafalan);
 
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50/80 transition';
@@ -310,11 +454,10 @@ function renderTable() {
             </td>
             <td class="p-3.5 font-medium text-slate-700">${escapeHtml(item.juzUjian)}</td>
             <td class="p-3.5 text-center font-bold text-emerald-700 text-base">${item.totalHafalan.toFixed(1)}</td>
-            <td class="p-3.5 text-center font-bold text-teal-700">${item.totalAdab}</td>
-            <td class="p-3.5">
-                ${statusBadge}
-                <p class="text-[11px] text-slate-500 mt-0.5">${statusText}</p>
+            <td class="p-3.5 text-center">
+                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold border ${pred.badge}">${pred.title}</span>
             </td>
+            <td class="p-3.5 text-center font-bold text-teal-700">${item.totalAdab}</td>
             <td class="p-3.5 text-slate-500 text-xs">${item.tglEvaluasi}</td>
             <td class="p-3.5 text-center">
                 <div class="flex items-center justify-center gap-1.5">
@@ -333,9 +476,7 @@ function renderTable() {
         tbody.appendChild(tr);
     });
 
-    if (window.lucide) {
-        lucide.createIcons();
-    }
+    if (window.lucide) lucide.createIcons();
 }
 
 function editEvaluation(id) {
@@ -343,12 +484,22 @@ function editEvaluation(id) {
     if (!item) return;
 
     document.getElementById('edit-id').value = item.id;
-    document.getElementById('namaSantri').value = item.namaSantri;
-    document.getElementById('nisSantri').value = item.nisSantri;
-    document.getElementById('kelompokSantri').value = item.kelompokSantri;
+
+    // Set dropdown santri jika cocok
+    const s = masterSantri.find(x => x.nama === item.namaSantri);
+    if (s) {
+        document.getElementById('selectSantri').value = s.id;
+        onSantriSelected(s.id);
+    } else {
+        document.getElementById('selectSantri').value = '';
+        document.getElementById('namaSantri').value = item.namaSantri;
+        document.getElementById('nisSantri').value = item.nisSantri;
+        document.getElementById('kelompokSantri').value = item.kelompokSantri;
+    }
+
+    document.getElementById('selectPenguji').value = item.namaPenguji;
     document.getElementById('juzUjian').value = item.juzUjian;
     document.getElementById('tglEvaluasi').value = item.tglEvaluasi;
-    document.getElementById('namaPenguji').value = item.namaPenguji;
 
     document.getElementById('hafalan_kelancaran').value = item.hafalan.kelancaran;
     document.getElementById('hafalan_tajwid').value = item.hafalan.tajwid;
@@ -413,23 +564,7 @@ function loadRaporView(id) {
         return;
     }
 
-    let statusTitle = '';
-    let statusDesc = '';
-    let statusClass = '';
-
-    if (item.totalHafalan >= 85) {
-        statusTitle = 'LULUS (Lanjut Juz Berikutnya)';
-        statusDesc = 'MasyaAllah Hafalan Mutqan. Santri dapat melanjutkan hafalan ke Juz berikutnya.';
-        statusClass = 'bg-emerald-50 text-emerald-800 border-emerald-300';
-    } else if (item.totalHafalan >= 75) {
-        statusTitle = 'REMEDIAL & TES ULANG';
-        statusDesc = 'Perlu perbaikan/remedial pada bagian hafalan yang belum kuat sebelum tes ulang.';
-        statusClass = 'bg-amber-50 text-amber-800 border-amber-300';
-    } else {
-        statusTitle = 'BIMBINGAN INTENSIF';
-        statusDesc = 'Memerlukan penguatan hafalan dan pendampingan intensif sebelum dapat tes ulang.';
-        statusClass = 'bg-rose-50 text-rose-800 border-rose-300';
-    }
+    const pred = getPredikatQuran(item.totalHafalan);
 
     container.innerHTML = `
         <!-- Kop Rapor -->
@@ -507,10 +642,10 @@ function loadRaporView(id) {
                 </div>
             </div>
             <div>
-                <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-emerald-600 pl-2">C. Status Hasil Evaluasi</h3>
-                <div class="p-3 rounded-xl border ${statusClass} text-xs">
-                    <strong class="block font-bold text-sm mb-1">${statusTitle}</strong>
-                    <span>${statusDesc}</span>
+                <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-emerald-600 pl-2">C. Predikat Al-Qur'an & Status</h3>
+                <div class="p-3 rounded-xl border ${pred.badge} text-xs">
+                    <strong class="block font-bold text-sm mb-1">${pred.title}</strong>
+                    <span>${pred.statusText}</span>
                 </div>
             </div>
         </div>
@@ -544,10 +679,7 @@ function openWaModalFor(id) {
     const item = evaluations.find(i => i.id === id);
     if (!item) return;
 
-    let statusStr = '';
-    if (item.totalHafalan >= 85) statusStr = '✅ LULUS (Dapat Lanjut ke Juz Berikutnya)';
-    else if (item.totalHafalan >= 75) statusStr = '⚠️ REMEDIAL (Tes ulang pada bagian yang belum kuat)';
-    else statusStr = '🔴 BIMBINGAN INTENSIF (Penguatan hafalan sebelum tes ulang)';
+    const pred = getPredikatQuran(item.totalHafalan);
 
     const text = `*RAPOR EVALUASI TAKHASUS AL-QUR'AN* 📖\n` +
         `----------------------------------------\n` +
@@ -562,8 +694,9 @@ function openWaModalFor(id) {
         `   • Tajwid & Makhraj (25%): ${item.hafalan.tajwid}\n` +
         `   • Urutan Ayat (20%): ${item.hafalan.urutan}\n` +
         `   • Kemandirian (15%): ${item.hafalan.kemandirian}\n\n` +
-        `🌟 *Skor Adab & Karakter:* ${item.totalAdab} / 100 (${getAdabPredikatText(item.totalAdab)})\n\n` +
-        `📌 *Status:* ${statusStr}\n\n` +
+        `🌟 *Predikat Al-Qur'an:* ${pred.title}\n` +
+        `🤲 *Skor Adab & Karakter:* ${item.totalAdab} / 100 (${getAdabPredikatText(item.totalAdab)})\n\n` +
+        `📌 *Status/Rekomendasi:* ${pred.statusText}\n\n` +
         `📝 *Catatan Penguji:* \n"${item.catatan || '-'}"\n\n` +
         `_Penguji: ${item.namaPenguji}_\n` +
         `_Barakallahu Fiikum._`;
@@ -590,11 +723,11 @@ function exportCSV() {
         return;
     }
 
-    let csv = 'ID,Nama Santri,NIS,Kelompok,Juz Ujian,Tanggal,Nilai Hafalan,Skor Adab,Status,Penguji,Catatan\n';
+    let csv = 'ID,Nama Santri,NIS,Kelompok,Juz Ujian,Tanggal,Nilai Hafalan,Predikat Quran,Skor Adab,Penguji,Catatan\n';
 
     evaluations.forEach(i => {
-        let status = i.totalHafalan >= 85 ? 'Lanjut Juz' : (i.totalHafalan >= 75 ? 'Remedial' : 'Intensif');
-        csv += `"${i.id}","${i.namaSantri}","${i.nisSantri}","${i.kelompokSantri}","${i.juzUjian}","${i.tglEvaluasi}",${i.totalHafalan.toFixed(1)},${i.totalAdab},"${status}","${i.namaPenguji}","${(i.catatan || '').replace(/"/g, '""')}"\n`;
+        const pred = getPredikatQuran(i.totalHafalan);
+        csv += `"${i.id}","${i.namaSantri}","${i.nisSantri}","${i.kelompokSantri}","${i.juzUjian}","${i.tglEvaluasi}",${i.totalHafalan.toFixed(1)},"${pred.title}",${i.totalAdab},"${i.namaPenguji}","${(i.catatan || '').replace(/"/g, '""')}"\n`;
     });
 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
