@@ -64,38 +64,52 @@
 
                 <!-- Card 1: Data Santri & Penguji -->
                 <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80">
-                    <div class="flex items-center gap-2 border-b border-slate-100 pb-3 mb-4">
-                        <i data-lucide="user-check" class="w-5 h-5 text-emerald-600"></i>
-                        <h2 class="text-lg font-bold text-slate-800">1. Data Santri & Penguji</h2>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 mb-4 gap-2">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="user-check" class="w-5 h-5 text-emerald-600"></i>
+                            <h2 class="text-lg font-bold text-slate-800">1. Data Santri & Penguji</h2>
+                        </div>
+                        <button type="button" onclick="openMasterModal()" class="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition">
+                            <i data-lucide="database" class="w-3.5 h-3.5"></i> Kelola Master Santri & Guru
+                        </button>
                     </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <!-- Dropdown Santri -->
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Lengkap Santri <span class="text-rose-500">*</span></label>
-                            <input type="text" id="namaSantri" required placeholder="Contoh: Abdullah Azzam" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition">
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih Santri <span class="text-rose-500">*</span></label>
+                            <select id="selectSantri" required onchange="onSantriSelected(this.value)" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition">
+                                <option value="">-- Pilih Santri --</option>
+                            </select>
+                            <input type="hidden" id="namaSantri" value="">
                         </div>
+
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">ID / NIS <span class="text-rose-500">*</span></label>
-                            <input type="text" id="nisSantri" required placeholder="Contoh: TKH-2026-001" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition">
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">ID / NIS</label>
+                            <input type="text" id="nisSantri" readonly placeholder="Otomatis dari Master Santri" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 bg-slate-50 text-slate-600 focus:outline-none">
                         </div>
+
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Kelompok / Kategori</label>
-                            <select id="kelompokSantri" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition">
-                                <option value="Takhasus Ula (Tingkat Dasar)">Takhasus Ula (Tingkat Dasar)</option>
-                                <option value="Takhasus Wustha (Tingkat Menengah)" selected>Takhasus Wustha (Tingkat Menengah)</option>
-                                <option value="Takhasus 'Ulya (Tingkat Lanjut)">Takhasus 'Ulya (Tingkat Lanjut)</option>
-                            </select>
+                            <input type="text" id="kelompokSantri" readonly placeholder="Otomatis dari Master Santri" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 bg-slate-50 text-slate-600 focus:outline-none">
                         </div>
+
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Juz / Materi Ujian <span class="text-rose-500">*</span></label>
                             <input type="text" id="juzUjian" required placeholder="Contoh: Juz 30 / Surat Al-Baqarah 1-100" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition">
                         </div>
+
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal Evaluasi</label>
                             <input type="date" id="tglEvaluasi" required class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition">
                         </div>
+
+                        <!-- Dropdown Penguji -->
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Nama Penguji / Ustadz <span class="text-rose-500">*</span></label>
-                            <input type="text" id="namaPenguji" required placeholder="Contoh: Ust. Ahmad Fauzi, Lc." class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition">
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih Penguji / Ustadz <span class="text-rose-500">*</span></label>
+                            <select id="selectPenguji" required class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition">
+                                <option value="">-- Pilih Penguji --</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -216,11 +230,11 @@
                                     <input type="number" min="0" max="10" id="adab_teman" value="9" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-teal-500">
                                 </div>
                                 <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
-                                    <span class="font-medium text-slate-700">5. Adab kepada Tanggung Jawab (Maks 10)</span>
+                                    <span class="font-medium text-slate-700">5. Tanggung Jawab (Maks 10)</span>
                                     <input type="number" min="0" max="10" id="adab_tanggungjawab" value="9" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-teal-500">
                                 </div>
                                 <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
-                                    <span class="font-medium text-slate-700">6. Adab kepada Lingkungan (Maks 10)</span>
+                                    <span class="font-medium text-slate-700">6. Lingkungan (Maks 10)</span>
                                     <input type="number" min="0" max="10" id="adab_lingkungan" value="8" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-teal-500">
                                 </div>
                                 <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
@@ -292,7 +306,7 @@
                 </div>
                 <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
                     <div>
-                        <p class="text-xs font-semibold text-slate-500 uppercase">Lanjut Juz (Lulus)</p>
+                        <p class="text-xs font-semibold text-slate-500 uppercase">Mumtaz / Lulus</p>
                         <h3 id="statLulus" class="text-2xl font-bold text-emerald-600 mt-1">0</h3>
                     </div>
                     <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
@@ -334,10 +348,12 @@
                             <input type="text" id="searchInput" oninput="renderTable()" placeholder="Cari nama / NIS..." class="pl-9 pr-3 py-1.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 w-48 sm:w-60">
                         </div>
                         <select id="filterStatus" onchange="renderTable()" class="px-3 py-1.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                            <option value="ALL">Semua Status</option>
-                            <option value="LANJUT">Lanjut Juz (&ge;85)</option>
-                            <option value="REMEDIAL">Remedial (75-84)</option>
-                            <option value="INTENSIF">Bimbingan Intensif (&lt;75)</option>
+                            <option value="ALL">Semua Predikat</option>
+                            <option value="MUMTAZ">Mumtaz (&ge;90)</option>
+                            <option value="JAYYID_JIDDAN">Jayyid Jiddan (80-89)</option>
+                            <option value="JAYYID">Jayyid (70-79)</option>
+                            <option value="MAQBUL">Maqbul (60-69)</option>
+                            <option value="RASIB">Rasib (&lt;60)</option>
                         </select>
                         <button onclick="exportCSV()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-xs flex items-center gap-1.5 transition">
                             <i data-lucide="download" class="w-3.5 h-3.5"></i> Ekspor CSV
@@ -353,8 +369,8 @@
                                 <th class="p-3.5">Santri / ID</th>
                                 <th class="p-3.5">Juz Ujian</th>
                                 <th class="p-3.5 text-center">Nilai Hafalan</th>
+                                <th class="p-3.5 text-center">Predikat Al-Qur'an</th>
                                 <th class="p-3.5 text-center">Nilai Adab</th>
-                                <th class="p-3.5">Status & Rekomendasi</th>
                                 <th class="p-3.5">Tanggal</th>
                                 <th class="p-3.5 text-center">Aksi</th>
                             </tr>
@@ -395,103 +411,51 @@
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-6">
                 <div>
                     <h2 class="text-xl font-bold text-slate-800 border-b border-slate-100 pb-3 flex items-center gap-2">
-                        <i data-lucide="book-open" class="w-6 h-6 text-emerald-600"></i> Panduan Kriteria & Standar Penilaian
+                        <i data-lucide="book-open" class="w-6 h-6 text-emerald-600"></i> Panduan Kriteria & Standar Predikat Al-Qur'an
                     </h2>
                     <p class="text-xs sm:text-sm text-slate-600 mt-2">
-                        Gunakan pedoman ini sebagai acuan objektif bagi para penguji kelompok Takhasus Al-Qur'an agar penilaian seragam dan terukur.
+                        Gunakan pedoman ini sebagai acuan penilaian objektif dengan standar predikat Al-Qur'an (*Mumtaz, Jayyid Jiddan, Jayyid, Maqbul, Rasib*).
                     </p>
                 </div>
 
-                <!-- Section 1: Hafalan Breakdown -->
+                <!-- Standar Predikat -->
                 <div class="space-y-3">
-                    <h3 class="text-sm font-bold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg inline-block">1. Komponen & Bobot Hafalan (100%)</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                        <div class="p-3.5 border border-slate-200 rounded-xl bg-slate-50">
-                            <span class="font-bold text-slate-800 block text-sm mb-1">a. Kelancaran & Ketepatan Hafalan (40%)</span>
-                            <p class="text-slate-600">Menilai kontinuitas bacaan tanpa jeda lama, tidak sering lupa ayat, dan terbiasa menyambung ayat dengan lancar tanpa ragu-ragu.</p>
-                        </div>
-                        <div class="p-3.5 border border-slate-200 rounded-xl bg-slate-50">
-                            <span class="font-bold text-slate-800 block text-sm mb-1">b. Tajwid & Makhorijul Huruf (25%)</span>
-                            <p class="text-slate-600">Kesesuaian dengan hukum tajwid (Ghunnah, Mad, Idgham, Nun Mati/Tanwin) serta ketepatan artikulasi tempat keluarnya huruf (Makhraj).</p>
-                        </div>
-                        <div class="p-3.5 border border-slate-200 rounded-xl bg-slate-50">
-                            <span class="font-bold text-slate-800 block text-sm mb-1">c. Ketepatan Ayat & Urutan Ayat (20%)</span>
-                            <p class="text-slate-600">Presisi lafaz kata per kata, kelengkapan ayat, dan tidak terbalik dalam urutan ayat atau surat yang diujikan.</p>
-                        </div>
-                        <div class="p-3.5 border border-slate-200 rounded-xl bg-slate-50">
-                            <span class="font-bold text-slate-800 block text-sm mb-1">d. Kemandirian & Kesiapan Hafalan (15%)</span>
-                            <p class="text-slate-600">Kesiapan mental saat dipanggil, minimalnya bantuan atau pancingan (*talaqqu*) dari penguji selama proses ujian.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Section 2: Kriteria Kelulusan -->
-                <div class="space-y-3">
-                    <h3 class="text-sm font-bold text-amber-800 bg-amber-50 px-3 py-1.5 rounded-lg inline-block">2. Kriteria Kelulusan & Tindak Lanjut</h3>
+                    <h3 class="text-sm font-bold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg inline-block">1. Skala Predikat Evaluasi Hafalan</h3>
                     <div class="space-y-2 text-xs">
                         <div class="p-3 rounded-xl border border-emerald-200 bg-emerald-50/60 flex items-start gap-3">
-                            <span class="bg-emerald-600 text-white font-bold px-2 py-0.5 rounded text-[11px]">85 - 100</span>
+                            <span class="bg-emerald-700 text-white font-bold px-2.5 py-1 rounded text-xs min-w-[90px] text-center">Mumtaz</span>
                             <div>
-                                <strong class="text-emerald-900 block font-semibold">Dapat Melanjutkan ke Juz Berikutnya</strong>
-                                <span class="text-slate-600">Hafalan mutqan (kuat), tajwid rapi, dan siap melangkah ke materi ujian baru.</span>
+                                <strong class="text-emerald-900 block font-semibold">90 - 100 (Istimewa)</strong>
+                                <span class="text-slate-600">Hafalan sangat mutqan, tartil, dan lancar. Santri langsung melanjutkan ke Juz berikutnya.</span>
+                            </div>
+                        </div>
+                        <div class="p-3 rounded-xl border border-teal-200 bg-teal-50/60 flex items-start gap-3">
+                            <span class="bg-teal-700 text-white font-bold px-2.5 py-1 rounded text-xs min-w-[90px] text-center">Jayyid Jiddan</span>
+                            <div>
+                                <strong class="text-teal-900 block font-semibold">80 - 89 (Sangat Baik)</strong>
+                                <span class="text-slate-600">Hafalan baik dan teratur. Santri dapat melanjutkan ke Juz berikutnya dengan pemantapan mandiri.</span>
                             </div>
                         </div>
                         <div class="p-3 rounded-xl border border-amber-200 bg-amber-50/60 flex items-start gap-3">
-                            <span class="bg-amber-600 text-white font-bold px-2 py-0.5 rounded text-[11px]">75 - 84</span>
+                            <span class="bg-amber-700 text-white font-bold px-2.5 py-1 rounded text-xs min-w-[90px] text-center">Jayyid</span>
                             <div>
-                                <strong class="text-amber-900 block font-semibold">Remedial pada Bagian yang Belum Kuat, Lalu Tes Ulang</strong>
-                                <span class="text-slate-600">Santri perlu mengulang bagian surah/halaman yang masih ada kesalahan sebelum diuji kembali.</span>
+                                <strong class="text-amber-900 block font-semibold">70 - 79 (Baik)</strong>
+                                <span class="text-slate-600">Hafalan cukup baik, namun perlu perbaikan pada bagian halaman/surat yang belum kuat sebelum tes ulang.</span>
+                            </div>
+                        </div>
+                        <div class="p-3 rounded-xl border border-orange-200 bg-orange-50/60 flex items-start gap-3">
+                            <span class="bg-orange-700 text-white font-bold px-2.5 py-1 rounded text-xs min-w-[90px] text-center">Maqbul</span>
+                            <div>
+                                <strong class="text-orange-900 block font-semibold">60 - 69 (Cukup)</strong>
+                                <span class="text-slate-600">Batas cukup lulus. Diwajibkan mengulang bagian yang lemah (*remedial*) lalu tes ulang.</span>
                             </div>
                         </div>
                         <div class="p-3 rounded-xl border border-rose-200 bg-rose-50/60 flex items-start gap-3">
-                            <span class="bg-rose-600 text-white font-bold px-2 py-0.5 rounded text-[11px]">&lt; 75</span>
+                            <span class="bg-rose-700 text-white font-bold px-2.5 py-1 rounded text-xs min-w-[90px] text-center">Rasib</span>
                             <div>
-                                <strong class="text-rose-900 block font-semibold">Penguatan Hafalan & Bimbingan Intensif Sebelum Tes Ulang</strong>
-                                <span class="text-slate-600">Santri memerlukan pendampingan khusus (*talaqqi* ulang) dari ustadz pembimbing.</span>
+                                <strong class="text-rose-900 block font-semibold">&lt; 60 (Mengulang)</strong>
+                                <span class="text-slate-600">Memerlukan bimbingan intensif dan *talaqqi* ulang bersama pembimbing sebelum diperbolehkan tes ulang.</span>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Section 3: Adab Breakdown -->
-                <div class="space-y-3">
-                    <h3 class="text-sm font-bold text-teal-800 bg-teal-50 px-3 py-1.5 rounded-lg inline-block">3. Indikator Rubrik Adab & Karakter (Total 100)</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                        <div class="p-3 border border-slate-200 rounded-lg">
-                            <strong class="text-slate-800">1. Adab kpd Allah (Maks 20)</strong>
-                            <p class="text-slate-500 mt-1">Niat ikhlas, khusyuks, kesadaran beribadah.</p>
-                        </div>
-                        <div class="p-3 border border-slate-200 rounded-lg">
-                            <strong class="text-slate-800">2. Adab kpd Guru (Maks 15)</strong>
-                            <p class="text-slate-500 mt-1">Sopan, mendengarkan arahan, tawadhu.</p>
-                        </div>
-                        <div class="p-3 border border-slate-200 rounded-lg">
-                            <strong class="text-slate-800">3. Adab kpd Al-Qur'an (Maks 15)</strong>
-                            <p class="text-slate-500 mt-1">Memegang mushaf dengan adab, wudhu, tenang.</p>
-                        </div>
-                        <div class="p-3 border border-slate-200 rounded-lg">
-                            <strong class="text-slate-800">4. Adab kpd Teman (Maks 10)</strong>
-                            <p class="text-slate-500 mt-1">Saling menghargai, tidak mengganggu teman.</p>
-                        </div>
-                        <div class="p-3 border border-slate-200 rounded-lg">
-                            <strong class="text-slate-800">5. Tanggung Jawab (Maks 10)</strong>
-                            <p class="text-slate-500 mt-1">Disiplin waktu setoran, tepat jadwal.</p>
-                        </div>
-                        <div class="p-3 border border-slate-200 rounded-lg">
-                            <strong class="text-slate-800">6. Lingkungan (Maks 10)</strong>
-                            <p class="text-slate-500 mt-1">Menjaga kebersihan halaqah / kelas.</p>
-                        </div>
-                        <div class="p-3 border border-slate-200 rounded-lg">
-                            <strong class="text-slate-800">7. Kejujuran (Maks 10)</strong>
-                            <p class="text-slate-500 mt-1">Jujur dalam hafalan dan laporan mutaba'ah.</p>
-                        </div>
-                        <div class="p-3 border border-slate-200 rounded-lg">
-                            <strong class="text-slate-800">8. Kemandirian (Maks 5)</strong>
-                            <p class="text-slate-500 mt-1">Inisiatif muraja'ah mandiri tanpa dipaksa.</p>
-                        </div>
-                        <div class="p-3 border border-slate-200 rounded-lg">
-                            <strong class="text-slate-800">9. Pengendalian Emosi (Maks 5)</strong>
-                            <p class="text-slate-500 mt-1">Sabar saat dikoreksi dan diuji.</p>
                         </div>
                     </div>
                 </div>
@@ -499,6 +463,83 @@
         </section>
 
     </main>
+
+    <!-- MODAL MASTER SANTRI & PENGUJI -->
+    <div id="masterModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 flex flex-col space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="database" class="w-5 h-5 text-emerald-600"></i>
+                    <h3 class="font-bold text-slate-800 text-base">Kelola Data Master Santri & Penguji</h3>
+                </div>
+                <button onclick="closeMasterModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Tabs Modal Master -->
+            <div class="flex border-b border-slate-200 text-xs font-semibold gap-2">
+                <button onclick="switchMasterTab('santri')" id="tab-master-santri" class="px-4 py-2 border-b-2 border-emerald-600 text-emerald-700">Data Master Santri</button>
+                <button onclick="switchMasterTab('penguji')" id="tab-master-penguji" class="px-4 py-2 text-slate-500 hover:text-slate-700">Data Master Penguji / Ustadz</button>
+            </div>
+
+            <!-- Master Santri Content -->
+            <div id="view-master-santri" class="space-y-4">
+                <form onsubmit="addMasterSantri(event)" class="bg-slate-50 p-3 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <input type="text" id="newNamaSantri" placeholder="Nama Santri" required class="px-3 py-1.5 text-xs rounded-lg border border-slate-300">
+                    <input type="text" id="newNisSantri" placeholder="NIS / ID" required class="px-3 py-1.5 text-xs rounded-lg border border-slate-300">
+                    <div class="flex gap-2">
+                        <select id="newKelompokSantri" class="w-full px-2 py-1.5 text-xs rounded-lg border border-slate-300">
+                            <option value="Takhasus Ula (Tingkat Dasar)">Takhasus Ula</option>
+                            <option value="Takhasus Wustha (Tingkat Menengah)">Takhasus Wustha</option>
+                            <option value="Takhasus 'Ulya (Tingkat Lanjut)">Takhasus 'Ulya</option>
+                        </select>
+                        <button type="submit" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700 whitespace-nowrap">+ Tambah</button>
+                    </div>
+                </form>
+
+                <div class="max-h-48 overflow-y-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead class="bg-slate-100 text-slate-600 sticky top-0">
+                            <tr>
+                                <th class="p-2">Nama</th>
+                                <th class="p-2">NIS</th>
+                                <th class="p-2">Kelompok</th>
+                                <th class="p-2 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="masterSantriTable" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Master Penguji Content -->
+            <div id="view-master-penguji" class="space-y-4 hidden">
+                <form onsubmit="addMasterPenguji(event)" class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex gap-2">
+                    <input type="text" id="newNamaPenguji" placeholder="Nama Ustadz / Penguji" required class="flex-grow px-3 py-1.5 text-xs rounded-lg border border-slate-300">
+                    <button type="submit" class="px-4 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700">+ Tambah</button>
+                </form>
+
+                <div class="max-h-48 overflow-y-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead class="bg-slate-100 text-slate-600 sticky top-0">
+                            <tr>
+                                <th class="p-2">Nama Penguji</th>
+                                <th class="p-2 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="masterPengujiTable" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-2 border-t border-slate-100">
+                <button onclick="closeMasterModal()" class="px-4 py-2 text-xs font-semibold bg-slate-200 text-slate-700 rounded-xl hover:bg-slate-300 transition">
+                    Selesai
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- MODAL WHATSAPP MESSAGE GENERATOR -->
     <div id="waModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
