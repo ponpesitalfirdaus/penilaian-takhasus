@@ -38,35 +38,35 @@ function getPredikatQuran(score) {
     if (score >= 90) {
         return {
             title: 'Mumtaz (Istimewa)',
-            badge: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+            badge: 'bg-amber-100 text-amber-900 border-amber-300 font-extrabold',
             statusText: 'Lanjut Juz Berikutnya',
             code: 'MUMTAZ'
         };
     } else if (score >= 80) {
         return {
             title: 'Jayyid Jiddan (Sangat Baik)',
-            badge: 'bg-teal-100 text-teal-800 border-teal-300',
+            badge: 'bg-blue-100 text-blue-900 border-blue-300 font-bold',
             statusText: 'Lanjut Juz (Pemantapan Mandiri)',
             code: 'JAYYID_JIDDAN'
         };
     } else if (score >= 70) {
         return {
             title: 'Jayyid (Baik)',
-            badge: 'bg-amber-100 text-amber-800 border-amber-300',
+            badge: 'bg-sky-100 text-sky-900 border-sky-300 font-bold',
             statusText: 'Remedial Bagian Belum Kuat',
             code: 'JAYYID'
         };
     } else if (score >= 60) {
         return {
             title: 'Maqbul (Cukup)',
-            badge: 'bg-orange-100 text-orange-800 border-orange-300',
+            badge: 'bg-orange-100 text-orange-900 border-orange-300 font-bold',
             statusText: 'Remedial & Tes Ulang',
             code: 'MAQBUL'
         };
     } else {
         return {
             title: 'Rasib (Mengulang)',
-            badge: 'bg-rose-100 text-rose-800 border-rose-300',
+            badge: 'bg-rose-100 text-rose-900 border-rose-300 font-bold',
             statusText: 'Bimbingan Intensif Sebelum Tes Ulang',
             code: 'RASIB'
         };
@@ -132,13 +132,13 @@ function switchMasterTab(tab) {
     if (tab === 'santri') {
         document.getElementById('view-master-santri').classList.remove('hidden');
         document.getElementById('view-master-penguji').classList.add('hidden');
-        document.getElementById('tab-master-santri').className = 'px-4 py-2 border-b-2 border-emerald-600 text-emerald-700';
+        document.getElementById('tab-master-santri').className = 'px-4 py-2 border-b-2 border-amber-500 text-amber-900 font-bold';
         document.getElementById('tab-master-penguji').className = 'px-4 py-2 text-slate-500 hover:text-slate-700';
     } else {
         document.getElementById('view-master-santri').classList.add('hidden');
         document.getElementById('view-master-penguji').classList.remove('hidden');
         document.getElementById('tab-master-santri').className = 'px-4 py-2 text-slate-500 hover:text-slate-700';
-        document.getElementById('tab-master-penguji').className = 'px-4 py-2 border-b-2 border-emerald-600 text-emerald-700';
+        document.getElementById('tab-master-penguji').className = 'px-4 py-2 border-b-2 border-amber-500 text-amber-900 font-bold';
     }
 }
 
@@ -239,8 +239,8 @@ function saveDataToStorage() {
 function switchTab(tabKey) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
     document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('bg-white', 'text-emerald-950', 'shadow', 'font-semibold');
-        btn.classList.add('text-emerald-100', 'hover:bg-white/10');
+        btn.classList.remove('bg-amber-500', 'text-slate-950', 'shadow', 'font-bold');
+        btn.classList.add('text-amber-100', 'hover:bg-white/10');
     });
 
     const activeTab = document.getElementById('tab-' + tabKey);
@@ -248,8 +248,8 @@ function switchTab(tabKey) {
 
     if (activeView && activeTab) {
         activeView.classList.remove('hidden');
-        activeTab.classList.add('bg-white', 'text-emerald-950', 'shadow', 'font-semibold');
-        activeTab.classList.remove('text-emerald-100', 'hover:bg-white/10');
+        activeTab.classList.add('bg-amber-500', 'text-slate-950', 'shadow', 'font-bold');
+        activeTab.classList.remove('text-amber-100', 'hover:bg-white/10');
     }
 
     if (tabKey === 'rekap') renderTable();
@@ -294,7 +294,7 @@ function updateStatusIndicator(score) {
     const pred = getPredikatQuran(score);
 
     badgeContainer.innerHTML = `
-        <span class="inline-flex items-center gap-1 ${pred.badge} border px-3 py-1 rounded-full text-xs font-bold">
+        <span class="inline-flex items-center gap-1 ${pred.badge} border px-3 py-1 rounded-full text-xs">
             ${pred.title}
         </span>
     `;
@@ -320,7 +320,7 @@ function calculateAdabScore() {
             predikatBadge.className = 'inline-block mt-0.5 text-xs font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800';
             predikatBadge.innerText = 'Sangat Baik';
         } else if (total >= 80) {
-            predikatBadge.className = 'inline-block mt-0.5 text-xs font-semibold px-2 py-0.5 rounded bg-teal-100 text-teal-800';
+            predikatBadge.className = 'inline-block mt-0.5 text-xs font-semibold px-2 py-0.5 rounded bg-blue-100 text-blue-900';
             predikatBadge.innerText = 'Baik';
         } else if (total >= 70) {
             predikatBadge.className = 'inline-block mt-0.5 text-xs font-semibold px-2 py-0.5 rounded bg-amber-100 text-amber-800';
@@ -354,7 +354,7 @@ function handleFormSubmit(e) {
     const namaPenguji = document.getElementById('selectPenguji').value;
 
     if (!namaSantri) {
-        showToast('Pilih Santri terlebih dahulu!', 'warning');
+        showToast('Sila pilih Santri terlebih dahulu!', 'warning');
         return;
     }
 
@@ -381,7 +381,7 @@ function handleFormSubmit(e) {
     if (editId) {
         const idx = evaluations.findIndex(item => item.id === editId);
         if (idx !== -1) evaluations[idx] = evalObj;
-        showToast('Data penilaian berhasil diperbarui!', 'success');
+        showToast('Data penilaian berhasil dikemaskini!', 'success');
     } else {
         evaluations.unshift(evalObj);
         showToast('Data penilaian berhasil disimpan!', 'success');
@@ -453,18 +453,18 @@ function renderTable() {
                 <div class="text-[11px] text-slate-400">${escapeHtml(item.nisSantri)} | ${escapeHtml(item.kelompokSantri)}</div>
             </td>
             <td class="p-3.5 font-medium text-slate-700">${escapeHtml(item.juzUjian)}</td>
-            <td class="p-3.5 text-center font-bold text-emerald-700 text-base">${item.totalHafalan.toFixed(1)}</td>
+            <td class="p-3.5 text-center font-bold text-blue-900 text-base">${item.totalHafalan.toFixed(1)}</td>
             <td class="p-3.5 text-center">
-                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold border ${pred.badge}">${pred.title}</span>
+                <span class="px-2.5 py-1 rounded-full text-[11px] border ${pred.badge}">${pred.title}</span>
             </td>
-            <td class="p-3.5 text-center font-bold text-teal-700">${item.totalAdab}</td>
+            <td class="p-3.5 text-center font-bold text-amber-700">${item.totalAdab}</td>
             <td class="p-3.5 text-slate-500 text-xs">${item.tglEvaluasi}</td>
             <td class="p-3.5 text-center">
                 <div class="flex items-center justify-center gap-1.5">
-                    <button onclick="openWaModalFor('${item.id}')" title="Kirim WA" class="p-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-lg transition">
+                    <button onclick="openWaModalFor('${item.id}')" title="Kirim WA" class="p-1.5 bg-amber-50 text-amber-700 hover:bg-amber-100 rounded-lg transition">
                         <i data-lucide="message-square" class="w-4 h-4"></i>
                     </button>
-                    <button onclick="editEvaluation('${item.id}')" title="Edit Data" class="p-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition">
+                    <button onclick="editEvaluation('${item.id}')" title="Edit Data" class="p-1.5 bg-blue-50 text-blue-900 hover:bg-blue-100 rounded-lg transition">
                         <i data-lucide="edit" class="w-4 h-4"></i>
                     </button>
                     <button onclick="deleteEvaluation('${item.id}')" title="Hapus" class="p-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-lg transition">
@@ -485,7 +485,7 @@ function editEvaluation(id) {
 
     document.getElementById('edit-id').value = item.id;
 
-    // Set dropdown santri jika cocok
+    // Set dropdown santri jika wujud
     const s = masterSantri.find(x => x.nama === item.namaSantri);
     if (s) {
         document.getElementById('selectSantri').value = s.id;
@@ -518,14 +518,14 @@ function editEvaluation(id) {
     calculateHafalanScore();
     calculateAdabScore();
     switchTab('input');
-    showToast('Data dimuat ke form input untuk diedit.', 'info');
+    showToast('Data dimuat ke borang input untuk diedit.', 'info');
 }
 
 function deleteEvaluation(id) {
-    if (window.confirm('Apakah Anda yakin ingin menghapus data penilaian santri ini?')) {
+    if (window.confirm('Adakah anda pasti mahu memadamkan data penilaian santri ini?')) {
         evaluations = evaluations.filter(i => i.id !== id);
         saveDataToStorage();
-        showToast('Data berhasil dihapus.', 'info');
+        showToast('Data berhasil dipadamkan.', 'info');
     }
 }
 
@@ -568,9 +568,11 @@ function loadRaporView(id) {
 
     container.innerHTML = `
         <!-- Kop Rapor -->
-        <div class="border-b-2 border-emerald-900 pb-4 mb-6 text-center">
-            <h2 class="text-xl sm:text-2xl font-extrabold text-emerald-900 tracking-wide uppercase">RAPOR EVALUASI TAKHASUS AL-QUR'AN</h2>
-            <p class="text-xs sm:text-sm text-slate-600 font-medium">Lembaga Pendidikan Al-Qur'an & Kelompok Bimbingan Hafalan</p>
+        <div class="border-b-2 border-blue-950 pb-4 mb-6 text-center">
+            <img src="https://lh3.googleusercontent.com/d/1Zw8z1i2yixH-k6umwcDbOc7Xu6v3HTQl" alt="Logo Al Firdaus" class="w-20 h-20 mx-auto mb-2 object-contain">
+            <h2 class="text-xl sm:text-2xl font-extrabold text-blue-950 tracking-wide uppercase">RAPOR EVALUASI TAKHASUS AL-QUR'AN</h2>
+            <p class="text-xs sm:text-sm text-amber-700 font-bold">AL FIRDAUS BANDAR LAMPUNG</p>
+            <p class="text-xs text-slate-500">Lembaga Pendidikan Al-Qur'an & Bimbingan Hafalan</p>
         </div>
 
         <!-- Info Santri & Penguji -->
@@ -589,7 +591,7 @@ function loadRaporView(id) {
 
         <!-- Table Assessment Breakdown -->
         <div class="mb-6">
-            <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-emerald-600 pl-2">A. Capaian Penilaian Hafalan</h3>
+            <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-amber-500 pl-2">A. Capaian Penilaian Hafalan</h3>
             <table class="w-full text-xs sm:text-sm border-collapse border border-slate-300">
                 <thead>
                     <tr class="bg-slate-100 text-slate-700 font-bold">
@@ -604,29 +606,29 @@ function loadRaporView(id) {
                         <td class="border border-slate-300 p-2">Kelancaran & Ketepatan Hafalan</td>
                         <td class="border border-slate-300 p-2 text-center">40%</td>
                         <td class="border border-slate-300 p-2 text-center font-semibold">${item.hafalan.kelancaran}</td>
-                        <td class="border border-slate-300 p-2 text-center font-bold text-emerald-700">${(item.hafalan.kelancaran * 0.4).toFixed(1)}</td>
+                        <td class="border border-slate-300 p-2 text-center font-bold text-blue-900">${(item.hafalan.kelancaran * 0.4).toFixed(1)}</td>
                     </tr>
                     <tr>
                         <td class="border border-slate-300 p-2">Tajwid & Makhorijul Huruf</td>
                         <td class="border border-slate-300 p-2 text-center">25%</td>
                         <td class="border border-slate-300 p-2 text-center font-semibold">${item.hafalan.tajwid}</td>
-                        <td class="border border-slate-300 p-2 text-center font-bold text-emerald-700">${(item.hafalan.tajwid * 0.25).toFixed(1)}</td>
+                        <td class="border border-slate-300 p-2 text-center font-bold text-blue-900">${(item.hafalan.tajwid * 0.25).toFixed(1)}</td>
                     </tr>
                     <tr>
                         <td class="border border-slate-300 p-2">Ketepatan Ayat & Urutan Ayat</td>
                         <td class="border border-slate-300 p-2 text-center">20%</td>
                         <td class="border border-slate-300 p-2 text-center font-semibold">${item.hafalan.urutan}</td>
-                        <td class="border border-slate-300 p-2 text-center font-bold text-emerald-700">${(item.hafalan.urutan * 0.20).toFixed(1)}</td>
+                        <td class="border border-slate-300 p-2 text-center font-bold text-blue-900">${(item.hafalan.urutan * 0.20).toFixed(1)}</td>
                     </tr>
                     <tr>
                         <td class="border border-slate-300 p-2">Kemandirian & Kesiapan Hafalan</td>
                         <td class="border border-slate-300 p-2 text-center">15%</td>
                         <td class="border border-slate-300 p-2 text-center font-semibold">${item.hafalan.kemandirian}</td>
-                        <td class="border border-slate-300 p-2 text-center font-bold text-emerald-700">${(item.hafalan.kemandirian * 0.15).toFixed(1)}</td>
+                        <td class="border border-slate-300 p-2 text-center font-bold text-blue-900">${(item.hafalan.kemandirian * 0.15).toFixed(1)}</td>
                     </tr>
-                    <tr class="bg-slate-50 font-bold">
-                        <td colspan="3" class="border border-slate-300 p-2 text-right">TOTAL NILAI HAFALAN</td>
-                        <td class="border border-slate-300 p-2 text-center text-base text-emerald-800">${item.totalHafalan.toFixed(1)} / 100</td>
+                    <tr class="bg-amber-50 font-bold">
+                        <td colspan="3" class="border border-slate-300 p-2 text-right text-slate-800">TOTAL NILAI HAFALAN</td>
+                        <td class="border border-slate-300 p-2 text-center text-base text-blue-950 font-extrabold">${item.totalHafalan.toFixed(1)} / 100</td>
                     </tr>
                 </tbody>
             </table>
@@ -635,14 +637,14 @@ function loadRaporView(id) {
         <!-- Adab Breakdown & Result Box -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
-                <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-teal-600 pl-2">B. Skor Adab & Karakter</h3>
+                <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-blue-900 pl-2">B. Skor Adab & Karakter</h3>
                 <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1">
-                    <div class="flex justify-between"><span>Total Skor Adab:</span> <strong class="text-teal-700 font-bold text-sm">${item.totalAdab} / 100</strong></div>
+                    <div class="flex justify-between"><span>Total Skor Adab:</span> <strong class="text-blue-900 font-bold text-sm">${item.totalAdab} / 100</strong></div>
                     <div class="flex justify-between text-slate-500"><span>Kualifikasi:</span> <span>${getAdabPredikatText(item.totalAdab)}</span></div>
                 </div>
             </div>
             <div>
-                <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-emerald-600 pl-2">C. Predikat Al-Qur'an & Status</h3>
+                <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-amber-500 pl-2">C. Predikat Al-Qur'an & Status</h3>
                 <div class="p-3 rounded-xl border ${pred.badge} text-xs">
                     <strong class="block font-bold text-sm mb-1">${pred.title}</strong>
                     <span>${pred.statusText}</span>
@@ -682,6 +684,7 @@ function openWaModalFor(id) {
     const pred = getPredikatQuran(item.totalHafalan);
 
     const text = `*RAPOR EVALUASI TAKHASUS AL-QUR'AN* 📖\n` +
+        `*AL FIRDAUS BANDAR LAMPUNG*\n` +
         `----------------------------------------\n` +
         `*Nama Santri:* ${item.namaSantri}\n` +
         `*NIS:* ${item.nisSantri}\n` +
@@ -713,7 +716,7 @@ function copyWaText() {
     const textEl = document.getElementById('waTextContent');
     textEl.select();
     document.execCommand('copy');
-    showToast('Teks WhatsApp berhasil disalin ke clipboard!', 'success');
+    showToast('Teks WhatsApp berhasil disalin ke papan klip!', 'success');
 }
 
 // --- CSV EXPORT ---
@@ -734,11 +737,11 @@ function exportCSV() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', `Rekap_Takhasus_Quran_${new Date().toISOString().split('T')[0]}.csv`);
+    link.setAttribute('download', `Rekap_Takhasus_AlFirdaus_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    showToast('File CSV berhasil diunduh.', 'success');
+    showToast('Fail CSV berhasil dimuat turun.', 'success');
 }
 
 // --- HELPER UTILITIES ---
@@ -759,11 +762,11 @@ function showToast(message, type = 'info') {
 
     const toast = document.createElement('div');
 
-    let typeClass = 'bg-slate-800 text-white';
-    if (type === 'success') typeClass = 'bg-emerald-700 text-white';
+    let typeClass = 'bg-slate-900 text-white border-amber-400/50';
+    if (type === 'success') typeClass = 'bg-blue-950 text-white border-amber-400';
     if (type === 'warning') typeClass = 'bg-amber-600 text-white';
 
-    toast.className = `px-4 py-2.5 rounded-xl text-xs font-semibold shadow-xl border border-white/20 transform transition duration-300 translate-y-2 opacity-0 flex items-center gap-2 ${typeClass}`;
+    toast.className = `px-4 py-2.5 rounded-xl text-xs font-semibold shadow-xl border transform transition duration-300 translate-y-2 opacity-0 flex items-center gap-2 ${typeClass}`;
     toast.innerHTML = `<span>${message}</span>`;
 
     container.appendChild(toast);
