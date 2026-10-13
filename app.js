@@ -6,6 +6,7 @@ const MASTER_PENGUJI_KEY = 'takhasus_master_penguji_v1';
 let evaluations = [];
 let masterSantri = [];
 let masterPenguji = [];
+let isSidebarOpen = false;
 let showHijriDate = false;
 
 // Sample Master Data Default
@@ -21,6 +22,12 @@ const defaultPenguji = [
     { id: 'p_3', nama: 'Ust. Ahmad Fauzi, Lc.' }
 ];
 
+// Inisialisasi awal saat DOM siap
+document.addEventListener('DOMContentLoaded', function() {
+    initSidebar();
+    startClockAndWidget();
+});
+
 window.onload = function() {
     const tglInput = document.getElementById('tglEvaluasi');
     if (tglInput) tglInput.value = new Date().toISOString().split('T')[0];
@@ -32,107 +39,107 @@ window.onload = function() {
 
     calculateHafalanScore();
     calculateAdabScore();
-
-    // Start Live Clock & Alternating Date
-    startClockAndWidget();
 };
 
-// --- SIDEBAR TOGGLE LOGIC ---
-function toggleSidebar() {
+// --- SIDEBAR & TOGGLE LOGIC ---
+function initSidebar() {
+    // Pada Layar Lebar (Desktop >= 1024px) sidebar terbuka otomatis, pada HP/Tablet tertutup
+    if (window.innerWidth >= 1024) {
+        setSidebarState(true);
+    } else {
+        setSidebarState(false);
+    }
+}
+
+function setSidebarState(open) {
+    isSidebarOpen = open;
     const sidebar = document.getElementById('sidebar');
     const backdrop = document.getElementById('sidebarBackdrop');
     const iconHamburger = document.getElementById('iconHamburger');
     const iconClose = document.getElementById('iconClose');
     const mainWrapper = document.getElementById('mainWrapper');
 
-    const isMobile = window.innerWidth < 768;
+    if (!sidebar || !iconHamburger || !iconClose || !mainWrapper) return;
 
-    if (isMobile) {
-        const isClosed = sidebar.classList.contains('-translate-x-full');
-        if (isClosed) {
-            // Open Mobile Sidebar
-            sidebar.classList.remove('-translate-x-full');
-            backdrop.classList.remove('hidden');
-            iconHamburger.classList.add('hidden');
-            iconClose.classList.remove('hidden');
+    if (open) {
+        // Keadaan Terbuka / Diperlebar
+        sidebar.classList.remove('-translate-x-full');
+        if (window.innerWidth >= 1024) {
+            mainWrapper.classList.add('lg:pl-72');
+            if (backdrop) backdrop.classList.add('hidden');
         } else {
-            // Close Mobile Sidebar
-            sidebar.classList.add('-translate-x-full');
-            backdrop.classList.add('hidden');
-            iconHamburger.classList.remove('hidden');
-            iconClose.classList.add('hidden');
+            mainWrapper.classList.remove('lg:pl-72');
+            if (backdrop) backdrop.classList.remove('hidden');
         }
+        // Ikon berubah menjadi 'X'
+        iconHamburger.classList.add('hidden');
+        iconClose.classList.remove('hidden');
     } else {
-        // Desktop Toggle
-        const isClosed = sidebar.classList.contains('md:-translate-x-full');
-        if (isClosed) {
-            // Expand Sidebar on Desktop
-            sidebar.classList.remove('md:-translate-x-full');
-            mainWrapper.classList.remove('md:pl-0');
-            mainWrapper.classList.add('md:pl-72');
-            iconHamburger.classList.add('hidden');
-            iconClose.classList.remove('hidden');
-        } else {
-            // Collapse Sidebar on Desktop
-            sidebar.classList.add('md:-translate-x-full');
-            mainWrapper.classList.remove('md:pl-72');
-            mainWrapper.classList.add('md:pl-0');
-            iconHamburger.classList.remove('hidden');
-            iconClose.classList.add('hidden');
-        }
+        // Keadaan Tertutup / Diciutkan
+        sidebar.classList.add('-translate-x-full');
+        mainWrapper.classList.remove('lg:pl-72');
+        if (backdrop) backdrop.classList.add('hidden');
+
+        // Ikon berubah menjadi Garis 3 Hamburger
+        iconHamburger.classList.remove('hidden');
+        iconClose.classList.add('hidden');
     }
 }
 
-// --- CLOCK & ALTERNATING DATE WIDGET ---
+function toggleSidebar() {
+    setSidebarState(!isSidebarOpen);
+}
+
+// --- CLOCK & ALTERNATING DATE WIDGET (FAIL-SAFE) ---
 function startClockAndWidget() {
     updateClockAndDate();
     setInterval(updateClockAndDate, 1000);
-    // Swap Masehi & Hijri every 4 seconds
+    // Berganti Tampilan Masehi / Hijriah Setiap 4 Detik
     setInterval(() => {
         showHijriDate = !showHijriDate;
         updateClockAndDate();
     }, 4000);
 }
 
+function getMasehiString(now) {
+    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    return `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()} M`;
+}
+
+function getHijriString(now) {
+    try {
+        const formatter = new Intl.DateTimeFormat('id-ID-u-ca-islamic', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+        return formatter.format(now).replace(' AH', ' H').replace(' M', ' H');
+    } catch (e) {
+        return '1448 H';
+    }
+}
+
 function updateClockAndDate() {
     const now = new Date();
 
     // 1. Digital Clock (HH:mm:ss WIB)
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-    
     const clockEl = document.getElementById('widgetClock');
-    if (clockEl) clockEl.innerText = `${hours}:${minutes}:${seconds} WIB`;
+    if (clockEl) {
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        clockEl.innerText = `${hours}:${minutes}:${seconds} WIB`;
+    }
 
-    // 2. Dates (Masehi vs Hijriah)
+    // 2. Tanggal Bergantian (Masehi <-> Hijriah)
     const dateEl = document.getElementById('widgetDate');
-    if (!dateEl) return;
-
-    try {
+    if (dateEl) {
         if (!showHijriDate) {
-            const masehiStr = new Intl.DateTimeFormat('id-ID', {
-                weekday: 'long',
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric'
-            }).format(now);
-            dateEl.innerText = `${masehiStr} M`;
+            dateEl.innerText = getMasehiString(now);
         } else {
-            let hijriStr = '';
-            try {
-                hijriStr = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                }).format(now) + ' H';
-            } catch(e) {
-                hijriStr = '1448 H';
-            }
-            dateEl.innerText = `${hijriStr}`;
+            dateEl.innerText = getHijriString(now);
         }
-    } catch(e) {
-        dateEl.innerText = now.toLocaleDateString('id-ID');
     }
 }
 
@@ -362,12 +369,9 @@ function switchTab(tabKey) {
         if (sel && sel.value) loadRaporView(sel.value);
     }
 
-    // Auto close mobile sidebar when tab clicked
-    if (window.innerWidth < 768) {
-        const sidebar = document.getElementById('sidebar');
-        if (!sidebar.classList.contains('-translate-x-full')) {
-            toggleSidebar();
-        }
+    // Otomatis menutup sidebar jika berpindah tab di HP / Tablet
+    if (window.innerWidth < 1024) {
+        setSidebarState(false);
     }
 
     if (window.lucide) lucide.createIcons();
