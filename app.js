@@ -6,6 +6,7 @@ const MASTER_PENGUJI_KEY = 'takhasus_master_penguji_v1';
 let evaluations = [];
 let masterSantri = [];
 let masterPenguji = [];
+let showHijriDate = false;
 
 // Sample Master Data Default
 const defaultSantri = [
@@ -31,7 +32,109 @@ window.onload = function() {
 
     calculateHafalanScore();
     calculateAdabScore();
+
+    // Start Live Clock & Alternating Date
+    startClockAndWidget();
 };
+
+// --- SIDEBAR TOGGLE LOGIC ---
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    const iconHamburger = document.getElementById('iconHamburger');
+    const iconClose = document.getElementById('iconClose');
+    const mainWrapper = document.getElementById('mainWrapper');
+
+    const isMobile = window.innerWidth < 768;
+
+    if (isMobile) {
+        const isClosed = sidebar.classList.contains('-translate-x-full');
+        if (isClosed) {
+            // Open Mobile Sidebar
+            sidebar.classList.remove('-translate-x-full');
+            backdrop.classList.remove('hidden');
+            iconHamburger.classList.add('hidden');
+            iconClose.classList.remove('hidden');
+        } else {
+            // Close Mobile Sidebar
+            sidebar.classList.add('-translate-x-full');
+            backdrop.classList.add('hidden');
+            iconHamburger.classList.remove('hidden');
+            iconClose.classList.add('hidden');
+        }
+    } else {
+        // Desktop Toggle
+        const isClosed = sidebar.classList.contains('md:-translate-x-full');
+        if (isClosed) {
+            // Expand Sidebar on Desktop
+            sidebar.classList.remove('md:-translate-x-full');
+            mainWrapper.classList.remove('md:pl-0');
+            mainWrapper.classList.add('md:pl-72');
+            iconHamburger.classList.add('hidden');
+            iconClose.classList.remove('hidden');
+        } else {
+            // Collapse Sidebar on Desktop
+            sidebar.classList.add('md:-translate-x-full');
+            mainWrapper.classList.remove('md:pl-72');
+            mainWrapper.classList.add('md:pl-0');
+            iconHamburger.classList.remove('hidden');
+            iconClose.classList.add('hidden');
+        }
+    }
+}
+
+// --- CLOCK & ALTERNATING DATE WIDGET ---
+function startClockAndWidget() {
+    updateClockAndDate();
+    setInterval(updateClockAndDate, 1000);
+    // Swap Masehi & Hijri every 4 seconds
+    setInterval(() => {
+        showHijriDate = !showHijriDate;
+        updateClockAndDate();
+    }, 4000);
+}
+
+function updateClockAndDate() {
+    const now = new Date();
+
+    // 1. Digital Clock (HH:mm:ss WIB)
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    
+    const clockEl = document.getElementById('widgetClock');
+    if (clockEl) clockEl.innerText = `${hours}:${minutes}:${seconds} WIB`;
+
+    // 2. Dates (Masehi vs Hijriah)
+    const dateEl = document.getElementById('widgetDate');
+    if (!dateEl) return;
+
+    try {
+        if (!showHijriDate) {
+            const masehiStr = new Intl.DateTimeFormat('id-ID', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            }).format(now);
+            dateEl.innerText = `${masehiStr} M`;
+        } else {
+            let hijriStr = '';
+            try {
+                hijriStr = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                }).format(now) + ' H';
+            } catch(e) {
+                hijriStr = '1448 H';
+            }
+            dateEl.innerText = `${hijriStr}`;
+        }
+    } catch(e) {
+        dateEl.innerText = now.toLocaleDateString('id-ID');
+    }
+}
 
 // --- PREDIKAT AL-QUR'AN HELPER ---
 function getPredikatQuran(score) {
@@ -239,8 +342,8 @@ function saveDataToStorage() {
 function switchTab(tabKey) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
     document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('bg-amber-500', 'text-slate-950', 'shadow', 'font-bold');
-        btn.classList.add('text-amber-100', 'hover:bg-white/10');
+        btn.classList.remove('bg-amber-500', 'text-slate-950', 'shadow-md', 'font-bold');
+        btn.classList.add('text-amber-100', 'hover:bg-white/10', 'font-medium');
     });
 
     const activeTab = document.getElementById('tab-' + tabKey);
@@ -248,8 +351,8 @@ function switchTab(tabKey) {
 
     if (activeView && activeTab) {
         activeView.classList.remove('hidden');
-        activeTab.classList.add('bg-amber-500', 'text-slate-950', 'shadow', 'font-bold');
-        activeTab.classList.remove('text-amber-100', 'hover:bg-white/10');
+        activeTab.classList.add('bg-amber-500', 'text-slate-950', 'shadow-md', 'font-bold');
+        activeTab.classList.remove('text-amber-100', 'hover:bg-white/10', 'font-medium');
     }
 
     if (tabKey === 'rekap') renderTable();
@@ -257,6 +360,14 @@ function switchTab(tabKey) {
         populateRaporSelect();
         const sel = document.getElementById('raporSelectSantri');
         if (sel && sel.value) loadRaporView(sel.value);
+    }
+
+    // Auto close mobile sidebar when tab clicked
+    if (window.innerWidth < 768) {
+        const sidebar = document.getElementById('sidebar');
+        if (!sidebar.classList.contains('-translate-x-full')) {
+            toggleSidebar();
+        }
     }
 
     if (window.lucide) lucide.createIcons();
@@ -354,7 +465,7 @@ function handleFormSubmit(e) {
     const namaPenguji = document.getElementById('selectPenguji').value;
 
     if (!namaSantri) {
-        showToast('Sila pilih Santri terlebih dahulu!', 'warning');
+        showToast('Pilih Santri terlebih dahulu!', 'warning');
         return;
     }
 
@@ -381,7 +492,7 @@ function handleFormSubmit(e) {
     if (editId) {
         const idx = evaluations.findIndex(item => item.id === editId);
         if (idx !== -1) evaluations[idx] = evalObj;
-        showToast('Data penilaian berhasil dikemaskini!', 'success');
+        showToast('Data penilaian berhasil diperbarui!', 'success');
     } else {
         evaluations.unshift(evalObj);
         showToast('Data penilaian berhasil disimpan!', 'success');
@@ -485,7 +596,7 @@ function editEvaluation(id) {
 
     document.getElementById('edit-id').value = item.id;
 
-    // Set dropdown santri jika wujud
+    // Set dropdown santri jika cocok
     const s = masterSantri.find(x => x.nama === item.namaSantri);
     if (s) {
         document.getElementById('selectSantri').value = s.id;
@@ -518,14 +629,14 @@ function editEvaluation(id) {
     calculateHafalanScore();
     calculateAdabScore();
     switchTab('input');
-    showToast('Data dimuat ke borang input untuk diedit.', 'info');
+    showToast('Data dimuat ke form input untuk diedit.', 'info');
 }
 
 function deleteEvaluation(id) {
-    if (window.confirm('Adakah anda pasti mahu memadamkan data penilaian santri ini?')) {
+    if (window.confirm('Apakah Anda yakin ingin menghapus data penilaian santri ini?')) {
         evaluations = evaluations.filter(i => i.id !== id);
         saveDataToStorage();
-        showToast('Data berhasil dipadamkan.', 'info');
+        showToast('Data berhasil dihapus.', 'info');
     }
 }
 
@@ -741,7 +852,7 @@ function exportCSV() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    showToast('Fail CSV berhasil dimuat turun.', 'success');
+    showToast('File CSV berhasil diunduh.', 'success');
 }
 
 // --- HELPER UTILITIES ---
