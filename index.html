@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplikasi Penilaian Takhasus Al-Qur'an</title>
+    <title>Aplikasi Penilaian Takhasus Al-Qur'an - Al Firdaus Bandar Lampung</title>
+    <!-- Favicon Logo Al Firdaus -->
+    <link rel="icon" type="image/png" href="https://lh3.googleusercontent.com/d/1Zw8z1i2yixH-k6umwcDbOc7Xu6v3HTQl">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -18,32 +20,32 @@
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col antialiased">
 
     <!-- Header / Navbar -->
-    <header class="bg-gradient-to-r from-emerald-950 via-emerald-900 to-teal-900 text-white shadow-lg sticky top-0 z-30 no-print">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <header class="bg-gradient-to-r from-slate-950 via-blue-950 to-slate-900 text-white shadow-xl sticky top-0 z-30 border-b-2 border-amber-500 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div class="flex items-center space-x-3">
-                    <div class="p-2.5 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 shadow-inner">
-                        <i data-lucide="book-open-check" class="w-8 h-8 text-emerald-300"></i>
+                    <div class="p-1.5 bg-white/10 backdrop-blur-md rounded-xl border border-amber-400/40 shadow-inner">
+                        <img src="https://lh3.googleusercontent.com/d/1Zw8z1i2yixH-k6umwcDbOc7Xu6v3HTQl" alt="Logo Al Firdaus" class="w-10 h-10 object-contain">
                     </div>
                     <div>
-                        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                        <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white flex items-center gap-2">
                             Aplikasi Penilaian Takhasus Al-Qur'an
                         </h1>
-                        <p class="text-xs sm:text-sm text-emerald-200/90 font-medium">Sistem Evaluasi Hafalan & Adab Karakter Santri</p>
+                        <p class="text-xs sm:text-sm text-amber-300 font-semibold tracking-wide">Al Firdaus Bandar Lampung</p>
                     </div>
                 </div>
                 <!-- Navigation Tabs -->
-                <nav class="flex flex-wrap gap-1 bg-emerald-950/40 p-1.5 rounded-xl border border-white/10 text-xs sm:text-sm font-medium">
-                    <button onclick="switchTab('input')" id="tab-input" class="tab-btn px-3 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 bg-white text-emerald-950 shadow font-semibold">
+                <nav class="flex flex-wrap gap-1 bg-slate-900/80 p-1.5 rounded-xl border border-amber-500/30 text-xs sm:text-sm font-medium">
+                    <button onclick="switchTab('input')" id="tab-input" class="tab-btn px-3.5 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 bg-amber-500 text-slate-950 font-bold shadow">
                         <i data-lucide="edit-3" class="w-4 h-4"></i> Input Penilaian
                     </button>
-                    <button onclick="switchTab('rekap')" id="tab-rekap" class="tab-btn px-3 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 text-emerald-100 hover:bg-white/10">
+                    <button onclick="switchTab('rekap')" id="tab-rekap" class="tab-btn px-3.5 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 text-amber-100 hover:bg-white/10">
                         <i data-lucide="table" class="w-4 h-4"></i> Rekapitulasi Data
                     </button>
-                    <button onclick="switchTab('print')" id="tab-print" class="tab-btn px-3 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 text-emerald-100 hover:bg-white/10">
+                    <button onclick="switchTab('print')" id="tab-print" class="tab-btn px-3.5 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 text-amber-100 hover:bg-white/10">
                         <i data-lucide="printer" class="w-4 h-4"></i> Cetak Rapor
                     </button>
-                    <button onclick="switchTab('guidelines')" id="tab-guidelines" class="tab-btn px-3 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 text-emerald-100 hover:bg-white/10">
+                    <button onclick="switchTab('guidelines')" id="tab-guidelines" class="tab-btn px-3.5 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 text-amber-100 hover:bg-white/10">
                         <i data-lucide="book-marked" class="w-4 h-4"></i> Panduan Rubrik
                     </button>
                 </nav>
@@ -66,10 +68,10 @@
                 <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 mb-4 gap-2">
                         <div class="flex items-center gap-2">
-                            <i data-lucide="user-check" class="w-5 h-5 text-emerald-600"></i>
+                            <i data-lucide="user-check" class="w-5 h-5 text-blue-900"></i>
                             <h2 class="text-lg font-bold text-slate-800">1. Data Santri & Penguji</h2>
                         </div>
-                        <button type="button" onclick="openMasterModal()" class="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition">
+                        <button type="button" onclick="openMasterModal()" class="px-3.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition">
                             <i data-lucide="database" class="w-3.5 h-3.5"></i> Kelola Master Santri & Guru
                         </button>
                     </div>
@@ -78,7 +80,7 @@
                         <!-- Dropdown Santri -->
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih Santri <span class="text-rose-500">*</span></label>
-                            <select id="selectSantri" required onchange="onSantriSelected(this.value)" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition">
+                            <select id="selectSantri" required onchange="onSantriSelected(this.value)" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                                 <option value="">-- Pilih Santri --</option>
                             </select>
                             <input type="hidden" id="namaSantri" value="">
@@ -96,18 +98,18 @@
 
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Juz / Materi Ujian <span class="text-rose-500">*</span></label>
-                            <input type="text" id="juzUjian" required placeholder="Contoh: Juz 30 / Surat Al-Baqarah 1-100" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition">
+                            <input type="text" id="juzUjian" required placeholder="Contoh: Juz 30 / Surat Al-Baqarah 1-100" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                         </div>
 
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal Evaluasi</label>
-                            <input type="date" id="tglEvaluasi" required class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition">
+                            <input type="date" id="tglEvaluasi" required class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                         </div>
 
                         <!-- Dropdown Penguji -->
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih Penguji / Ustadz <span class="text-rose-500">*</span></label>
-                            <select id="selectPenguji" required class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition">
+                            <select id="selectPenguji" required class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                                 <option value="">-- Pilih Penguji --</option>
                             </select>
                         </div>
@@ -122,10 +124,10 @@
                         <div>
                             <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
                                 <div class="flex items-center gap-2">
-                                    <i data-lucide="award" class="w-5 h-5 text-emerald-600"></i>
+                                    <i data-lucide="award" class="w-5 h-5 text-amber-600"></i>
                                     <h2 class="text-lg font-bold text-slate-800">2. Penilaian Hafalan Al-Qur'an</h2>
                                 </div>
-                                <span class="text-xs bg-emerald-50 text-emerald-700 font-semibold px-2.5 py-1 rounded-full border border-emerald-200">Bobot 100%</span>
+                                <span class="text-xs bg-amber-50 text-amber-800 font-semibold px-2.5 py-1 rounded-full border border-amber-200">Bobot 100%</span>
                             </div>
 
                             <p class="text-xs text-slate-500 mb-4">Masukkan nilai mentah (skala 0 - 100) untuk masing-masing parameter di bawah ini:</p>
@@ -135,10 +137,10 @@
                                 <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/60">
                                     <div class="flex justify-between items-center mb-1.5">
                                         <label class="text-xs font-bold text-slate-700">a. Kelancaran & Ketepatan Hafalan</label>
-                                        <span class="text-xs font-semibold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded">Bobot 40%</span>
+                                        <span class="text-xs font-semibold text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded">Bobot 40%</span>
                                     </div>
                                     <div class="flex items-center gap-3">
-                                        <input type="number" min="0" max="100" id="hafalan_kelancaran" value="85" oninput="calculateHafalanScore()" required class="w-24 px-3 py-1.5 text-sm font-bold text-center rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500">
+                                        <input type="number" min="0" max="100" id="hafalan_kelancaran" value="85" oninput="calculateHafalanScore()" required class="w-24 px-3 py-1.5 text-sm font-bold text-center rounded-lg border border-slate-300 focus:ring-2 focus:ring-amber-500">
                                         <span class="text-xs text-slate-500">Kontribusi: <strong id="contrib_kelancaran" class="text-slate-800">34.0</strong> poin</span>
                                     </div>
                                 </div>
@@ -147,10 +149,10 @@
                                 <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/60">
                                     <div class="flex justify-between items-center mb-1.5">
                                         <label class="text-xs font-bold text-slate-700">b. Tajwid & Makhorijul Huruf</label>
-                                        <span class="text-xs font-semibold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded">Bobot 25%</span>
+                                        <span class="text-xs font-semibold text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded">Bobot 25%</span>
                                     </div>
                                     <div class="flex items-center gap-3">
-                                        <input type="number" min="0" max="100" id="hafalan_tajwid" value="80" oninput="calculateHafalanScore()" required class="w-24 px-3 py-1.5 text-sm font-bold text-center rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500">
+                                        <input type="number" min="0" max="100" id="hafalan_tajwid" value="80" oninput="calculateHafalanScore()" required class="w-24 px-3 py-1.5 text-sm font-bold text-center rounded-lg border border-slate-300 focus:ring-2 focus:ring-amber-500">
                                         <span class="text-xs text-slate-500">Kontribusi: <strong id="contrib_tajwid" class="text-slate-800">20.0</strong> poin</span>
                                     </div>
                                 </div>
@@ -159,10 +161,10 @@
                                 <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/60">
                                     <div class="flex justify-between items-center mb-1.5">
                                         <label class="text-xs font-bold text-slate-700">c. Ketepatan Ayat & Urutan Ayat</label>
-                                        <span class="text-xs font-semibold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded">Bobot 20%</span>
+                                        <span class="text-xs font-semibold text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded">Bobot 20%</span>
                                     </div>
                                     <div class="flex items-center gap-3">
-                                        <input type="number" min="0" max="100" id="hafalan_urutan" value="85" oninput="calculateHafalanScore()" required class="w-24 px-3 py-1.5 text-sm font-bold text-center rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500">
+                                        <input type="number" min="0" max="100" id="hafalan_urutan" value="85" oninput="calculateHafalanScore()" required class="w-24 px-3 py-1.5 text-sm font-bold text-center rounded-lg border border-slate-300 focus:ring-2 focus:ring-amber-500">
                                         <span class="text-xs text-slate-500">Kontribusi: <strong id="contrib_urutan" class="text-slate-800">17.0</strong> poin</span>
                                     </div>
                                 </div>
@@ -171,10 +173,10 @@
                                 <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/60">
                                     <div class="flex justify-between items-center mb-1.5">
                                         <label class="text-xs font-bold text-slate-700">d. Kemandirian & Kesiapan Hafalan</label>
-                                        <span class="text-xs font-semibold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded">Bobot 15%</span>
+                                        <span class="text-xs font-semibold text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded">Bobot 15%</span>
                                     </div>
                                     <div class="flex items-center gap-3">
-                                        <input type="number" min="0" max="100" id="hafalan_kemandirian" value="90" oninput="calculateHafalanScore()" required class="w-24 px-3 py-1.5 text-sm font-bold text-center rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500">
+                                        <input type="number" min="0" max="100" id="hafalan_kemandirian" value="90" oninput="calculateHafalanScore()" required class="w-24 px-3 py-1.5 text-sm font-bold text-center rounded-lg border border-slate-300 focus:ring-2 focus:ring-amber-500">
                                         <span class="text-xs text-slate-500">Kontribusi: <strong id="contrib_kemandirian" class="text-slate-800">13.5</strong> poin</span>
                                     </div>
                                 </div>
@@ -182,10 +184,10 @@
                         </div>
 
                         <!-- Total Score & Dynamic Badge -->
-                        <div class="mt-6 pt-4 border-t border-slate-200 bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-xl p-4 shadow-md">
+                        <div class="mt-6 pt-4 border-t border-slate-200 bg-gradient-to-r from-slate-950 via-blue-950 to-slate-900 text-white rounded-xl p-4 shadow-md border-l-4 border-amber-400">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <span class="text-xs uppercase tracking-wider text-slate-400 font-bold block">Total Skor Hafalan</span>
+                                    <span class="text-xs uppercase tracking-wider text-slate-300 font-bold block">Total Skor Hafalan</span>
                                     <span id="totalHafalanDisplay" class="text-3xl font-extrabold text-amber-400">84.5</span>
                                     <span class="text-xs text-slate-400">/ 100</span>
                                 </div>
@@ -204,10 +206,10 @@
                         <div>
                             <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
                                 <div class="flex items-center gap-2">
-                                    <i data-lucide="heart-handshake" class="w-5 h-5 text-teal-600"></i>
+                                    <i data-lucide="heart-handshake" class="w-5 h-5 text-blue-900"></i>
                                     <h2 class="text-lg font-bold text-slate-800">3. Rubrik Adab & Karakter</h2>
                                 </div>
-                                <span class="text-xs bg-teal-50 text-teal-700 font-semibold px-2.5 py-1 rounded-full border border-teal-200">Maks 100 Poin</span>
+                                <span class="text-xs bg-blue-50 text-blue-900 font-semibold px-2.5 py-1 rounded-full border border-blue-200">Maks 100 Poin</span>
                             </div>
 
                             <p class="text-xs text-slate-500 mb-3">Isi skor angka sesuai batas maksimum setiap indikator:</p>
@@ -215,52 +217,52 @@
                             <div class="space-y-2.5 text-xs">
                                 <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
                                     <span class="font-medium text-slate-700">1. Adab kepada Allah (Maks 20)</span>
-                                    <input type="number" min="0" max="20" id="adab_allah" value="18" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-teal-500">
+                                    <input type="number" min="0" max="20" id="adab_allah" value="18" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-amber-500">
                                 </div>
                                 <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
                                     <span class="font-medium text-slate-700">2. Adab kepada Guru (Maks 15)</span>
-                                    <input type="number" min="0" max="15" id="adab_guru" value="14" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-teal-500">
+                                    <input type="number" min="0" max="15" id="adab_guru" value="14" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-amber-500">
                                 </div>
                                 <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
                                     <span class="font-medium text-slate-700">3. Adab kepada Al-Qur'an (Maks 15)</span>
-                                    <input type="number" min="0" max="15" id="adab_quran" value="14" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-teal-500">
+                                    <input type="number" min="0" max="15" id="adab_quran" value="14" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-amber-500">
                                 </div>
                                 <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
                                     <span class="font-medium text-slate-700">4. Adab kepada Teman (Maks 10)</span>
-                                    <input type="number" min="0" max="10" id="adab_teman" value="9" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-teal-500">
+                                    <input type="number" min="0" max="10" id="adab_teman" value="9" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-amber-500">
                                 </div>
                                 <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
-                                    <span class="font-medium text-slate-700">5. Tanggung Jawab (Maks 10)</span>
-                                    <input type="number" min="0" max="10" id="adab_tanggungjawab" value="9" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-teal-500">
+                                    <span class="font-medium text-slate-700">5. Adab kepada Tanggung Jawab (Maks 10)</span>
+                                    <input type="number" min="0" max="10" id="adab_tanggungjawab" value="9" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-amber-500">
                                 </div>
                                 <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
-                                    <span class="font-medium text-slate-700">6. Lingkungan (Maks 10)</span>
-                                    <input type="number" min="0" max="10" id="adab_lingkungan" value="8" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-teal-500">
+                                    <span class="font-medium text-slate-700">6. Adab kepada Lingkungan (Maks 10)</span>
+                                    <input type="number" min="0" max="10" id="adab_lingkungan" value="8" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-amber-500">
                                 </div>
                                 <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
                                     <span class="font-medium text-slate-700">7. Kejujuran (Maks 10)</span>
-                                    <input type="number" min="0" max="10" id="adab_kejujuran" value="9" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-teal-500">
+                                    <input type="number" min="0" max="10" id="adab_kejujuran" value="9" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-amber-500">
                                 </div>
                                 <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
                                     <span class="font-medium text-slate-700">8. Kemandirian (Maks 5)</span>
-                                    <input type="number" min="0" max="5" id="adab_kemandirian" value="4" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-teal-500">
+                                    <input type="number" min="0" max="5" id="adab_kemandirian" value="4" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-amber-500">
                                 </div>
                                 <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
                                     <span class="font-medium text-slate-700">9. Pengendalian Emosi (Maks 5)</span>
-                                    <input type="number" min="0" max="5" id="adab_emosi" value="4" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-teal-500">
+                                    <input type="number" min="0" max="5" id="adab_emosi" value="4" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-amber-500">
                                 </div>
                             </div>
                         </div>
 
                         <!-- Total Skor Adab Box -->
-                        <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between bg-teal-50/80 p-3.5 rounded-xl border border-teal-100">
+                        <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between bg-amber-50/80 p-3.5 rounded-xl border border-amber-200">
                             <div>
-                                <span class="text-xs uppercase font-bold text-teal-800 block">Total Skor Adab</span>
-                                <span id="adabPredikatBadge" class="inline-block mt-0.5 text-xs font-semibold px-2 py-0.5 rounded bg-teal-200 text-teal-900">Sangat Baik</span>
+                                <span class="text-xs uppercase font-bold text-amber-900 block">Total Skor Adab</span>
+                                <span id="adabPredikatBadge" class="inline-block mt-0.5 text-xs font-semibold px-2 py-0.5 rounded bg-amber-200 text-amber-900">Sangat Baik</span>
                             </div>
                             <div class="text-right">
-                                <span id="totalAdabDisplay" class="text-2xl font-extrabold text-teal-700">89</span>
-                                <span class="text-xs text-teal-600">/ 100</span>
+                                <span id="totalAdabDisplay" class="text-2xl font-extrabold text-blue-950">89</span>
+                                <span class="text-xs text-amber-700">/ 100</span>
                             </div>
                         </div>
                     </div>
@@ -269,11 +271,11 @@
                 <!-- Card 3: Catatan Evaluasi & Tombol Aksi -->
                 <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80 mt-6">
                     <div class="flex items-center gap-2 border-b border-slate-100 pb-3 mb-4">
-                        <i data-lucide="message-square-plus" class="w-5 h-5 text-emerald-600"></i>
+                        <i data-lucide="message-square-plus" class="w-5 h-5 text-amber-600"></i>
                         <h2 class="text-lg font-bold text-slate-800">4. Catatan Evaluasi & Rekomendasi Penguji</h2>
                     </div>
                     <div>
-                        <textarea id="catatanPenguji" rows="3" placeholder="Tuliskan bagian ayat/surat yang perlu diperkuat, rekomendasi bimbingan, atau saran motivasi untuk santri..." class="w-full p-3.5 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"></textarea>
+                        <textarea id="catatanPenguji" rows="3" placeholder="Tuliskan bagian ayat/surat yang perlu diperkuat, rekomendasi bimbingan, atau saran motivasi untuk santri..." class="w-full p-3.5 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"></textarea>
                     </div>
 
                     <!-- Action Buttons -->
@@ -282,8 +284,8 @@
                             <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset Form
                         </button>
                         <div class="flex flex-wrap items-center gap-3">
-                            <button type="submit" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm shadow-md hover:shadow-lg flex items-center gap-2 transition">
-                                <i data-lucide="save" class="w-4 h-4"></i> Simpan Data Evaluation
+                            <button type="submit" class="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm shadow-md hover:shadow-lg flex items-center gap-2 transition">
+                                <i data-lucide="save" class="w-4 h-4"></i> Simpan Data Penilaian
                             </button>
                         </div>
                     </div>
@@ -300,34 +302,34 @@
                         <p class="text-xs font-semibold text-slate-500 uppercase">Total Santri Evaluasi</p>
                         <h3 id="statTotalSantri" class="text-2xl font-bold text-slate-800 mt-1">0</h3>
                     </div>
-                    <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+                    <div class="p-3 bg-blue-50 text-blue-900 rounded-xl">
                         <i data-lucide="users" class="w-6 h-6"></i>
                     </div>
                 </div>
                 <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
                     <div>
                         <p class="text-xs font-semibold text-slate-500 uppercase">Mumtaz / Lulus</p>
-                        <h3 id="statLulus" class="text-2xl font-bold text-emerald-600 mt-1">0</h3>
+                        <h3 id="statLulus" class="text-2xl font-bold text-amber-600 mt-1">0</h3>
                     </div>
-                    <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+                    <div class="p-3 bg-amber-50 text-amber-600 rounded-xl">
                         <i data-lucide="check-circle-2" class="w-6 h-6"></i>
                     </div>
                 </div>
                 <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
                     <div>
                         <p class="text-xs font-semibold text-slate-500 uppercase">Perlu Remedial</p>
-                        <h3 id="statRemedial" class="text-2xl font-bold text-amber-600 mt-1">0</h3>
+                        <h3 id="statRemedial" class="text-2xl font-bold text-orange-600 mt-1">0</h3>
                     </div>
-                    <div class="p-3 bg-amber-50 text-amber-600 rounded-xl">
+                    <div class="p-3 bg-orange-50 text-orange-600 rounded-xl">
                         <i data-lucide="alert-triangle" class="w-6 h-6"></i>
                     </div>
                 </div>
                 <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
                     <div>
                         <p class="text-xs font-semibold text-slate-500 uppercase">Rata-rata Skor Hafalan</p>
-                        <h3 id="statAvgHafalan" class="text-2xl font-bold text-teal-600 mt-1">0.0</h3>
+                        <h3 id="statAvgHafalan" class="text-2xl font-bold text-blue-900 mt-1">0.0</h3>
                     </div>
-                    <div class="p-3 bg-teal-50 text-teal-600 rounded-xl">
+                    <div class="p-3 bg-slate-100 text-blue-900 rounded-xl">
                         <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
                     </div>
                 </div>
@@ -337,7 +339,7 @@
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
                 <div class="p-5 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div class="flex items-center gap-2">
-                        <i data-lucide="list" class="w-5 h-5 text-emerald-600"></i>
+                        <i data-lucide="list" class="w-5 h-5 text-blue-900"></i>
                         <h2 class="text-lg font-bold text-slate-800">Daftar Hasil Penilaian Santri</h2>
                     </div>
 
@@ -345,9 +347,9 @@
                     <div class="flex flex-wrap items-center gap-3">
                         <div class="relative">
                             <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                            <input type="text" id="searchInput" oninput="renderTable()" placeholder="Cari nama / NIS..." class="pl-9 pr-3 py-1.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 w-48 sm:w-60">
+                            <input type="text" id="searchInput" oninput="renderTable()" placeholder="Cari nama / NIS..." class="pl-9 pr-3 py-1.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 w-48 sm:w-60">
                         </div>
-                        <select id="filterStatus" onchange="renderTable()" class="px-3 py-1.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <select id="filterStatus" onchange="renderTable()" class="px-3 py-1.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500">
                             <option value="ALL">Semua Predikat</option>
                             <option value="MUMTAZ">Mumtaz (&ge;90)</option>
                             <option value="JAYYID_JIDDAN">Jayyid Jiddan (80-89)</option>
@@ -391,10 +393,10 @@
                     <p class="text-xs text-slate-500">Pilih santri untuk menampilkan cetakan rapor resmi versi siap print atau simpan PDF.</p>
                 </div>
                 <div class="flex items-center gap-3">
-                    <select id="raporSelectSantri" onchange="loadRaporView(this.value)" class="px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-emerald-500">
+                    <select id="raporSelectSantri" onchange="loadRaporView(this.value)" class="px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500">
                         <!-- Options populated via JS -->
                     </select>
-                    <button onclick="window.print()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-sm flex items-center gap-2 shadow transition">
+                    <button onclick="window.print()" class="px-5 py-2 bg-blue-900 hover:bg-slate-900 text-white font-semibold rounded-xl text-sm flex items-center gap-2 shadow transition">
                         <i data-lucide="printer" class="w-4 h-4"></i> Cetak / PDF
                     </button>
                 </div>
@@ -411,7 +413,7 @@
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-6">
                 <div>
                     <h2 class="text-xl font-bold text-slate-800 border-b border-slate-100 pb-3 flex items-center gap-2">
-                        <i data-lucide="book-open" class="w-6 h-6 text-emerald-600"></i> Panduan Kriteria & Standar Predikat Al-Qur'an
+                        <i data-lucide="book-open" class="w-6 h-6 text-amber-600"></i> Panduan Kriteria & Standar Predikat Al-Qur'an
                     </h2>
                     <p class="text-xs sm:text-sm text-slate-600 mt-2">
                         Gunakan pedoman ini sebagai acuan penilaian objektif dengan standar predikat Al-Qur'an (*Mumtaz, Jayyid Jiddan, Jayyid, Maqbul, Rasib*).
@@ -420,40 +422,40 @@
 
                 <!-- Standar Predikat -->
                 <div class="space-y-3">
-                    <h3 class="text-sm font-bold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg inline-block">1. Skala Predikat Evaluasi Hafalan</h3>
+                    <h3 class="text-sm font-bold text-amber-900 bg-amber-50 px-3 py-1.5 rounded-lg inline-block border border-amber-200">1. Skala Predikat Evaluasi Hafalan</h3>
                     <div class="space-y-2 text-xs">
-                        <div class="p-3 rounded-xl border border-emerald-200 bg-emerald-50/60 flex items-start gap-3">
-                            <span class="bg-emerald-700 text-white font-bold px-2.5 py-1 rounded text-xs min-w-[90px] text-center">Mumtaz</span>
+                        <div class="p-3 rounded-xl border border-amber-200 bg-amber-50/70 flex items-start gap-3">
+                            <span class="bg-amber-500 text-slate-950 font-extrabold px-2.5 py-1 rounded text-xs min-w-[90px] text-center shadow-sm">Mumtaz</span>
                             <div>
-                                <strong class="text-emerald-900 block font-semibold">90 - 100 (Istimewa)</strong>
+                                <strong class="text-amber-950 block font-semibold">90 - 100 (Istimewa)</strong>
                                 <span class="text-slate-600">Hafalan sangat mutqan, tartil, dan lancar. Santri langsung melanjutkan ke Juz berikutnya.</span>
                             </div>
                         </div>
-                        <div class="p-3 rounded-xl border border-teal-200 bg-teal-50/60 flex items-start gap-3">
-                            <span class="bg-teal-700 text-white font-bold px-2.5 py-1 rounded text-xs min-w-[90px] text-center">Jayyid Jiddan</span>
+                        <div class="p-3 rounded-xl border border-blue-200 bg-blue-50/70 flex items-start gap-3">
+                            <span class="bg-blue-900 text-white font-bold px-2.5 py-1 rounded text-xs min-w-[90px] text-center">Jayyid Jiddan</span>
                             <div>
-                                <strong class="text-teal-900 block font-semibold">80 - 89 (Sangat Baik)</strong>
+                                <strong class="text-blue-950 block font-semibold">80 - 89 (Sangat Baik)</strong>
                                 <span class="text-slate-600">Hafalan baik dan teratur. Santri dapat melanjutkan ke Juz berikutnya dengan pemantapan mandiri.</span>
                             </div>
                         </div>
-                        <div class="p-3 rounded-xl border border-amber-200 bg-amber-50/60 flex items-start gap-3">
-                            <span class="bg-amber-700 text-white font-bold px-2.5 py-1 rounded text-xs min-w-[90px] text-center">Jayyid</span>
+                        <div class="p-3 rounded-xl border border-sky-200 bg-sky-50/70 flex items-start gap-3">
+                            <span class="bg-sky-700 text-white font-bold px-2.5 py-1 rounded text-xs min-w-[90px] text-center">Jayyid</span>
                             <div>
-                                <strong class="text-amber-900 block font-semibold">70 - 79 (Baik)</strong>
+                                <strong class="text-sky-950 block font-semibold">70 - 79 (Baik)</strong>
                                 <span class="text-slate-600">Hafalan cukup baik, namun perlu perbaikan pada bagian halaman/surat yang belum kuat sebelum tes ulang.</span>
                             </div>
                         </div>
-                        <div class="p-3 rounded-xl border border-orange-200 bg-orange-50/60 flex items-start gap-3">
+                        <div class="p-3 rounded-xl border border-orange-200 bg-orange-50/70 flex items-start gap-3">
                             <span class="bg-orange-700 text-white font-bold px-2.5 py-1 rounded text-xs min-w-[90px] text-center">Maqbul</span>
                             <div>
-                                <strong class="text-orange-900 block font-semibold">60 - 69 (Cukup)</strong>
+                                <strong class="text-orange-950 block font-semibold">60 - 69 (Cukup)</strong>
                                 <span class="text-slate-600">Batas cukup lulus. Diwajibkan mengulang bagian yang lemah (*remedial*) lalu tes ulang.</span>
                             </div>
                         </div>
-                        <div class="p-3 rounded-xl border border-rose-200 bg-rose-50/60 flex items-start gap-3">
+                        <div class="p-3 rounded-xl border border-rose-200 bg-rose-50/70 flex items-start gap-3">
                             <span class="bg-rose-700 text-white font-bold px-2.5 py-1 rounded text-xs min-w-[90px] text-center">Rasib</span>
                             <div>
-                                <strong class="text-rose-900 block font-semibold">&lt; 60 (Mengulang)</strong>
+                                <strong class="text-rose-950 block font-semibold">&lt; 60 (Mengulang)</strong>
                                 <span class="text-slate-600">Memerlukan bimbingan intensif dan *talaqqi* ulang bersama pembimbing sebelum diperbolehkan tes ulang.</span>
                             </div>
                         </div>
@@ -469,7 +471,7 @@
         <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 flex flex-col space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                 <div class="flex items-center gap-2">
-                    <i data-lucide="database" class="w-5 h-5 text-emerald-600"></i>
+                    <i data-lucide="database" class="w-5 h-5 text-blue-900"></i>
                     <h3 class="font-bold text-slate-800 text-base">Kelola Data Master Santri & Penguji</h3>
                 </div>
                 <button onclick="closeMasterModal()" class="text-slate-400 hover:text-slate-600">
@@ -479,7 +481,7 @@
 
             <!-- Tabs Modal Master -->
             <div class="flex border-b border-slate-200 text-xs font-semibold gap-2">
-                <button onclick="switchMasterTab('santri')" id="tab-master-santri" class="px-4 py-2 border-b-2 border-emerald-600 text-emerald-700">Data Master Santri</button>
+                <button onclick="switchMasterTab('santri')" id="tab-master-santri" class="px-4 py-2 border-b-2 border-amber-500 text-amber-900 font-bold">Data Master Santri</button>
                 <button onclick="switchMasterTab('penguji')" id="tab-master-penguji" class="px-4 py-2 text-slate-500 hover:text-slate-700">Data Master Penguji / Ustadz</button>
             </div>
 
@@ -494,7 +496,7 @@
                             <option value="Takhasus Wustha (Tingkat Menengah)">Takhasus Wustha</option>
                             <option value="Takhasus 'Ulya (Tingkat Lanjut)">Takhasus 'Ulya</option>
                         </select>
-                        <button type="submit" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700 whitespace-nowrap">+ Tambah</button>
+                        <button type="submit" class="px-3 py-1.5 bg-amber-500 text-slate-950 font-bold rounded-lg text-xs hover:bg-amber-600 whitespace-nowrap">+ Tambah</button>
                     </div>
                 </form>
 
@@ -517,7 +519,7 @@
             <div id="view-master-penguji" class="space-y-4 hidden">
                 <form onsubmit="addMasterPenguji(event)" class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex gap-2">
                     <input type="text" id="newNamaPenguji" placeholder="Nama Ustadz / Penguji" required class="flex-grow px-3 py-1.5 text-xs rounded-lg border border-slate-300">
-                    <button type="submit" class="px-4 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700">+ Tambah</button>
+                    <button type="submit" class="px-4 py-1.5 bg-amber-500 text-slate-950 font-bold rounded-lg text-xs hover:bg-amber-600">+ Tambah</button>
                 </form>
 
                 <div class="max-h-48 overflow-y-auto border border-slate-200 rounded-xl">
@@ -546,7 +548,7 @@
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 flex flex-col space-y-4">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                 <div class="flex items-center gap-2">
-                    <i data-lucide="message-square" class="w-5 h-5 text-emerald-600"></i>
+                    <i data-lucide="message-square" class="w-5 h-5 text-amber-600"></i>
                     <h3 class="font-bold text-slate-800 text-base">Format Pesan WhatsApp Rapor</h3>
                 </div>
                 <button onclick="closeWaModal()" class="text-slate-400 hover:text-slate-600">
@@ -564,7 +566,7 @@
                 <button onclick="closeWaModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">
                     Tutup
                 </button>
-                <button onclick="copyWaText()" class="px-4 py-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl flex items-center gap-1.5 shadow transition">
+                <button onclick="copyWaText()" class="px-4 py-2 text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-xl flex items-center gap-1.5 shadow transition">
                     <i data-lucide="copy" class="w-3.5 h-3.5"></i> Salin Teks Pesan
                 </button>
             </div>
