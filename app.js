@@ -1,30 +1,8 @@
-// Tailwind Custom Palette Configuration
-tailwind.config = {
-    theme: {
-        extend: {
-            fontFamily: {
-                sans: ['Plus Jakarta Sans', 'sans-serif'],
-            },
-            colors: {
-                brand: {
-                    50: '#ecfdf5',
-                    100: '#d1fae5',
-                    500: '#10b981',
-                    600: '#059669',
-                    700: '#047857',
-                    800: '#065f46',
-                    900: '#064e3b',
-                }
-            }
-        }
-    }
-};
-
 // --- APPLICATION STATE & INITIALIZATION ---
 const LOCAL_STORAGE_KEY = 'takhasus_quran_evaluations_v1';
 let evaluations = [];
 
-// Sample initial data if storage is empty
+// Sample initial data
 const sampleData = [
     {
         id: 'eval_1710000000001',
@@ -57,16 +35,15 @@ const sampleData = [
 ];
 
 window.onload = function() {
-    // Set default date input to today
-    document.getElementById('tglEvaluasi').value = new Date().toISOString().split('T')[0];
+    const tglInput = document.getElementById('tglEvaluasi');
+    if (tglInput) tglInput.value = new Date().toISOString().split('T')[0];
 
-    // Load from LocalStorage
     loadDataFromStorage();
 
-    // Dynamic icons
-    lucide.createIcons();
+    if (window.lucide) {
+        lucide.createIcons();
+    }
 
-    // Run initial score calculations
     calculateHafalanScore();
     calculateAdabScore();
 };
@@ -98,7 +75,7 @@ function saveDataToStorage() {
 function switchTab(tabKey) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
     document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('bg-white', 'text-brand-900', 'shadow', 'font-semibold');
+        btn.classList.remove('bg-white', 'text-emerald-950', 'shadow', 'font-semibold');
         btn.classList.add('text-emerald-100', 'hover:bg-white/10');
     });
 
@@ -107,7 +84,7 @@ function switchTab(tabKey) {
 
     if (activeView && activeTab) {
         activeView.classList.remove('hidden');
-        activeTab.classList.add('bg-white', 'text-brand-900', 'shadow', 'font-semibold');
+        activeTab.classList.add('bg-white', 'text-emerald-950', 'shadow', 'font-semibold');
         activeTab.classList.remove('text-emerald-100', 'hover:bg-white/10');
     }
 
@@ -115,39 +92,42 @@ function switchTab(tabKey) {
     if (tabKey === 'print') {
         populateRaporSelect();
         const sel = document.getElementById('raporSelectSantri');
-        if (sel.value) loadRaporView(sel.value);
+        if (sel && sel.value) loadRaporView(sel.value);
     }
 
-    lucide.createIcons();
+    if (window.lucide) {
+        lucide.createIcons();
+    }
 }
 
 // --- REAL-TIME CALCULATIONS ---
 function calculateHafalanScore() {
-    const kelancaran = parseFloat(document.getElementById('hafalan_kelancaran').value) || 0;
-    const tajwid = parseFloat(document.getElementById('hafalan_tajwid').value) || 0;
-    const urutan = parseFloat(document.getElementById('hafalan_urutan').value) || 0;
-    const kemandirian = parseFloat(document.getElementById('hafalan_kemandirian').value) || 0;
+    const kelancaran = parseFloat(document.getElementById('hafalan_kelancaran')?.value) || 0;
+    const tajwid = parseFloat(document.getElementById('hafalan_tajwid')?.value) || 0;
+    const urutan = parseFloat(document.getElementById('hafalan_urutan')?.value) || 0;
+    const kemandirian = parseFloat(document.getElementById('hafalan_kemandirian')?.value) || 0;
 
     const c_kelancaran = kelancaran * 0.40;
     const c_tajwid = tajwid * 0.25;
     const c_urutan = urutan * 0.20;
     const c_kemandirian = kemandirian * 0.15;
 
-    document.getElementById('contrib_kelancaran').innerText = c_kelancaran.toFixed(1);
-    document.getElementById('contrib_tajwid').innerText = c_tajwid.toFixed(1);
-    document.getElementById('contrib_urutan').innerText = c_urutan.toFixed(1);
-    document.getElementById('contrib_kemandirian').innerText = c_kemandirian.toFixed(1);
+    if (document.getElementById('contrib_kelancaran')) document.getElementById('contrib_kelancaran').innerText = c_kelancaran.toFixed(1);
+    if (document.getElementById('contrib_tajwid')) document.getElementById('contrib_tajwid').innerText = c_tajwid.toFixed(1);
+    if (document.getElementById('contrib_urutan')) document.getElementById('contrib_urutan').innerText = c_urutan.toFixed(1);
+    if (document.getElementById('contrib_kemandirian')) document.getElementById('contrib_kemandirian').innerText = c_kemandirian.toFixed(1);
 
     const total = c_kelancaran + c_tajwid + c_urutan + c_kemandirian;
-    document.getElementById('totalHafalanDisplay').innerText = total.toFixed(1);
+    if (document.getElementById('totalHafalanDisplay')) document.getElementById('totalHafalanDisplay').innerText = total.toFixed(1);
 
-    // Update Badge & Status
     updateStatusIndicator(total);
 }
 
 function updateStatusIndicator(score) {
     const badgeContainer = document.getElementById('statusBadgeContainer');
     const descContainer = document.getElementById('statusRecommendationText');
+
+    if (!badgeContainer || !descContainer) return;
 
     if (score >= 85) {
         badgeContainer.innerHTML = `
@@ -171,7 +151,10 @@ function updateStatusIndicator(score) {
         `;
         descContainer.innerHTML = `<span class="text-rose-300 font-semibold">&bull; Rekomendasi:</span> Penguatan hafalan & Bimbingan Intensif Sebelum tes ulang.`;
     }
-    lucide.createIcons();
+
+    if (window.lucide) {
+        lucide.createIcons();
+    }
 }
 
 function calculateAdabScore() {
@@ -179,25 +162,28 @@ function calculateAdabScore() {
     let total = 0;
 
     fields.forEach(f => {
-        const val = parseInt(document.getElementById('adab_' + f).value) || 0;
+        const el = document.getElementById('adab_' + f);
+        const val = parseInt(el?.value) || 0;
         total += val;
     });
 
-    document.getElementById('totalAdabDisplay').innerText = total;
+    if (document.getElementById('totalAdabDisplay')) document.getElementById('totalAdabDisplay').innerText = total;
 
     const predikatBadge = document.getElementById('adabPredikatBadge');
-    if (total >= 90) {
-        predikatBadge.className = 'inline-block mt-0.5 text-xs font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800';
-        predikatBadge.innerText = 'Sangat Baik';
-    } else if (total >= 80) {
-        predikatBadge.className = 'inline-block mt-0.5 text-xs font-semibold px-2 py-0.5 rounded bg-teal-100 text-teal-800';
-        predikatBadge.innerText = 'Baik';
-    } else if (total >= 70) {
-        predikatBadge.className = 'inline-block mt-0.5 text-xs font-semibold px-2 py-0.5 rounded bg-amber-100 text-amber-800';
-        predikatBadge.innerText = 'Cukup';
-    } else {
-        predikatBadge.className = 'inline-block mt-0.5 text-xs font-semibold px-2 py-0.5 rounded bg-rose-100 text-rose-800';
-        predikatBadge.innerText = 'Perlu Bimbingan';
+    if (predikatBadge) {
+        if (total >= 90) {
+            predikatBadge.className = 'inline-block mt-0.5 text-xs font-semibold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800';
+            predikatBadge.innerText = 'Sangat Baik';
+        } else if (total >= 80) {
+            predikatBadge.className = 'inline-block mt-0.5 text-xs font-semibold px-2 py-0.5 rounded bg-teal-100 text-teal-800';
+            predikatBadge.innerText = 'Baik';
+        } else if (total >= 70) {
+            predikatBadge.className = 'inline-block mt-0.5 text-xs font-semibold px-2 py-0.5 rounded bg-amber-100 text-amber-800';
+            predikatBadge.innerText = 'Cukup';
+        } else {
+            predikatBadge.className = 'inline-block mt-0.5 text-xs font-semibold px-2 py-0.5 rounded bg-rose-100 text-rose-800';
+            predikatBadge.innerText = 'Perlu Bimbingan';
+        }
     }
 }
 
@@ -212,7 +198,7 @@ function handleFormSubmit(e) {
     let sumAdab = 0;
     const adabObj = {};
     fieldsAdab.forEach(f => {
-        const v = parseInt(document.getElementById('adab_' + f).value) || 0;
+        const v = parseInt(document.getElementById('adab_' + f)?.value) || 0;
         adabObj[f] = v;
         sumAdab += v;
     });
@@ -262,8 +248,10 @@ function resetForm() {
 // --- TABLE RENDER & REKAP ---
 function renderTable() {
     const tbody = document.getElementById('rekapTableBody');
-    const search = document.getElementById('searchInput').value.toLowerCase();
-    const filter = document.getElementById('filterStatus').value;
+    if (!tbody) return;
+
+    const search = document.getElementById('searchInput')?.value.toLowerCase() || '';
+    const filter = document.getElementById('filterStatus')?.value || 'ALL';
 
     tbody.innerHTML = '';
 
@@ -277,15 +265,14 @@ function renderTable() {
         return matchSearch && matchStatus;
     });
 
-    // Update Statistics
-    document.getElementById('statTotalSantri').innerText = evaluations.length;
+    if (document.getElementById('statTotalSantri')) document.getElementById('statTotalSantri').innerText = evaluations.length;
     const countLulus = evaluations.filter(i => i.totalHafalan >= 85).length;
     const countRemedial = evaluations.filter(i => i.totalHafalan >= 75 && i.totalHafalan < 85).length;
     const avgHafalan = evaluations.length > 0 ? (evaluations.reduce((acc, curr) => acc + curr.totalHafalan, 0) / evaluations.length).toFixed(1) : '0.0';
 
-    document.getElementById('statLulus').innerText = countLulus;
-    document.getElementById('statRemedial').innerText = countRemedial;
-    document.getElementById('statAvgHafalan').innerText = avgHafalan;
+    if (document.getElementById('statLulus')) document.getElementById('statLulus').innerText = countLulus;
+    if (document.getElementById('statRemedial')) document.getElementById('statRemedial').innerText = countRemedial;
+    if (document.getElementById('statAvgHafalan')) document.getElementById('statAvgHafalan').innerText = avgHafalan;
 
     if (filtered.length === 0) {
         tbody.innerHTML = `
@@ -296,7 +283,7 @@ function renderTable() {
                 </td>
             </tr>
         `;
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
         return;
     }
 
@@ -322,7 +309,7 @@ function renderTable() {
                 <div class="text-[11px] text-slate-400">${escapeHtml(item.nisSantri)} | ${escapeHtml(item.kelompokSantri)}</div>
             </td>
             <td class="p-3.5 font-medium text-slate-700">${escapeHtml(item.juzUjian)}</td>
-            <td class="p-3.5 text-center font-bold text-brand-700 text-base">${item.totalHafalan.toFixed(1)}</td>
+            <td class="p-3.5 text-center font-bold text-emerald-700 text-base">${item.totalHafalan.toFixed(1)}</td>
             <td class="p-3.5 text-center font-bold text-teal-700">${item.totalAdab}</td>
             <td class="p-3.5">
                 ${statusBadge}
@@ -346,7 +333,9 @@ function renderTable() {
         tbody.appendChild(tr);
     });
 
-    lucide.createIcons();
+    if (window.lucide) {
+        lucide.createIcons();
+    }
 }
 
 function editEvaluation(id) {
@@ -392,11 +381,15 @@ function deleteEvaluation(id) {
 // --- RAPOR PRINT GENERATOR ---
 function populateRaporSelect() {
     const sel = document.getElementById('raporSelectSantri');
+    if (!sel) return;
+
     sel.innerHTML = '';
 
     if (evaluations.length === 0) {
         sel.innerHTML = '<option value="">(Belum Ada Data Santri)</option>';
-        document.getElementById('raporContainer').innerHTML = '<p class="text-center py-10 text-slate-400">Belum ada data evaluasi santri.</p>';
+        if (document.getElementById('raporContainer')) {
+            document.getElementById('raporContainer').innerHTML = '<p class="text-center py-10 text-slate-400">Belum ada data evaluasi santri.</p>';
+        }
         return;
     }
 
@@ -413,6 +406,8 @@ function populateRaporSelect() {
 function loadRaporView(id) {
     const item = evaluations.find(i => i.id === id);
     const container = document.getElementById('raporContainer');
+    if (!container) return;
+
     if (!item) {
         container.innerHTML = '<p class="text-center text-slate-400 py-10">Data tidak ditemukan.</p>';
         return;
@@ -438,8 +433,8 @@ function loadRaporView(id) {
 
     container.innerHTML = `
         <!-- Kop Rapor -->
-        <div class="border-b-2 border-brand-900 pb-4 mb-6 text-center">
-            <h2 class="text-xl sm:text-2xl font-extrabold text-brand-900 tracking-wide uppercase">RAPOR EVALUASI TAKHASUS AL-QUR'AN</h2>
+        <div class="border-b-2 border-emerald-900 pb-4 mb-6 text-center">
+            <h2 class="text-xl sm:text-2xl font-extrabold text-emerald-900 tracking-wide uppercase">RAPOR EVALUASI TAKHASUS AL-QUR'AN</h2>
             <p class="text-xs sm:text-sm text-slate-600 font-medium">Lembaga Pendidikan Al-Qur'an & Kelompok Bimbingan Hafalan</p>
         </div>
 
@@ -459,7 +454,7 @@ function loadRaporView(id) {
 
         <!-- Table Assessment Breakdown -->
         <div class="mb-6">
-            <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-brand-600 pl-2">A. Capaian Penilaian Hafalan</h3>
+            <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-emerald-600 pl-2">A. Capaian Penilaian Hafalan</h3>
             <table class="w-full text-xs sm:text-sm border-collapse border border-slate-300">
                 <thead>
                     <tr class="bg-slate-100 text-slate-700 font-bold">
@@ -474,29 +469,29 @@ function loadRaporView(id) {
                         <td class="border border-slate-300 p-2">Kelancaran & Ketepatan Hafalan</td>
                         <td class="border border-slate-300 p-2 text-center">40%</td>
                         <td class="border border-slate-300 p-2 text-center font-semibold">${item.hafalan.kelancaran}</td>
-                        <td class="border border-slate-300 p-2 text-center font-bold text-brand-700">${(item.hafalan.kelancaran * 0.4).toFixed(1)}</td>
+                        <td class="border border-slate-300 p-2 text-center font-bold text-emerald-700">${(item.hafalan.kelancaran * 0.4).toFixed(1)}</td>
                     </tr>
                     <tr>
                         <td class="border border-slate-300 p-2">Tajwid & Makhorijul Huruf</td>
                         <td class="border border-slate-300 p-2 text-center">25%</td>
                         <td class="border border-slate-300 p-2 text-center font-semibold">${item.hafalan.tajwid}</td>
-                        <td class="border border-slate-300 p-2 text-center font-bold text-brand-700">${(item.hafalan.tajwid * 0.25).toFixed(1)}</td>
+                        <td class="border border-slate-300 p-2 text-center font-bold text-emerald-700">${(item.hafalan.tajwid * 0.25).toFixed(1)}</td>
                     </tr>
                     <tr>
                         <td class="border border-slate-300 p-2">Ketepatan Ayat & Urutan Ayat</td>
                         <td class="border border-slate-300 p-2 text-center">20%</td>
                         <td class="border border-slate-300 p-2 text-center font-semibold">${item.hafalan.urutan}</td>
-                        <td class="border border-slate-300 p-2 text-center font-bold text-brand-700">${(item.hafalan.urutan * 0.20).toFixed(1)}</td>
+                        <td class="border border-slate-300 p-2 text-center font-bold text-emerald-700">${(item.hafalan.urutan * 0.20).toFixed(1)}</td>
                     </tr>
                     <tr>
                         <td class="border border-slate-300 p-2">Kemandirian & Kesiapan Hafalan</td>
                         <td class="border border-slate-300 p-2 text-center">15%</td>
                         <td class="border border-slate-300 p-2 text-center font-semibold">${item.hafalan.kemandirian}</td>
-                        <td class="border border-slate-300 p-2 text-center font-bold text-brand-700">${(item.hafalan.kemandirian * 0.15).toFixed(1)}</td>
+                        <td class="border border-slate-300 p-2 text-center font-bold text-emerald-700">${(item.hafalan.kemandirian * 0.15).toFixed(1)}</td>
                     </tr>
                     <tr class="bg-slate-50 font-bold">
                         <td colspan="3" class="border border-slate-300 p-2 text-right">TOTAL NILAI HAFALAN</td>
-                        <td class="border border-slate-300 p-2 text-center text-base text-brand-800">${item.totalHafalan.toFixed(1)} / 100</td>
+                        <td class="border border-slate-300 p-2 text-center text-base text-emerald-800">${item.totalHafalan.toFixed(1)} / 100</td>
                     </tr>
                 </tbody>
             </table>
@@ -512,7 +507,7 @@ function loadRaporView(id) {
                 </div>
             </div>
             <div>
-                <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-brand-600 pl-2">C. Status Hasil Evaluasi</h3>
+                <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-emerald-600 pl-2">C. Status Hasil Evaluasi</h3>
                 <div class="p-3 rounded-xl border ${statusClass} text-xs">
                     <strong class="block font-bold text-sm mb-1">${statusTitle}</strong>
                     <span>${statusDesc}</span>
@@ -627,6 +622,8 @@ function escapeHtml(str) {
 
 function showToast(message, type = 'info') {
     const container = document.getElementById('toast-container');
+    if (!container) return;
+
     const toast = document.createElement('div');
 
     let typeClass = 'bg-slate-800 text-white';
