@@ -10,10 +10,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Google Fonts: Plus Jakarta Sans -->
+    <!-- Google Fonts: Plus Jakarta Sans & Traditional Arabic -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Custom Style -->
     <link rel="stylesheet" href="style.css">
 </head>
@@ -31,7 +31,9 @@
                     <img src="https://lh3.googleusercontent.com/d/1Zw8z1i2yixH-k6umwcDbOc7Xu6v3HTQl" alt="Logo Al Firdaus" class="w-9 h-9 object-contain">
                 </div>
                 <div>
-                    <h1 class="text-base font-extrabold tracking-tight text-white leading-tight">Takhasus Qur'an</h1>
+                    <h1 class="text-base font-extrabold tracking-tight text-white leading-tight flex items-center gap-1">
+                        <span class="text-amber-400 font-serif">۞</span> Takhasus Qur'an
+                    </h1>
                     <p class="text-[11px] text-amber-300 font-semibold tracking-wide">Al Firdaus Bandar Lampung</p>
                 </div>
             </div>
@@ -62,38 +64,50 @@
         </nav>
 
         <!-- Sidebar Footer -->
-        <div class="p-4 border-t border-white/10 text-center text-[11px] text-slate-400">
-            &copy; LPQ Al Firdaus Bandar Lampung
+        <div class="p-4 border-t border-white/10 text-center text-[11px] text-slate-400 flex flex-col items-center gap-1">
+            <span class="font-serif text-amber-400/80 text-sm">۞ LPQ Al Firdaus ۞</span>
+            <span>Bandar Lampung &copy; 2026</span>
         </div>
     </aside>
 
     <!-- MAIN WRAPPER (KANAN) -->
     <div id="mainWrapper" class="flex-1 flex flex-col min-w-0 transition-all duration-300">
 
-        <!-- HEADER / NAVBAR ATAS -->
+        <!-- HEADER / NAVBAR ATAS DENGAN ORNAMEN ISLAMI -->
         <header class="bg-gradient-to-r from-slate-950 via-blue-950 to-slate-900 text-white shadow-md sticky top-0 z-30 border-b-2 border-amber-500/40 no-print">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-3">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-3">
                 
-                <!-- Left: Hamburger / X Toggle Button -->
+                <!-- Left: Hamburger / X Toggle Button & Title -->
                 <div class="flex items-center gap-3">
                     <button id="sidebarToggleBtn" onclick="toggleSidebar()" title="Buka/Tutup Menu" class="p-2 bg-white/10 hover:bg-white/20 text-amber-300 border border-amber-400/30 rounded-xl transition flex items-center justify-center">
                         <i id="iconHamburger" data-lucide="menu" class="w-6 h-6"></i>
                         <i id="iconClose" data-lucide="x" class="w-6 h-6 hidden"></i>
                     </button>
-                    <div class="hidden sm:block">
-                        <h2 class="text-base font-extrabold text-white leading-tight">Aplikasi Penilaian Takhasus Al-Qur'an</h2>
-                        <p class="text-xs text-amber-300 font-semibold">LPQ Al Firdaus Bandar Lampung</p>
+                    <div>
+                        <h2 class="text-sm sm:text-base font-extrabold text-white leading-tight flex items-center gap-1.5">
+                            <span class="text-amber-400 font-serif text-base hidden sm:inline">۞</span>
+                            Aplikasi Penilaian Takhasus Al-Qur'an
+                            <span class="text-amber-400 font-serif text-base hidden sm:inline">۞</span>
+                        </h2>
+                        <p class="text-[11px] sm:text-xs text-amber-300 font-semibold flex items-center gap-1">
+                            <span>LPQ Al Firdaus Bandar Lampung</span>
+                        </p>
                     </div>
                 </div>
 
+                <!-- Center: Kaligrafi Bismillah (Desktop Only) -->
+                <div class="hidden md:flex flex-col items-center justify-center px-4">
+                    <span class="font-serif text-amber-300 text-sm sm:text-base tracking-widest leading-none" style="font-family: 'Amiri', serif;">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</span>
+                </div>
+
                 <!-- Right: Widget Jam Digital & Tanggal Masehi/Hijriah Real-Time -->
-                <div class="flex items-center gap-2.5 bg-slate-900/80 px-3.5 py-1.5 rounded-xl border border-amber-500/30 shadow-inner">
-                    <div class="p-1.5 bg-amber-500/20 rounded-lg text-amber-400">
+                <div class="flex items-center gap-2 bg-slate-900/90 px-3 py-1.5 rounded-xl border border-amber-500/30 shadow-inner">
+                    <div class="p-1 bg-amber-500/20 rounded-lg text-amber-400">
                         <i data-lucide="clock" class="w-4 h-4 animate-pulse"></i>
                     </div>
                     <div class="flex flex-col text-right">
-                        <span id="widgetClock" class="font-bold text-amber-300 font-mono text-xs sm:text-sm tracking-wider">--:--:-- WIB</span>
-                        <span id="widgetDate" class="text-[10px] sm:text-xs text-slate-200 font-medium transition-all duration-500">Memuat tanggal...</span>
+                        <span id="widgetClock" class="font-bold text-amber-300 font-mono text-xs tracking-wider">--:--:-- WIB</span>
+                        <span id="widgetDate" class="text-[10px] text-slate-200 font-medium transition-all duration-500">Memuat...</span>
                     </div>
                 </div>
 
@@ -111,10 +125,30 @@
                 <form id="evaluationForm" onsubmit="handleFormSubmit(event)">
                     <input type="hidden" id="edit-id" value="">
 
+                    <!-- Header Banner Islami -->
+                    <div class="bg-gradient-to-r from-blue-950 via-slate-900 to-blue-950 rounded-2xl p-4 sm:p-5 text-white border border-amber-500/30 flex items-center justify-between shadow-md">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2.5 bg-amber-500/20 rounded-xl border border-amber-400/30 text-amber-300">
+                                <i data-lucide="book-open-check" class="w-7 h-7"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-base sm:text-lg font-bold text-amber-300 flex items-center gap-2">
+                                    <span>Lembar Penilaian Setoran Santri</span>
+                                    <span class="font-serif text-amber-400 text-sm">۞</span>
+                                </h2>
+                                <p class="text-xs text-slate-300">Silakan isi formulir hafalan baru (ziyadah), muraja'ah, dan adab santri di bawah ini.</p>
+                            </div>
+                        </div>
+                        <div class="hidden lg:block font-serif text-amber-300 text-lg opacity-80" style="font-family: 'Amiri', serif;">
+                            Khairukum man ta'allamal Qur'ana wa 'allamah
+                        </div>
+                    </div>
+
                     <!-- Card 1: Data Santri & Penguji -->
                     <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 mb-4 gap-2">
                             <div class="flex items-center gap-2">
+                                <span class="text-amber-600 font-serif text-lg">۞</span>
                                 <i data-lucide="user-check" class="w-5 h-5 text-blue-900"></i>
                                 <h2 class="text-lg font-bold text-slate-800">1. Data Santri & Penguji</h2>
                             </div>
@@ -144,7 +178,7 @@
                             </div>
 
                             <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Juz / Materi Ujian <span class="text-rose-500">*</span></label>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Juz / Materi Hafalan Baru (Ziyadah) <span class="text-rose-500">*</span></label>
                                 <input type="text" id="juzUjian" required placeholder="Contoh: Juz 30 / Surat Al-Baqarah 1-100" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                             </div>
 
@@ -163,163 +197,229 @@
                         </div>
                     </div>
 
-                    <!-- Grid 2-Column for Hafalan & Adab -->
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
+                    <!-- Grid 2-Column for Hafalan Ziyadah & Muraja'ah -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
 
-                        <!-- Column 1: Penilaian Hafalan (7 Cols) -->
-                        <div class="lg:col-span-7 bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80 flex flex-col justify-between">
+                        <!-- Column 1: Penilaian Hafalan Baru (Ziyadah) -->
+                        <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80 flex flex-col justify-between">
                             <div>
                                 <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
                                     <div class="flex items-center gap-2">
+                                        <span class="text-amber-600 font-serif text-lg">۞</span>
                                         <i data-lucide="award" class="w-5 h-5 text-amber-600"></i>
-                                        <h2 class="text-lg font-bold text-slate-800">2. Penilaian Hafalan Al-Qur'an</h2>
+                                        <h2 class="text-lg font-bold text-slate-800">2. Hafalan Baru (Ziyadah)</h2>
                                     </div>
                                     <span class="text-xs bg-amber-50 text-amber-800 font-semibold px-2.5 py-1 rounded-full border border-amber-200">Bobot 100%</span>
                                 </div>
 
-                                <p class="text-xs text-slate-500 mb-4">Masukkan nilai mentah (skala 0 - 100) untuk masing-masing parameter di bawah ini:</p>
+                                <p class="text-xs text-slate-500 mb-4">Masukkan nilai mentah (skala 0 - 100) hafalan baru:</p>
 
-                                <div class="space-y-4">
+                                <div class="space-y-3.5">
                                     <!-- Param 1 -->
-                                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/60">
-                                        <div class="flex justify-between items-center mb-1.5">
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/60">
+                                        <div class="flex justify-between items-center mb-1">
                                             <label class="text-xs font-bold text-slate-700">a. Kelancaran & Ketepatan Hafalan</label>
-                                            <span class="text-xs font-semibold text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded">Bobot 40%</span>
+                                            <span class="text-[11px] font-semibold text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded">Bobot 40%</span>
                                         </div>
                                         <div class="flex items-center gap-3">
-                                            <input type="number" min="0" max="100" id="hafalan_kelancaran" value="85" oninput="calculateHafalanScore()" required class="w-24 px-3 py-1.5 text-sm font-bold text-center rounded-lg border border-slate-300 focus:ring-2 focus:ring-amber-500">
-                                            <span class="text-xs text-slate-500">Kontribusi: <strong id="contrib_kelancaran" class="text-slate-800">34.0</strong> poin</span>
+                                            <input type="number" min="0" max="100" id="hafalan_kelancaran" value="85" oninput="calculateHafalanScore()" required class="w-20 px-2.5 py-1 text-sm font-bold text-center rounded-lg border border-slate-300 focus:ring-2 focus:ring-amber-500">
+                                            <span class="text-xs text-slate-500">Poin: <strong id="contrib_kelancaran" class="text-slate-800">34.0</strong></span>
                                         </div>
                                     </div>
 
                                     <!-- Param 2 -->
-                                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/60">
-                                        <div class="flex justify-between items-center mb-1.5">
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/60">
+                                        <div class="flex justify-between items-center mb-1">
                                             <label class="text-xs font-bold text-slate-700">b. Tajwid & Makhorijul Huruf</label>
-                                            <span class="text-xs font-semibold text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded">Bobot 25%</span>
+                                            <span class="text-[11px] font-semibold text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded">Bobot 25%</span>
                                         </div>
                                         <div class="flex items-center gap-3">
-                                            <input type="number" min="0" max="100" id="hafalan_tajwid" value="80" oninput="calculateHafalanScore()" required class="w-24 px-3 py-1.5 text-sm font-bold text-center rounded-lg border border-slate-300 focus:ring-2 focus:ring-amber-500">
-                                            <span class="text-xs text-slate-500">Kontribusi: <strong id="contrib_tajwid" class="text-slate-800">20.0</strong> poin</span>
+                                            <input type="number" min="0" max="100" id="hafalan_tajwid" value="80" oninput="calculateHafalanScore()" required class="w-20 px-2.5 py-1 text-sm font-bold text-center rounded-lg border border-slate-300 focus:ring-2 focus:ring-amber-500">
+                                            <span class="text-xs text-slate-500">Poin: <strong id="contrib_tajwid" class="text-slate-800">20.0</strong></span>
                                         </div>
                                     </div>
 
                                     <!-- Param 3 -->
-                                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/60">
-                                        <div class="flex justify-between items-center mb-1.5">
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/60">
+                                        <div class="flex justify-between items-center mb-1">
                                             <label class="text-xs font-bold text-slate-700">c. Ketepatan Ayat & Urutan Ayat</label>
-                                            <span class="text-xs font-semibold text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded">Bobot 20%</span>
+                                            <span class="text-[11px] font-semibold text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded">Bobot 20%</span>
                                         </div>
                                         <div class="flex items-center gap-3">
-                                            <input type="number" min="0" max="100" id="hafalan_urutan" value="85" oninput="calculateHafalanScore()" required class="w-24 px-3 py-1.5 text-sm font-bold text-center rounded-lg border border-slate-300 focus:ring-2 focus:ring-amber-500">
-                                            <span class="text-xs text-slate-500">Kontribusi: <strong id="contrib_urutan" class="text-slate-800">17.0</strong> poin</span>
+                                            <input type="number" min="0" max="100" id="hafalan_urutan" value="85" oninput="calculateHafalanScore()" required class="w-20 px-2.5 py-1 text-sm font-bold text-center rounded-lg border border-slate-300 focus:ring-2 focus:ring-amber-500">
+                                            <span class="text-xs text-slate-500">Poin: <strong id="contrib_urutan" class="text-slate-800">17.0</strong></span>
                                         </div>
                                     </div>
 
                                     <!-- Param 4 -->
-                                    <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200/60">
-                                        <div class="flex justify-between items-center mb-1.5">
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/60">
+                                        <div class="flex justify-between items-center mb-1">
                                             <label class="text-xs font-bold text-slate-700">d. Kemandirian & Kesiapan Hafalan</label>
-                                            <span class="text-xs font-semibold text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded">Bobot 15%</span>
+                                            <span class="text-[11px] font-semibold text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded">Bobot 15%</span>
                                         </div>
                                         <div class="flex items-center gap-3">
-                                            <input type="number" min="0" max="100" id="hafalan_kemandirian" value="90" oninput="calculateHafalanScore()" required class="w-24 px-3 py-1.5 text-sm font-bold text-center rounded-lg border border-slate-300 focus:ring-2 focus:ring-amber-500">
-                                            <span class="text-xs text-slate-500">Kontribusi: <strong id="contrib_kemandirian" class="text-slate-800">13.5</strong> poin</span>
+                                            <input type="number" min="0" max="100" id="hafalan_kemandirian" value="90" oninput="calculateHafalanScore()" required class="w-20 px-2.5 py-1 text-sm font-bold text-center rounded-lg border border-slate-300 focus:ring-2 focus:ring-amber-500">
+                                            <span class="text-xs text-slate-500">Poin: <strong id="contrib_kemandirian" class="text-slate-800">13.5</strong></span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Total Score & Dynamic Badge -->
-                            <div class="mt-6 pt-4 border-t border-slate-200 bg-gradient-to-r from-slate-950 via-blue-950 to-slate-900 text-white rounded-xl p-4 shadow-md border-l-4 border-amber-400">
+                            <div class="mt-5 pt-3 border-t border-slate-200 bg-gradient-to-r from-slate-950 via-blue-950 to-slate-900 text-white rounded-xl p-3.5 shadow-md border-l-4 border-amber-400">
                                 <div class="flex items-center justify-between">
                                     <div>
-                                        <span class="text-xs uppercase tracking-wider text-slate-300 font-bold block">Total Skor Hafalan</span>
-                                        <span id="totalHafalanDisplay" class="text-3xl font-extrabold text-amber-400">84.5</span>
+                                        <span class="text-[11px] uppercase tracking-wider text-slate-300 font-bold block">Skor Ziyadah (Baru)</span>
+                                        <span id="totalHafalanDisplay" class="text-2xl font-extrabold text-amber-400">84.5</span>
                                         <span class="text-xs text-slate-400">/ 100</span>
                                     </div>
-                                    <div id="statusBadgeContainer" class="text-right">
-                                        <!-- Dynamic Badge Injected Here -->
+                                    <div id="statusBadgeContainer" class="text-right"></div>
+                                </div>
+                                <div id="statusRecommendationText" class="mt-2 text-[11px] font-medium border-t border-slate-700/60 pt-1.5 text-slate-300"></div>
+                            </div>
+                        </div>
+
+                        <!-- Column 2: Penilaian Muraja'ah Al-Qur'an (FITUR BARU) -->
+                        <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-blue-900 font-serif text-lg">۞</span>
+                                        <i data-lucide="refresh-cw" class="w-5 h-5 text-blue-900"></i>
+                                        <h2 class="text-lg font-bold text-slate-800">3. Penilaian Muraja'ah</h2>
+                                    </div>
+                                    <span class="text-xs bg-blue-50 text-blue-900 font-semibold px-2.5 py-1 rounded-full border border-blue-200">Bobot 100%</span>
+                                </div>
+
+                                <!-- Input Materi Murajaah -->
+                                <div class="mb-4">
+                                    <label class="block text-xs font-semibold text-slate-600 mb-1">Juz / Materi Muraja'ah <span class="text-rose-500">*</span></label>
+                                    <input type="text" id="materiMurajaah" placeholder="Contoh: Juz 29 / Surat Al-Mulk - Al-Mursalat" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
+                                </div>
+
+                                <div class="space-y-3.5">
+                                    <!-- Param 1 Murajaah -->
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/60">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <label class="text-xs font-bold text-slate-700">a. Kelancaran Muraja'ah</label>
+                                            <span class="text-[11px] font-semibold text-blue-900 bg-blue-100 px-2 py-0.5 rounded">Bobot 50%</span>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <input type="number" min="0" max="100" id="murajaah_kelancaran" value="85" oninput="calculateMurajaahScore()" required class="w-20 px-2.5 py-1 text-sm font-bold text-center rounded-lg border border-slate-300 focus:ring-2 focus:ring-amber-500">
+                                            <span class="text-xs text-slate-500">Poin: <strong id="contrib_murajaah_kelancaran" class="text-slate-800">42.5</strong></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Param 2 Murajaah -->
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/60">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <label class="text-xs font-bold text-slate-700">b. Tajwid & Makhraj Muraja'ah</label>
+                                            <span class="text-[11px] font-semibold text-blue-900 bg-blue-100 px-2 py-0.5 rounded">Bobot 30%</span>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <input type="number" min="0" max="100" id="murajaah_tajwid" value="80" oninput="calculateMurajaahScore()" required class="w-20 px-2.5 py-1 text-sm font-bold text-center rounded-lg border border-slate-300 focus:ring-2 focus:ring-amber-500">
+                                            <span class="text-xs text-slate-500">Poin: <strong id="contrib_murajaah_tajwid" class="text-slate-800">24.0</strong></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Param 3 Murajaah -->
+                                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200/60">
+                                        <div class="flex justify-between items-center mb-1">
+                                            <label class="text-xs font-bold text-slate-700">c. Ketepatan Ayah & Sambung Ayat</label>
+                                            <span class="text-[11px] font-semibold text-blue-900 bg-blue-100 px-2 py-0.5 rounded">Bobot 20%</span>
+                                        </div>
+                                        <div class="flex items-center gap-3">
+                                            <input type="number" min="0" max="100" id="murajaah_urutan" value="85" oninput="calculateMurajaahScore()" required class="w-20 px-2.5 py-1 text-sm font-bold text-center rounded-lg border border-slate-300 focus:ring-2 focus:ring-amber-500">
+                                            <span class="text-xs text-slate-500">Poin: <strong id="contrib_murajaah_urutan" class="text-slate-800">17.0</strong></span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div id="statusRecommendationText" class="mt-2 text-xs font-medium border-t border-slate-700/60 pt-2 text-slate-300">
-                                    <!-- Dynamic Status Description -->
+                            </div>
+
+                            <!-- Total Murajaah Score Box -->
+                            <div class="mt-5 pt-3 border-t border-slate-200 bg-gradient-to-r from-blue-950 via-slate-900 to-blue-950 text-white rounded-xl p-3.5 shadow-md border-l-4 border-blue-400">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <span class="text-[11px] uppercase tracking-wider text-slate-300 font-bold block">Skor Total Muraja'ah</span>
+                                        <span id="totalMurajaahDisplay" class="text-2xl font-extrabold text-blue-300">83.5</span>
+                                        <span class="text-xs text-slate-400">/ 100</span>
+                                    </div>
+                                    <div id="murajaahStatusBadgeContainer" class="text-right"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Column 2: Rubrik Adab & Karakter (5 Cols) -->
-                        <div class="lg:col-span-5 bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80 flex flex-col justify-between">
-                            <div>
-                                <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-                                    <div class="flex items-center gap-2">
-                                        <i data-lucide="heart-handshake" class="w-5 h-5 text-blue-900"></i>
-                                        <h2 class="text-lg font-bold text-slate-800">3. Rubrik Adab & Karakter</h2>
-                                    </div>
-                                    <span class="text-xs bg-blue-50 text-blue-900 font-semibold px-2.5 py-1 rounded-full border border-blue-200">Maks 100 Poin</span>
-                                </div>
+                    </div>
 
-                                <p class="text-xs text-slate-500 mb-3">Isi skor angka sesuai batas maksimum setiap indikator:</p>
-
-                                <div class="space-y-2.5 text-xs">
-                                    <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
-                                        <span class="font-medium text-slate-700">1. Adab kepada Allah (Maks 20)</span>
-                                        <input type="number" min="0" max="20" id="adab_allah" value="18" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-amber-500">
-                                    </div>
-                                    <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
-                                        <span class="font-medium text-slate-700">2. Adab kepada Guru (Maks 15)</span>
-                                        <input type="number" min="0" max="15" id="adab_guru" value="14" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-amber-500">
-                                    </div>
-                                    <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
-                                        <span class="font-medium text-slate-700">3. Adab kepada Al-Qur'an (Maks 15)</span>
-                                        <input type="number" min="0" max="15" id="adab_quran" value="14" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-amber-500">
-                                    </div>
-                                    <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
-                                        <span class="font-medium text-slate-700">4. Adab kepada Teman (Maks 10)</span>
-                                        <input type="number" min="0" max="10" id="adab_teman" value="9" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-amber-500">
-                                    </div>
-                                    <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
-                                        <span class="font-medium text-slate-700">5. Tanggung Jawab (Maks 10)</span>
-                                        <input type="number" min="0" max="10" id="adab_tanggungjawab" value="9" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-amber-500">
-                                    </div>
-                                    <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
-                                        <span class="font-medium text-slate-700">6. Lingkungan (Maks 10)</span>
-                                        <input type="number" min="0" max="10" id="adab_lingkungan" value="8" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-amber-500">
-                                    </div>
-                                    <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
-                                        <span class="font-medium text-slate-700">7. Kejujuran (Maks 10)</span>
-                                        <input type="number" min="0" max="10" id="adab_kejujuran" value="9" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-amber-500">
-                                    </div>
-                                    <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
-                                        <span class="font-medium text-slate-700">8. Kemandirian (Maks 5)</span>
-                                        <input type="number" min="0" max="5" id="adab_kemandirian" value="4" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-amber-500">
-                                    </div>
-                                    <div class="flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-200/50">
-                                        <span class="font-medium text-slate-700">9. Pengendalian Emosi (Maks 5)</span>
-                                        <input type="number" min="0" max="5" id="adab_emosi" value="4" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded border border-slate-300 focus:ring-1 focus:ring-amber-500">
-                                    </div>
-                                </div>
+                    <!-- Card 3: Rubrik Adab & Karakter -->
+                    <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80 mt-6">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                            <div class="flex items-center gap-2">
+                                <span class="text-blue-900 font-serif text-lg">۞</span>
+                                <i data-lucide="heart-handshake" class="w-5 h-5 text-blue-900"></i>
+                                <h2 class="text-lg font-bold text-slate-800">4. Rubrik Adab & Karakter Islami</h2>
                             </div>
+                            <span class="text-xs bg-blue-50 text-blue-900 font-semibold px-2.5 py-1 rounded-full border border-blue-200">Maks 100 Poin</span>
+                        </div>
 
-                            <!-- Total Skor Adab Box -->
-                            <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between bg-amber-50/80 p-3.5 rounded-xl border border-amber-200">
-                                <div>
-                                    <span class="text-xs uppercase font-bold text-amber-900 block">Total Skor Adab</span>
-                                    <span id="adabPredikatBadge" class="inline-block mt-0.5 text-xs font-semibold px-2 py-0.5 rounded bg-amber-200 text-amber-900">Sangat Baik</span>
-                                </div>
-                                <div class="text-right">
-                                    <span id="totalAdabDisplay" class="text-2xl font-extrabold text-blue-950">89</span>
-                                    <span class="text-xs text-amber-700">/ 100</span>
-                                </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                            <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-200/60">
+                                <span class="font-medium text-slate-700">1. Adab kepada Allah (Maks 20)</span>
+                                <input type="number" min="0" max="20" id="adab_allah" value="18" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded-lg border border-slate-300 focus:ring-1 focus:ring-amber-500">
+                            </div>
+                            <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-200/60">
+                                <span class="font-medium text-slate-700">2. Adab kepada Guru (Maks 15)</span>
+                                <input type="number" min="0" max="15" id="adab_guru" value="14" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded-lg border border-slate-300 focus:ring-1 focus:ring-amber-500">
+                            </div>
+                            <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-200/60">
+                                <span class="font-medium text-slate-700">3. Adab kepada Al-Qur'an (Maks 15)</span>
+                                <input type="number" min="0" max="15" id="adab_quran" value="14" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded-lg border border-slate-300 focus:ring-1 focus:ring-amber-500">
+                            </div>
+                            <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-200/60">
+                                <span class="font-medium text-slate-700">4. Adab kepada Teman (Maks 10)</span>
+                                <input type="number" min="0" max="10" id="adab_teman" value="9" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded-lg border border-slate-300 focus:ring-1 focus:ring-amber-500">
+                            </div>
+                            <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-200/60">
+                                <span class="font-medium text-slate-700">5. Tanggung Jawab (Maks 10)</span>
+                                <input type="number" min="0" max="10" id="adab_tanggungjawab" value="9" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded-lg border border-slate-300 focus:ring-1 focus:ring-amber-500">
+                            </div>
+                            <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-200/60">
+                                <span class="font-medium text-slate-700">6. Lingkungan (Maks 10)</span>
+                                <input type="number" min="0" max="10" id="adab_lingkungan" value="8" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded-lg border border-slate-300 focus:ring-1 focus:ring-amber-500">
+                            </div>
+                            <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-200/60">
+                                <span class="font-medium text-slate-700">7. Kejujuran (Maks 10)</span>
+                                <input type="number" min="0" max="10" id="adab_kejujuran" value="9" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded-lg border border-slate-300 focus:ring-1 focus:ring-amber-500">
+                            </div>
+                            <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-200/60">
+                                <span class="font-medium text-slate-700">8. Kemandirian (Maks 5)</span>
+                                <input type="number" min="0" max="5" id="adab_kemandirian" value="4" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded-lg border border-slate-300 focus:ring-1 focus:ring-amber-500">
+                            </div>
+                            <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl border border-slate-200/60">
+                                <span class="font-medium text-slate-700">9. Pengendalian Emosi (Maks 5)</span>
+                                <input type="number" min="0" max="5" id="adab_emosi" value="4" oninput="calculateAdabScore()" required class="w-16 px-2 py-1 text-center font-bold rounded-lg border border-slate-300 focus:ring-1 focus:ring-amber-500">
+                            </div>
+                        </div>
+
+                        <!-- Total Skor Adab Box -->
+                        <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between bg-amber-50/80 p-3.5 rounded-xl border border-amber-200">
+                            <div>
+                                <span class="text-xs uppercase font-bold text-amber-900 block">Total Skor Adab</span>
+                                <span id="adabPredikatBadge" class="inline-block mt-0.5 text-xs font-semibold px-2 py-0.5 rounded bg-amber-200 text-amber-900">Sangat Baik</span>
+                            </div>
+                            <div class="text-right">
+                                <span id="totalAdabDisplay" class="text-2xl font-extrabold text-blue-950">89</span>
+                                <span class="text-xs text-amber-700">/ 100</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Card 3: Catatan Evaluasi & Tombol Aksi -->
+                    <!-- Card 4: Catatan Evaluasi & Tombol Aksi -->
                     <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80 mt-6">
                         <div class="flex items-center gap-2 border-b border-slate-100 pb-3 mb-4">
+                            <span class="text-amber-600 font-serif text-lg">۞</span>
                             <i data-lucide="message-square-plus" class="w-5 h-5 text-amber-600"></i>
-                            <h2 class="text-lg font-bold text-slate-800">4. Catatan Evaluasi & Rekomendasi Penguji</h2>
+                            <h2 class="text-lg font-bold text-slate-800">5. Catatan Evaluasi & Rekomendasi Penguji</h2>
                         </div>
                         <div>
                             <textarea id="catatanPenguji" rows="3" placeholder="Tuliskan bagian ayat/surat yang perlu diperkuat, rekomendasi bimbingan, atau saran motivasi untuk santri..." class="w-full p-3.5 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"></textarea>
@@ -373,7 +473,7 @@
                     </div>
                     <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center justify-between">
                         <div>
-                            <p class="text-xs font-semibold text-slate-500 uppercase">Rata-rata Skor Hafalan</p>
+                            <p class="text-xs font-semibold text-slate-500 uppercase">Rata-rata Skor Ziyadah</p>
                             <h3 id="statAvgHafalan" class="text-2xl font-bold text-blue-900 mt-1">0.0</h3>
                         </div>
                         <div class="p-3 bg-slate-100 text-blue-900 rounded-xl">
@@ -386,6 +486,7 @@
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
                     <div class="p-5 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div class="flex items-center gap-2">
+                            <span class="text-amber-600 font-serif text-lg">۞</span>
                             <i data-lucide="list" class="w-5 h-5 text-blue-900"></i>
                             <h2 class="text-lg font-bold text-slate-800">Daftar Hasil Penilaian Santri</h2>
                         </div>
@@ -416,9 +517,10 @@
                             <thead>
                                 <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[11px]">
                                     <th class="p-3.5">Santri / ID</th>
-                                    <th class="p-3.5">Juz Ujian</th>
-                                    <th class="p-3.5 text-center">Nilai Hafalan</th>
-                                    <th class="p-3.5 text-center">Predikat Al-Qur'an</th>
+                                    <th class="p-3.5">Materi Ziyadah & Muraja'ah</th>
+                                    <th class="p-3.5 text-center">Skor Ziyadah</th>
+                                    <th class="p-3.5 text-center">Skor Muraja'ah</th>
+                                    <th class="p-3.5 text-center">Predikat Quran</th>
                                     <th class="p-3.5 text-center">Nilai Adab</th>
                                     <th class="p-3.5">Tanggal</th>
                                     <th class="p-3.5 text-center">Aksi</th>
@@ -436,7 +538,9 @@
             <section id="view-print" class="tab-content hidden space-y-6">
                 <div class="no-print bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div>
-                        <h2 class="text-base font-bold text-slate-800">Print Preview Rapor Takhasus</h2>
+                        <h2 class="text-base font-bold text-slate-800 flex items-center gap-1.5">
+                            <span class="text-amber-600 font-serif">۞</span> Print Preview Rapor Takhasus
+                        </h2>
                         <p class="text-xs text-slate-500">Pilih santri untuk menampilkan cetakan rapor resmi versi siap print atau simpan PDF.</p>
                     </div>
                     <div class="flex items-center gap-3">
@@ -460,6 +564,7 @@
                 <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200/80 space-y-6">
                     <div>
                         <h2 class="text-xl font-bold text-slate-800 border-b border-slate-100 pb-3 flex items-center gap-2">
+                            <span class="text-amber-600 font-serif text-xl">۞</span>
                             <i data-lucide="book-open" class="w-6 h-6 text-amber-600"></i> Panduan Kriteria & Standar Rubrik Penilaian
                         </h2>
                         <p class="text-xs sm:text-sm text-slate-600 mt-2">
@@ -509,68 +614,26 @@
                         </div>
                     </div>
 
-                    <!-- Section 2: Komponen Hafalan Breakdown -->
+                    <!-- Section 2: Komponen Breakdown Ziyadah & Muraja'ah -->
                     <div class="space-y-3">
-                        <h3 class="text-sm font-bold text-amber-900 bg-amber-50 px-3 py-1.5 rounded-lg inline-block border border-amber-200">2. Komponen & Bobot Penilaian Hafalan (Total 100%)</h3>
+                        <h3 class="text-sm font-bold text-amber-900 bg-amber-50 px-3 py-1.5 rounded-lg inline-block border border-amber-200">2. Komponen & Bobot Penilaian Hafalan & Muraja'ah</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                             <div class="p-3.5 border border-slate-200 rounded-xl bg-slate-50">
-                                <span class="font-bold text-slate-800 block text-sm mb-1">a. Kelancaran & Ketepatan Hafalan (Bobot 40%)</span>
-                                <p class="text-slate-600">Menilai kontinuitas bacaan tanpa jeda lama, tidak sering terhenti/lupa ayat, dan terbiasa menyambung ayat dengan lancar tanpa ragu-ragu.</p>
+                                <span class="font-bold text-slate-800 block text-sm mb-1">Hafalan Baru / Ziyadah (100%)</span>
+                                <ul class="list-disc pl-4 text-slate-600 space-y-1">
+                                    <li>Kelancaran Hafalan: 40%</li>
+                                    <li>Tajwid & Makhorijul Huruf: 25%</li>
+                                    <li>Ketepatan Ayat & Urutan: 20%</li>
+                                    <li>Kemandirian & Kesiapan: 15%</li>
+                                </ul>
                             </div>
                             <div class="p-3.5 border border-slate-200 rounded-xl bg-slate-50">
-                                <span class="font-bold text-slate-800 block text-sm mb-1">b. Tajwid & Makhorijul Huruf (Bobot 25%)</span>
-                                <p class="text-slate-600">Kesesuaian dengan hukum tajwid (Ghunnah, Mad, Idgham, Nun Mati/Tanwin) serta ketepatan artikulasi tempat keluarnya huruf (*Makhraj*).</p>
-                            </div>
-                            <div class="p-3.5 border border-slate-200 rounded-xl bg-slate-50">
-                                <span class="font-bold text-slate-800 block text-sm mb-1">c. Ketepatan Ayat & Urutan Ayat (Bobot 20%)</span>
-                                <p class="text-slate-600">Presisi lafaz kata per kata, kelengkapan ayat, dan tidak terbalik dalam urutan ayat atau surat yang diujikan.</p>
-                            </div>
-                            <div class="p-3.5 border border-slate-200 rounded-xl bg-slate-50">
-                                <span class="font-bold text-slate-800 block text-sm mb-1">d. Kemandirian & Kesiapan Hafalan (Bobot 15%)</span>
-                                <p class="text-slate-600">Kesiapan mental saat dipanggil, minimalnya bantuan atau pancingan (*talaqqi*) dari penguji selama proses ujian berlangsung.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Section 3: Indikator Detail Rubrik Adab & Karakter -->
-                    <div class="space-y-3">
-                        <h3 class="text-sm font-bold text-amber-900 bg-amber-50 px-3 py-1.5 rounded-lg inline-block border border-amber-200">3. Indikator Detail Rubrik Adab & Karakter (Total 100 Poin)</h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                            <div class="p-3 border border-slate-200 rounded-xl bg-slate-50">
-                                <strong class="text-blue-950 font-bold block text-sm mb-1">1. Adab kpd Allah (Maks 20 Poin)</strong>
-                                <p class="text-slate-600">Niat yang ikhlas, khusyuk saat tilawah, dan kesadaran beribadah kepada Allah.</p>
-                            </div>
-                            <div class="p-3 border border-slate-200 rounded-xl bg-slate-50">
-                                <strong class="text-blue-950 font-bold block text-sm mb-1">2. Adab kpd Guru (Maks 15 Poin)</strong>
-                                <p class="text-slate-600">Sopan santun, mendengarkan arahan ustadz/penguji, dan bersikap tawadhu.</p>
-                            </div>
-                            <div class="p-3 border border-slate-200 rounded-xl bg-slate-50">
-                                <strong class="text-blue-950 font-bold block text-sm mb-1">3. Adab kpd Al-Qur'an (Maks 15 Poin)</strong>
-                                <p class="text-slate-600">Memegang mushaf dengan adab yang benar, suci dari hadas (berwudhu), serta tenang.</p>
-                            </div>
-                            <div class="p-3 border border-slate-200 rounded-xl bg-slate-50">
-                                <strong class="text-blue-950 font-bold block text-sm mb-1">4. Adab kpd Teman (Maks 10 Poin)</strong>
-                                <p class="text-slate-600">Saling menghargai sesama santri dan tidak mengganggu saat teman lain sedang setoran.</p>
-                            </div>
-                            <div class="p-3 border border-slate-200 rounded-xl bg-slate-50">
-                                <strong class="text-blue-950 font-bold block text-sm mb-1">5. Tanggung Jawab (Maks 10 Poin)</strong>
-                                <p class="text-slate-600">Disiplin terhadap waktu setoran, hadir tepat jadwal, dan komitmen pada target.</p>
-                            </div>
-                            <div class="p-3 border border-slate-200 rounded-xl bg-slate-50">
-                                <strong class="text-blue-950 font-bold block text-sm mb-1">6. Lingkungan (Maks 10 Poin)</strong>
-                                <p class="text-slate-600">Menjaga kerapian dan kebersihan halaqah / ruangan tempat bimbingan.</p>
-                            </div>
-                            <div class="p-3 border border-slate-200 rounded-xl bg-slate-50">
-                                <strong class="text-blue-950 font-bold block text-sm mb-1">7. Kejujuran (Maks 10 Poin)</strong>
-                                <p class="text-slate-600">Jujur dalam menyampaikan pencapaian jumlah hafalan dan laporan mutaba'ah harian.</p>
-                            </div>
-                            <div class="p-3 border border-slate-200 rounded-xl bg-slate-50">
-                                <strong class="text-blue-950 font-bold block text-sm mb-1">8. Kemandirian (Maks 5 Poin)</strong>
-                                <p class="text-slate-600">Memiliki inisiatif *muraja'ah* mandiri tanpa harus selalu dipaksa atau diingatkan.</p>
-                            </div>
-                            <div class="p-3 border border-slate-200 rounded-xl bg-slate-50">
-                                <strong class="text-blue-950 font-bold block text-sm mb-1">9. Pengendalian Emosi (Maks 5 Poin)</strong>
-                                <p class="text-slate-600">Sabar, tenang, dan bersikap lapang dada saat menerima teguran atau koreksi dari penguji.</p>
+                                <span class="font-bold text-slate-800 block text-sm mb-1">Materi Muraja'ah / Pengulangan (100%)</span>
+                                <ul class="list-disc pl-4 text-slate-600 space-y-1">
+                                    <li>Kelancaran Muraja'ah: 50%</li>
+                                    <li>Tajwid & Makhraj Muraja'ah: 30%</li>
+                                    <li>Ketepatan & Sambung Ayat: 20%</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -585,6 +648,7 @@
         <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-100 flex flex-col space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                 <div class="flex items-center gap-2">
+                    <span class="text-amber-600 font-serif text-lg">۞</span>
                     <i data-lucide="database" class="w-5 h-5 text-blue-900"></i>
                     <h3 class="font-bold text-slate-800 text-base">Kelola Data Master Santri & Penguji</h3>
                 </div>
@@ -662,6 +726,7 @@
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 flex flex-col space-y-4">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                 <div class="flex items-center gap-2">
+                    <span class="text-amber-600 font-serif text-lg">۞</span>
                     <i data-lucide="message-square" class="w-5 h-5 text-amber-600"></i>
                     <h3 class="font-bold text-slate-800 text-base">Format Pesan WhatsApp Rapor</h3>
                 </div>
@@ -674,7 +739,7 @@
                 Pesan terformat di bawah ini dapat disalin dan langsung dikirimkan kepada orang tua/wali santri:
             </p>
 
-            <textarea id="waTextContent" rows="10" readonly class="w-full text-xs font-mono bg-slate-50 p-3 rounded-xl border border-slate-200 focus:outline-none"></textarea>
+            <textarea id="waTextContent" rows="11" readonly class="w-full text-xs font-mono bg-slate-50 p-3 rounded-xl border border-slate-200 focus:outline-none"></textarea>
 
             <div class="flex justify-end gap-3 pt-2">
                 <button onclick="closeWaModal()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition">
