@@ -38,12 +38,12 @@ window.onload = function() {
     if (window.lucide) lucide.createIcons();
 
     calculateHafalanScore();
+    calculateMurajaahScore();
     calculateAdabScore();
 };
 
 // --- SIDEBAR & TOGGLE LOGIC ---
 function initSidebar() {
-    // Pada Layar Lebar (Desktop >= 1024px) sidebar terbuka otomatis, pada HP/Tablet tertutup
     if (window.innerWidth >= 1024) {
         setSidebarState(true);
     } else {
@@ -62,7 +62,6 @@ function setSidebarState(open) {
     if (!sidebar || !iconHamburger || !iconClose || !mainWrapper) return;
 
     if (open) {
-        // Keadaan Terbuka / Diperlebar
         sidebar.classList.remove('-translate-x-full');
         if (window.innerWidth >= 1024) {
             mainWrapper.classList.add('lg:pl-72');
@@ -71,16 +70,12 @@ function setSidebarState(open) {
             mainWrapper.classList.remove('lg:pl-72');
             if (backdrop) backdrop.classList.remove('hidden');
         }
-        // Ikon berubah menjadi 'X'
         iconHamburger.classList.add('hidden');
         iconClose.classList.remove('hidden');
     } else {
-        // Keadaan Tertutup / Diciutkan
         sidebar.classList.add('-translate-x-full');
         mainWrapper.classList.remove('lg:pl-72');
         if (backdrop) backdrop.classList.add('hidden');
-
-        // Ikon berubah menjadi Garis 3 Hamburger
         iconHamburger.classList.remove('hidden');
         iconClose.classList.add('hidden');
     }
@@ -90,11 +85,10 @@ function toggleSidebar() {
     setSidebarState(!isSidebarOpen);
 }
 
-// --- CLOCK & ALTERNATING DATE WIDGET (FAIL-SAFE) ---
+// --- CLOCK & ALTERNATING DATE WIDGET ---
 function startClockAndWidget() {
     updateClockAndDate();
     setInterval(updateClockAndDate, 1000);
-    // Berganti Tampilan Masehi / Hijriah Setiap 4 Detik
     setInterval(() => {
         showHijriDate = !showHijriDate;
         updateClockAndDate();
@@ -123,7 +117,6 @@ function getHijriString(now) {
 function updateClockAndDate() {
     const now = new Date();
 
-    // 1. Digital Clock (HH:mm:ss WIB)
     const clockEl = document.getElementById('widgetClock');
     if (clockEl) {
         const hours = String(now.getHours()).padStart(2, '0');
@@ -132,7 +125,6 @@ function updateClockAndDate() {
         clockEl.innerText = `${hours}:${minutes}:${seconds} WIB`;
     }
 
-    // 2. Tanggal Bergantian (Masehi <-> Hijriah)
     const dateEl = document.getElementById('widgetDate');
     if (dateEl) {
         if (!showHijriDate) {
@@ -143,7 +135,7 @@ function updateClockAndDate() {
     }
 }
 
-// --- PREDIKAT AL-QUR'AN HELPER ---
+// --- PREDIKAT HELPER ---
 function getPredikatQuran(score) {
     if (score >= 90) {
         return {
@@ -325,7 +317,7 @@ function renderMasterTables() {
     if (window.lucide) lucide.createIcons();
 }
 
-// --- EVALUATIONS DATA STORAGE ---
+// --- STORAGE HANDLING ---
 function loadDataFromStorage() {
     const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (stored) {
@@ -369,7 +361,6 @@ function switchTab(tabKey) {
         if (sel && sel.value) loadRaporView(sel.value);
     }
 
-    // Otomatis menutup sidebar jika berpindah tab di HP / Tablet
     if (window.innerWidth < 1024) {
         setSidebarState(false);
     }
@@ -377,7 +368,7 @@ function switchTab(tabKey) {
     if (window.lucide) lucide.createIcons();
 }
 
-// --- REAL-TIME CALCULATIONS ---
+// --- REAL-TIME CALCULATIONS (ZIYADAH, MURAJAAH, ADAB) ---
 function calculateHafalanScore() {
     const kelancaran = parseFloat(document.getElementById('hafalan_kelancaran')?.value) || 0;
     const tajwid = parseFloat(document.getElementById('hafalan_tajwid')?.value) || 0;
@@ -400,6 +391,33 @@ function calculateHafalanScore() {
     updateStatusIndicator(total);
 }
 
+function calculateMurajaahScore() {
+    const kelancaran = parseFloat(document.getElementById('murajaah_kelancaran')?.value) || 0;
+    const tajwid = parseFloat(document.getElementById('murajaah_tajwid')?.value) || 0;
+    const urutan = parseFloat(document.getElementById('murajaah_urutan')?.value) || 0;
+
+    const c_kelancaran = kelancaran * 0.50;
+    const c_tajwid = tajwid * 0.30;
+    const c_urutan = urutan * 0.20;
+
+    if (document.getElementById('contrib_murajaah_kelancaran')) document.getElementById('contrib_murajaah_kelancaran').innerText = c_kelancaran.toFixed(1);
+    if (document.getElementById('contrib_murajaah_tajwid')) document.getElementById('contrib_murajaah_tajwid').innerText = c_tajwid.toFixed(1);
+    if (document.getElementById('contrib_murajaah_urutan')) document.getElementById('contrib_murajaah_urutan').innerText = c_urutan.toFixed(1);
+
+    const total = c_kelancaran + c_tajwid + c_urutan;
+    if (document.getElementById('totalMurajaahDisplay')) document.getElementById('totalMurajaahDisplay').innerText = total.toFixed(1);
+
+    const murajaahBadgeContainer = document.getElementById('murajaahStatusBadgeContainer');
+    if (murajaahBadgeContainer) {
+        const pred = getPredikatQuran(total);
+        murajaahBadgeContainer.innerHTML = `
+            <span class="inline-flex items-center gap-1 ${pred.badge} border px-2.5 py-0.5 rounded-full text-xs">
+                ${pred.title}
+            </span>
+        `;
+    }
+}
+
 function updateStatusIndicator(score) {
     const badgeContainer = document.getElementById('statusBadgeContainer');
     const descContainer = document.getElementById('statusRecommendationText');
@@ -409,7 +427,7 @@ function updateStatusIndicator(score) {
     const pred = getPredikatQuran(score);
 
     badgeContainer.innerHTML = `
-        <span class="inline-flex items-center gap-1 ${pred.badge} border px-3 py-1 rounded-full text-xs">
+        <span class="inline-flex items-center gap-1 ${pred.badge} border px-2.5 py-0.5 rounded-full text-xs">
             ${pred.title}
         </span>
     `;
@@ -447,12 +465,13 @@ function calculateAdabScore() {
     }
 }
 
-// --- FORM SUBMISSION ---
+// --- FORM SUBMIT LOGIC ---
 function handleFormSubmit(e) {
     e.preventDefault();
 
     const editId = document.getElementById('edit-id').value;
     const totalHafalan = parseFloat(document.getElementById('totalHafalanDisplay').innerText);
+    const totalMurajaah = parseFloat(document.getElementById('totalMurajaahDisplay').innerText);
 
     const fieldsAdab = ['allah', 'guru', 'quran', 'teman', 'tanggungjawab', 'lingkungan', 'kejujuran', 'kemandirian', 'emosi'];
     let sumAdab = 0;
@@ -479,6 +498,7 @@ function handleFormSubmit(e) {
         nisSantri: nisSantri,
         kelompokSantri: kelompokSantri,
         juzUjian: document.getElementById('juzUjian').value.trim(),
+        materiMurajaah: document.getElementById('materiMurajaah').value.trim() || 'Juz Pengulangan Mandiri',
         tglEvaluasi: document.getElementById('tglEvaluasi').value,
         namaPenguji: namaPenguji,
         hafalan: {
@@ -488,6 +508,12 @@ function handleFormSubmit(e) {
             kemandirian: parseFloat(document.getElementById('hafalan_kemandirian').value) || 0
         },
         totalHafalan: totalHafalan,
+        murajaah: {
+            kelancaran: parseFloat(document.getElementById('murajaah_kelancaran').value) || 0,
+            tajwid: parseFloat(document.getElementById('murajaah_tajwid').value) || 0,
+            urutan: parseFloat(document.getElementById('murajaah_urutan').value) || 0
+        },
+        totalMurajaah: totalMurajaah,
         adab: adabObj,
         totalAdab: sumAdab,
         catatan: document.getElementById('catatanPenguji').value.trim()
@@ -513,10 +539,11 @@ function resetForm() {
     document.getElementById('namaSantri').value = '';
     document.getElementById('tglEvaluasi').value = new Date().toISOString().split('T')[0];
     calculateHafalanScore();
+    calculateMurajaahScore();
     calculateAdabScore();
 }
 
-// --- TABLE RENDER & REKAP ---
+// --- REKAP & TABLE RENDER ---
 function renderTable() {
     const tbody = document.getElementById('rekapTableBody');
     if (!tbody) return;
@@ -547,7 +574,7 @@ function renderTable() {
     if (filtered.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="7" class="text-center py-8 text-slate-400">
+                <td colspan="8" class="text-center py-8 text-slate-400">
                     <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
                     <p class="font-medium text-xs">Belum ada data penilaian santri yang sesuai.</p>
                 </td>
@@ -567,12 +594,16 @@ function renderTable() {
                 <div class="font-bold text-slate-800">${escapeHtml(item.namaSantri)}</div>
                 <div class="text-[11px] text-slate-400">${escapeHtml(item.nisSantri)} | ${escapeHtml(item.kelompokSantri)}</div>
             </td>
-            <td class="p-3.5 font-medium text-slate-700">${escapeHtml(item.juzUjian)}</td>
-            <td class="p-3.5 text-center font-bold text-blue-900 text-base">${item.totalHafalan.toFixed(1)}</td>
+            <td class="p-3.5 font-medium text-slate-700">
+                <div><span class="text-amber-700 font-bold">Ziyadah:</span> ${escapeHtml(item.juzUjian)}</div>
+                <div class="text-[11px] text-slate-500 mt-0.5"><span class="text-blue-900 font-bold">Muraja'ah:</span> ${escapeHtml(item.materiMurajaah || '-')}</div>
+            </td>
+            <td class="p-3.5 text-center font-bold text-amber-700 text-base">${item.totalHafalan.toFixed(1)}</td>
+            <td class="p-3.5 text-center font-bold text-blue-900 text-base">${(item.totalMurajaah || 0).toFixed(1)}</td>
             <td class="p-3.5 text-center">
                 <span class="px-2.5 py-1 rounded-full text-[11px] border ${pred.badge}">${pred.title}</span>
             </td>
-            <td class="p-3.5 text-center font-bold text-amber-700">${item.totalAdab}</td>
+            <td class="p-3.5 text-center font-bold text-slate-700">${item.totalAdab}</td>
             <td class="p-3.5 text-slate-500 text-xs">${item.tglEvaluasi}</td>
             <td class="p-3.5 text-center">
                 <div class="flex items-center justify-center gap-1.5">
@@ -600,7 +631,6 @@ function editEvaluation(id) {
 
     document.getElementById('edit-id').value = item.id;
 
-    // Set dropdown santri jika cocok
     const s = masterSantri.find(x => x.nama === item.namaSantri);
     if (s) {
         document.getElementById('selectSantri').value = s.id;
@@ -614,12 +644,19 @@ function editEvaluation(id) {
 
     document.getElementById('selectPenguji').value = item.namaPenguji;
     document.getElementById('juzUjian').value = item.juzUjian;
+    document.getElementById('materiMurajaah').value = item.materiMurajaah || '';
     document.getElementById('tglEvaluasi').value = item.tglEvaluasi;
 
     document.getElementById('hafalan_kelancaran').value = item.hafalan.kelancaran;
     document.getElementById('hafalan_tajwid').value = item.hafalan.tajwid;
     document.getElementById('hafalan_urutan').value = item.hafalan.urutan;
     document.getElementById('hafalan_kemandirian').value = item.hafalan.kemandirian;
+
+    if (item.murajaah) {
+        document.getElementById('murajaah_kelancaran').value = item.murajaah.kelancaran || 85;
+        document.getElementById('murajaah_tajwid').value = item.murajaah.tajwid || 80;
+        document.getElementById('murajaah_urutan').value = item.murajaah.urutan || 85;
+    }
 
     const fieldsAdab = ['allah', 'guru', 'quran', 'teman', 'tanggungjawab', 'lingkungan', 'kejujuran', 'kemandirian', 'emosi'];
     fieldsAdab.forEach(f => {
@@ -631,6 +668,7 @@ function editEvaluation(id) {
     document.getElementById('catatanPenguji').value = item.catatan || '';
 
     calculateHafalanScore();
+    calculateMurajaahScore();
     calculateAdabScore();
     switchTab('input');
     showToast('Data dimuat ke form input untuk diedit.', 'info');
@@ -644,7 +682,7 @@ function deleteEvaluation(id) {
     }
 }
 
-// --- RAPOR PRINT GENERATOR ---
+// --- CETAK RAPOR GENERATOR ---
 function populateRaporSelect() {
     const sel = document.getElementById('raporSelectSantri');
     if (!sel) return;
@@ -680,10 +718,12 @@ function loadRaporView(id) {
     }
 
     const pred = getPredikatQuran(item.totalHafalan);
+    const predMurajaah = getPredikatQuran(item.totalMurajaah || 0);
 
     container.innerHTML = `
-        <!-- Kop Rapor -->
+        <!-- Kop Rapor Islami -->
         <div class="border-b-2 border-blue-950 pb-4 mb-6 text-center">
+            <div class="text-amber-600 font-serif text-lg mb-1">۞ بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ ۞</div>
             <img src="https://lh3.googleusercontent.com/d/1Zw8z1i2yixH-k6umwcDbOc7Xu6v3HTQl" alt="Logo Al Firdaus" class="w-20 h-20 mx-auto mb-2 object-contain">
             <h2 class="text-xl sm:text-2xl font-extrabold text-blue-950 tracking-wide uppercase">RAPOR EVALUASI TAKHASUS AL-QUR'AN</h2>
             <p class="text-xs sm:text-sm text-amber-700 font-bold">AL FIRDAUS BANDAR LAMPUNG</p>
@@ -698,15 +738,14 @@ function loadRaporView(id) {
                 <p class="text-slate-500 mt-1">Kelompok: <strong class="text-slate-800">${escapeHtml(item.kelompokSantri)}</strong></p>
             </div>
             <div>
-                <p class="text-slate-500">Juz Ujian: <strong class="text-slate-800">${escapeHtml(item.juzUjian)}</strong></p>
-                <p class="text-slate-500 mt-1">Tanggal Evaluasi: <strong class="text-slate-800">${item.tglEvaluasi}</strong></p>
+                <p class="text-slate-500">Tanggal Evaluasi: <strong class="text-slate-800">${item.tglEvaluasi}</strong></p>
                 <p class="text-slate-500 mt-1">Penguji: <strong class="text-slate-800">${escapeHtml(item.namaPenguji)}</strong></p>
             </div>
         </div>
 
-        <!-- Table Assessment Breakdown -->
+        <!-- Section A: Ziyadah -->
         <div class="mb-6">
-            <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-amber-500 pl-2">A. Capaian Penilaian Hafalan</h3>
+            <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-amber-500 pl-2">A. Penilaian Hafalan Baru (Ziyadah): ${escapeHtml(item.juzUjian)}</h3>
             <table class="w-full text-xs sm:text-sm border-collapse border border-slate-300">
                 <thead>
                     <tr class="bg-slate-100 text-slate-700 font-bold">
@@ -721,45 +760,84 @@ function loadRaporView(id) {
                         <td class="border border-slate-300 p-2">Kelancaran & Ketepatan Hafalan</td>
                         <td class="border border-slate-300 p-2 text-center">40%</td>
                         <td class="border border-slate-300 p-2 text-center font-semibold">${item.hafalan.kelancaran}</td>
-                        <td class="border border-slate-300 p-2 text-center font-bold text-blue-900">${(item.hafalan.kelancaran * 0.4).toFixed(1)}</td>
+                        <td class="border border-slate-300 p-2 text-center font-bold text-amber-800">${(item.hafalan.kelancaran * 0.4).toFixed(1)}</td>
                     </tr>
                     <tr>
                         <td class="border border-slate-300 p-2">Tajwid & Makhorijul Huruf</td>
                         <td class="border border-slate-300 p-2 text-center">25%</td>
                         <td class="border border-slate-300 p-2 text-center font-semibold">${item.hafalan.tajwid}</td>
-                        <td class="border border-slate-300 p-2 text-center font-bold text-blue-900">${(item.hafalan.tajwid * 0.25).toFixed(1)}</td>
+                        <td class="border border-slate-300 p-2 text-center font-bold text-amber-800">${(item.hafalan.tajwid * 0.25).toFixed(1)}</td>
                     </tr>
                     <tr>
                         <td class="border border-slate-300 p-2">Ketepatan Ayat & Urutan Ayat</td>
                         <td class="border border-slate-300 p-2 text-center">20%</td>
                         <td class="border border-slate-300 p-2 text-center font-semibold">${item.hafalan.urutan}</td>
-                        <td class="border border-slate-300 p-2 text-center font-bold text-blue-900">${(item.hafalan.urutan * 0.20).toFixed(1)}</td>
+                        <td class="border border-slate-300 p-2 text-center font-bold text-amber-800">${(item.hafalan.urutan * 0.20).toFixed(1)}</td>
                     </tr>
                     <tr>
                         <td class="border border-slate-300 p-2">Kemandirian & Kesiapan Hafalan</td>
                         <td class="border border-slate-300 p-2 text-center">15%</td>
                         <td class="border border-slate-300 p-2 text-center font-semibold">${item.hafalan.kemandirian}</td>
-                        <td class="border border-slate-300 p-2 text-center font-bold text-blue-900">${(item.hafalan.kemandirian * 0.15).toFixed(1)}</td>
+                        <td class="border border-slate-300 p-2 text-center font-bold text-amber-800">${(item.hafalan.kemandirian * 0.15).toFixed(1)}</td>
                     </tr>
                     <tr class="bg-amber-50 font-bold">
-                        <td colspan="3" class="border border-slate-300 p-2 text-right text-slate-800">TOTAL NILAI HAFALAN</td>
-                        <td class="border border-slate-300 p-2 text-center text-base text-blue-950 font-extrabold">${item.totalHafalan.toFixed(1)} / 100</td>
+                        <td colspan="3" class="border border-slate-300 p-2 text-right text-slate-800">TOTAL SKOR ZIYADAH</td>
+                        <td class="border border-slate-300 p-2 text-center text-base text-amber-900 font-extrabold">${item.totalHafalan.toFixed(1)} / 100</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <!-- Adab Breakdown & Result Box -->
+        <!-- Section B: Muraja'ah -->
+        <div class="mb-6">
+            <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-blue-900 pl-2">B. Penilaian Muraja'ah: ${escapeHtml(item.materiMurajaah || '-')}</h3>
+            <table class="w-full text-xs sm:text-sm border-collapse border border-slate-300">
+                <thead>
+                    <tr class="bg-slate-100 text-slate-700 font-bold">
+                        <th class="border border-slate-300 p-2 text-left">Komponen Muraja'ah</th>
+                        <th class="border border-slate-300 p-2 text-center">Bobot</th>
+                        <th class="border border-slate-300 p-2 text-center">Nilai Mentah</th>
+                        <th class="border border-slate-300 p-2 text-center">Nilai Akhir</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="border border-slate-300 p-2">Kelancaran Muraja'ah</td>
+                        <td class="border border-slate-300 p-2 text-center">50%</td>
+                        <td class="border border-slate-300 p-2 text-center font-semibold">${item.murajaah?.kelancaran || 0}</td>
+                        <td class="border border-slate-300 p-2 text-center font-bold text-blue-900">${((item.murajaah?.kelancaran || 0) * 0.5).toFixed(1)}</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-slate-300 p-2">Tajwid & Makhraj Muraja'ah</td>
+                        <td class="border border-slate-300 p-2 text-center">30%</td>
+                        <td class="border border-slate-300 p-2 text-center font-semibold">${item.murajaah?.tajwid || 0}</td>
+                        <td class="border border-slate-300 p-2 text-center font-bold text-blue-900">${((item.murajaah?.tajwid || 0) * 0.3).toFixed(1)}</td>
+                    </tr>
+                    <tr>
+                        <td class="border border-slate-300 p-2">Ketepatan & Sambung Ayat</td>
+                        <td class="border border-slate-300 p-2 text-center">20%</td>
+                        <td class="border border-slate-300 p-2 text-center font-semibold">${item.murajaah?.urutan || 0}</td>
+                        <td class="border border-slate-300 p-2 text-center font-bold text-blue-900">${((item.murajaah?.urutan || 0) * 0.2).toFixed(1)}</td>
+                    </tr>
+                    <tr class="bg-blue-50 font-bold">
+                        <td colspan="3" class="border border-slate-300 p-2 text-right text-slate-800">TOTAL SKOR MURAJA'AH</td>
+                        <td class="border border-slate-300 p-2 text-center text-base text-blue-950 font-extrabold">${(item.totalMurajaah || 0).toFixed(1)} / 100</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section C & D: Adab & Status -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
-                <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-blue-900 pl-2">B. Skor Adab & Karakter</h3>
+                <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-amber-500 pl-2">C. Skor Adab & Karakter</h3>
                 <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1">
                     <div class="flex justify-between"><span>Total Skor Adab:</span> <strong class="text-blue-900 font-bold text-sm">${item.totalAdab} / 100</strong></div>
                     <div class="flex justify-between text-slate-500"><span>Kualifikasi:</span> <span>${getAdabPredikatText(item.totalAdab)}</span></div>
                 </div>
             </div>
             <div>
-                <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-amber-500 pl-2">C. Predikat Al-Qur'an & Status</h3>
+                <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-blue-900 pl-2">D. Predikat Ziyadah & Rekomendasi</h3>
                 <div class="p-3 rounded-xl border ${pred.badge} text-xs">
                     <strong class="block font-bold text-sm mb-1">${pred.title}</strong>
                     <span>${pred.statusText}</span>
@@ -769,7 +847,7 @@ function loadRaporView(id) {
 
         <!-- Notes -->
         <div class="mb-8">
-            <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-slate-600 pl-2">D. Catatan / Rekomendasi Ustadz Penguji</h3>
+            <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-slate-600 pl-2">E. Catatan / Rekomendasi Ustadz Penguji</h3>
             <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs italic text-slate-700">
                 "${escapeHtml(item.catatan || 'Tidak ada catatan tambahan.')}"
             </div>
@@ -791,12 +869,13 @@ function loadRaporView(id) {
     `;
 }
 
-// --- WHATSAPP MESSAGE GENERATOR ---
+// --- WHATSAPP GENERATOR ---
 function openWaModalFor(id) {
     const item = evaluations.find(i => i.id === id);
     if (!item) return;
 
     const pred = getPredikatQuran(item.totalHafalan);
+    const predMurajaah = getPredikatQuran(item.totalMurajaah || 0);
 
     const text = `*RAPOR EVALUASI TAKHASUS AL-QUR'AN* 📖\n` +
         `*AL FIRDAUS BANDAR LAMPUNG*\n` +
@@ -804,15 +883,11 @@ function openWaModalFor(id) {
         `*Nama Santri:* ${item.namaSantri}\n` +
         `*NIS:* ${item.nisSantri}\n` +
         `*Kelompok:* ${item.kelompokSantri}\n` +
-        `*Materi/Juz Ujian:* ${item.juzUjian}\n` +
         `*Tanggal Evaluasi:* ${item.tglEvaluasi}\n\n` +
-        `*HASIL EVALUASI:* \n` +
-        `📊 *Nilai Hafalan:* ${item.totalHafalan.toFixed(1)} / 100\n` +
-        `   • Kelancaran (40%): ${item.hafalan.kelancaran}\n` +
-        `   • Tajwid & Makhraj (25%): ${item.hafalan.tajwid}\n` +
-        `   • Urutan Ayat (20%): ${item.hafalan.urutan}\n` +
-        `   • Kemandirian (15%): ${item.hafalan.kemandirian}\n\n` +
-        `🌟 *Predikat Al-Qur'an:* ${pred.title}\n` +
+        `📖 *HAFALAN BARU (ZIYADAH):* ${item.juzUjian}\n` +
+        `📊 *Skor Ziyadah:* ${item.totalHafalan.toFixed(1)} / 100 (${pred.title})\n\n` +
+        `🔄 *MURAJA'AH:* ${item.materiMurajaah || '-'}\n` +
+        `📊 *Skor Muraja'ah:* ${(item.totalMurajaah || 0).toFixed(1)} / 100 (${predMurajaah.title})\n\n` +
         `🤲 *Skor Adab & Karakter:* ${item.totalAdab} / 100 (${getAdabPredikatText(item.totalAdab)})\n\n` +
         `📌 *Status/Rekomendasi:* ${pred.statusText}\n\n` +
         `📝 *Catatan Penguji:* \n"${item.catatan || '-'}"\n\n` +
@@ -841,11 +916,11 @@ function exportCSV() {
         return;
     }
 
-    let csv = 'ID,Nama Santri,NIS,Kelompok,Juz Ujian,Tanggal,Nilai Hafalan,Predikat Quran,Skor Adab,Penguji,Catatan\n';
+    let csv = 'ID,Nama Santri,NIS,Kelompok,Juz Ziyadah,Materi Murajaah,Tanggal,Skor Ziyadah,Skor Murajaah,Predikat Ziyadah,Skor Adab,Penguji,Catatan\n';
 
     evaluations.forEach(i => {
         const pred = getPredikatQuran(i.totalHafalan);
-        csv += `"${i.id}","${i.namaSantri}","${i.nisSantri}","${i.kelompokSantri}","${i.juzUjian}","${i.tglEvaluasi}",${i.totalHafalan.toFixed(1)},"${pred.title}",${i.totalAdab},"${i.namaPenguji}","${(i.catatan || '').replace(/"/g, '""')}"\n`;
+        csv += `"${i.id}","${i.namaSantri}","${i.nisSantri}","${i.kelompokSantri}","${i.juzUjian}","${i.materiMurajaah || ''}","${i.tglEvaluasi}",${i.totalHafalan.toFixed(1)},${(i.totalMurajaah || 0).toFixed(1)},"${pred.title}",${i.totalAdab},"${i.namaPenguji}","${(i.catatan || '').replace(/"/g, '""')}"\n`;
     });
 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -859,7 +934,7 @@ function exportCSV() {
     showToast('File CSV berhasil diunduh.', 'success');
 }
 
-// --- HELPER UTILITIES ---
+// --- UTILITIES ---
 function getAdabPredikatText(score) {
     if (score >= 90) return 'Sangat Baik';
     if (score >= 80) return 'Baik';
