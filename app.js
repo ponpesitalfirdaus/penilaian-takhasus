@@ -1,9 +1,9 @@
 // --- STORAGE KEYS ---
-const LOCAL_STORAGE_KEY = 'takhasus_quran_evaluations_v1';
-const MASTER_SANTRI_KEY = 'takhasus_master_santri_v1';
-const MASTER_PENGUJI_KEY = 'takhasus_master_penguji_v1';
-const CURRENT_USER_KEY = 'takhasus_current_user_v1';
-const PRESENSI_STORAGE_KEY = 'takhasus_quran_presensi_v1';
+const LOCAL_STORAGE_KEY = 'takhasus_quran_evaluations_v2';
+const MASTER_SANTRI_KEY = 'takhasus_master_santri_v2';
+const MASTER_PENGUJI_KEY = 'takhasus_master_penguji_v2';
+const CURRENT_USER_KEY = 'takhasus_current_user_v2';
+const PRESENSI_STORAGE_KEY = 'takhasus_quran_presensi_v2';
 
 let evaluations = [];
 let masterSantri = [];
@@ -46,7 +46,7 @@ let currentUser = {
     kelompok: ''
 };
 
-// Master Data Default (Guru terikat dengan Kelompok Binaan)
+// Master Data Default
 const defaultSantri = [
     { id: 's_1', nama: 'Muhammad Al-Fatih', nis: 'TKH-2026-012', kelompok: "Takhasus 'Ulya (Tingkat Lanjut)" },
     { id: 's_2', nama: 'Aisyah Humaira', nis: 'TKH-2026-045', kelompok: 'Takhasus Wustha (Tingkat Menengah)' },
@@ -97,6 +97,71 @@ function populateSuratDropdowns() {
     if (murajaahSelect) murajaahSelect.innerHTML = options;
 }
 
+// --- MASTER DATA & DROPDOWN AUTO-REPAIR ---
+function loadMasterData() {
+    const santriStored = localStorage.getItem(MASTER_SANTRI_KEY);
+    masterSantri = santriStored ? JSON.parse(santriStored) : defaultSantri;
+
+    const pengujiStored = localStorage.getItem(MASTER_PENGUJI_KEY);
+    let loadedPenguji = pengujiStored ? JSON.parse(pengujiStored) : defaultPenguji;
+
+    // Perbaikan otomatis jika properti 'kelompok' tidak terdeteksi
+    masterPenguji = loadedPenguji.map(p => {
+        if (!p.kelompok) {
+            const def = defaultPenguji.find(d => d.nama === p.nama);
+            p.kelompok = def ? def.kelompok : 'Takhasus Ula (Tingkat Dasar)';
+        }
+        return p;
+    });
+
+    localStorage.setItem(MASTER_SANTRI_KEY, JSON.stringify(masterSantri));
+    localStorage.setItem(MASTER_PENGUJI_KEY, JSON.stringify(masterPenguji));
+
+    populateMasterDropdowns();
+    renderMasterTables();
+}
+
+function populateMasterDropdowns() {
+    const selSantri = document.getElementById('selectSantri');
+    const selPenguji = document.getElementById('selectPenguji');
+    const loginPenguji = document.getElementById('loginSelectPenguji');
+
+    if (loginPenguji) {
+        loginPenguji.innerHTML = '<option value="">-- Pilih Nama Guru --</option>';
+        masterPenguji.forEach(p => {
+            loginPenguji.innerHTML += `<option value="${p.nama}">${p.nama}</option>`;
+        });
+    }
+
+    if (selSantri) {
+        selSantri.innerHTML = '<option value="">-- Pilih Santri --</option>';
+        
+        let filteredSantri = masterSantri;
+        if (currentUser.role === 'guru' && currentUser.kelompok) {
+            filteredSantri = masterSantri.filter(s => s.kelompok && s.kelompok.trim() === currentUser.kelompok.trim());
+        }
+
+        if (filteredSantri.length === 0) {
+            selSantri.innerHTML = '<option value="">(Belum Ada Santri di Kelompok Ini)</option>';
+        } else {
+            filteredSantri.forEach(s => {
+                selSantri.innerHTML += `<option value="${s.id}">${s.nama}</option>`;
+            });
+        }
+    }
+
+    if (selPenguji) {
+        selPenguji.innerHTML = '<option value="">-- Pilih Penguji --</option>';
+        masterPenguji.forEach(p => {
+            selPenguji.innerHTML += `<option value="${p.nama}">${p.nama}</option>`;
+        });
+
+        if (currentUser.role === 'guru' && currentUser.name) {
+            selPenguji.value = currentUser.name;
+        }
+    }
+}
+
 // --- AUTH & MULTI-USER ACCESS CONTROL ---
 function checkUserSession() {
     const storedUser = sessionStorage.getItem(CURRENT_USER_KEY);
@@ -132,7 +197,7 @@ function onLoginGuruSelected(namaGuru) {
     const inputKelompok = document.getElementById('loginKelompokGuru');
     const guruObj = masterPenguji.find(p => p.nama === namaGuru);
     if (guruObj && inputKelompok) {
-        inputKelompok.value = guruObj.kelompok;
+        inputKelompok.value = guruObj.kelompok || 'Takhasus Ula (Tingkat Dasar)';
     } else if (inputKelompok) {
         inputKelompok.value = '';
     }
@@ -141,7 +206,8 @@ function onLoginGuruSelected(namaGuru) {
 function handleLoginGuru(e) {
     e.preventDefault();
     const namaGuru = document.getElementById('loginSelectPenguji').value;
-    const kelompok = document.getElementById('loginKelompokGuru').value;
+    const guruObj = masterPenguji.find(p => p.nama === namaGuru);
+    const kelompok = guruObj ? guruObj.kelompok : document.getElementById('loginKelompokGuru').value;
 
     if (!namaGuru) {
         showToast('Pilih nama guru penguji!', 'warning');
@@ -151,7 +217,7 @@ function handleLoginGuru(e) {
     currentUser = {
         role: 'guru',
         name: namaGuru,
-        kelompok: kelompok
+        kelompok: kelompok || 'Takhasus Ula (Tingkat Dasar)'
     };
 
     sessionStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
@@ -200,7 +266,7 @@ function applyRoleRestrictions() {
         if (presensiSelectKelompok) presensiSelectKelompok.disabled = false;
     } else {
         if (userBadgeInfo) {
-            userBadgeInfo.innerHTML = `<span class="bg-blue-900 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase">GURU</span> ${currentUser.name}`;
+            userBadgeInfo.innerHTML = `<span class="bg-blue-900 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase">GURU</span> ${currentUser.name} <span class="text-amber-300 font-normal">(${currentUser.kelompok})</span>`;
         }
         if (btnKelolaMaster) btnKelolaMaster.classList.add('hidden');
         if (presensiSelectKelompok) {
@@ -368,63 +434,10 @@ function formatMateriText(det) {
     return parts.length > 0 ? parts.join(' ') : '-';
 }
 
-// --- MASTER DATA & DROPDOWN FILTERING ---
-function loadMasterData() {
-    const santriStored = localStorage.getItem(MASTER_SANTRI_KEY);
-    masterSantri = santriStored ? JSON.parse(santriStored) : defaultSantri;
-    if (!santriStored) localStorage.setItem(MASTER_SANTRI_KEY, JSON.stringify(masterSantri));
-
-    const pengujiStored = localStorage.getItem(MASTER_PENGUJI_KEY);
-    masterPenguji = pengujiStored ? JSON.parse(pengujiStored) : defaultPenguji;
-    if (!pengujiStored) localStorage.setItem(MASTER_PENGUJI_KEY, JSON.stringify(masterPenguji));
-
-    populateMasterDropdowns();
-    renderMasterTables();
-}
-
-function populateMasterDropdowns() {
-    const selSantri = document.getElementById('selectSantri');
-    const selPenguji = document.getElementById('selectPenguji');
-    const loginPenguji = document.getElementById('loginSelectPenguji');
-
-    if (loginPenguji) {
-        loginPenguji.innerHTML = '<option value="">-- Pilih Nama Guru --</option>';
-        masterPenguji.forEach(p => {
-            loginPenguji.innerHTML += `<option value="${p.nama}">${p.nama}</option>`;
-        });
-    }
-
-    if (selSantri) {
-        selSantri.innerHTML = '<option value="">-- Pilih Santri --</option>';
-        
-        let filteredSantri = masterSantri;
-        if (currentUser.role === 'guru' && currentUser.kelompok) {
-            filteredSantri = masterSantri.filter(s => s.kelompok === currentUser.kelompok);
-        }
-
-        // NIS DIHILANGKAN DARI DROPDOWN SEUAI PERMINTAAN
-        filteredSantri.forEach(s => {
-            selSantri.innerHTML += `<option value="${s.id}">${s.nama}</option>`;
-        });
-    }
-
-    if (selPenguji) {
-        selPenguji.innerHTML = '<option value="">-- Pilih Penguji --</option>';
-        masterPenguji.forEach(p => {
-            selPenguji.innerHTML += `<option value="${p.nama}">${p.nama}</option>`;
-        });
-
-        if (currentUser.role === 'guru' && currentUser.name) {
-            selPenguji.value = currentUser.name;
-            onFormPengujiSelected(currentUser.name);
-        }
-    }
-}
-
 function onFormPengujiSelected(namaPenguji) {
     const guruObj = masterPenguji.find(p => p.nama === namaPenguji);
     if (guruObj) {
-        // Jika admin mengganti penguji, kelompok santri yang difilter bisa menyesuaikan
+        // Mendukung penyesuaian jika penguji diubah oleh admin
     }
 }
 
@@ -822,7 +835,7 @@ function renderPresensiForm() {
     const kelompok = selectKelompok.value;
     const tanggal = inputTgl.value;
 
-    const santriInKelompok = masterSantri.filter(s => s.kelompok === kelompok);
+    const santriInKelompok = masterSantri.filter(s => s.kelompok && s.kelompok.trim() === kelompok.trim());
 
     if (santriInKelompok.length === 0) {
         tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">Tidak ada santri pada kelompok ini.</td></tr>`;
@@ -875,7 +888,7 @@ function handlePresensiSubmit(e) {
     const kelompok = selectKelompok.value;
     const tanggal = inputTgl.value;
 
-    const santriInKelompok = masterSantri.filter(s => s.kelompok === kelompok);
+    const santriInKelompok = masterSantri.filter(s => s.kelompok && s.kelompok.trim() === kelompok.trim());
 
     santriInKelompok.forEach(santri => {
         const selectedRadio = document.querySelector(`input[name="status_${santri.id}"]:checked`);
@@ -917,7 +930,7 @@ function renderPresensiRekap() {
 
     let baseSantri = masterSantri;
     if (currentUser.role === 'guru' && currentUser.kelompok) {
-        baseSantri = masterSantri.filter(s => s.kelompok === currentUser.kelompok);
+        baseSantri = masterSantri.filter(s => s.kelompok && s.kelompok.trim() === currentUser.kelompok.trim());
     }
 
     if (baseSantri.length === 0) {
@@ -971,7 +984,7 @@ function renderTable() {
 
     let baseData = evaluations;
     if (currentUser.role === 'guru' && currentUser.kelompok) {
-        baseData = evaluations.filter(item => item.kelompokSantri === currentUser.kelompok);
+        baseData = evaluations.filter(item => item.kelompokSantri && item.kelompokSantri.trim() === currentUser.kelompok.trim());
     }
 
     let filtered = baseData.filter(item => {
@@ -1127,7 +1140,7 @@ function populateRaporSelect() {
 
     let baseData = evaluations;
     if (currentUser.role === 'guru' && currentUser.kelompok) {
-        baseData = evaluations.filter(item => item.kelompokSantri === currentUser.kelompok);
+        baseData = evaluations.filter(item => item.kelompokSantri && item.kelompokSantri.trim() === currentUser.kelompok.trim());
     }
 
     if (baseData.length === 0) {
@@ -1354,7 +1367,7 @@ function copyWaText() {
 function exportCSV() {
     let baseData = evaluations;
     if (currentUser.role === 'guru' && currentUser.kelompok) {
-        baseData = evaluations.filter(item => item.kelompokSantri === currentUser.kelompok);
+        baseData = evaluations.filter(item => item.kelompokSantri && item.kelompokSantri.trim() === currentUser.kelompok.trim());
     }
 
     if (baseData.length === 0) {
