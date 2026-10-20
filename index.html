@@ -38,13 +38,14 @@
             <form id="formLoginGuru" onsubmit="handleLoginGuru(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih Penguji / Ustadz <span class="text-rose-500">*</span></label>
-                    <select id="loginSelectPenguji" onchange="onLoginGuruSelected(this.value)" required class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500">
+                    <select id="loginSelectPenguji" required class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500">
                         <option value="">-- Pilih Nama Guru --</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Kelompok Binaan</label>
-                    <input type="text" id="loginKelompokGuru" readonly placeholder="Otomatis mengikuti nama Guru" class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-100 text-slate-700 font-medium focus:outline-none">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Kata Sandi / Password Guru <span class="text-rose-500">*</span></label>
+                    <input type="password" id="loginPasswordGuru" required placeholder="Masukkan kata sandi akun Guru..." class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500">
+                    <p class="text-[10px] text-slate-400 mt-1">*Password default guru awal: <span class="font-bold">123456</span></p>
                 </div>
                 <button type="submit" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs shadow-md transition">Masuk Sesi Guru</button>
             </form>
@@ -167,7 +168,7 @@
                             </div>
                             <div>
                                 <h2 class="text-base sm:text-lg font-bold text-amber-300 flex items-center gap-2">
-                                    <span>Lembar Penilaian Setoran Santri</span>
+                                    <span>Lembar Penilaian Setoran Santri Binaan</span>
                                     <span class="font-serif text-amber-400 text-sm">۞</span>
                                 </h2>
                                 <p class="text-xs text-slate-300">Isi rincian materi Ziyadah, Muraja'ah, dan skor adab santri di bawah ini.</p>
@@ -190,7 +191,7 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             <div class="lg:col-span-2">
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih Santri <span class="text-rose-500">*</span></label>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih Santri Binaan <span class="text-rose-500">*</span></label>
                                 <select id="selectSantri" required onchange="onSantriSelected(this.value)" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                                     <option value="">-- Pilih Santri --</option>
                                 </select>
@@ -501,7 +502,7 @@
                 </form>
             </section>
 
-            <!-- TAB PRESENSI / DAFTAR HADIR -->
+            <!-- TAB PRESENSI / DAFTAR HADIR (Dua Sub-Tab dalam 1 Halaman) -->
             <section id="view-presensi" class="tab-content hidden space-y-6">
                 <!-- Header Presensi -->
                 <div class="bg-gradient-to-r from-blue-950 via-slate-900 to-blue-950 rounded-2xl p-4 sm:p-5 text-white border border-amber-500/30 flex items-center justify-between shadow-md">
@@ -514,18 +515,30 @@
                                 <span>Manajemen Presensi & Daftar Hadir Santri</span>
                                 <span class="font-serif text-amber-400 text-sm">۞</span>
                             </h2>
-                            <p class="text-xs text-slate-300">Input dan rekapitulasi kehadiran harian santri per kelompok binaan.</p>
+                            <p class="text-xs text-slate-300">Kelola dan lihat rekapitulasi kehadiran santri binaan secara terstruktur.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Section 1: Form Input Presensi Harian -->
-                <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80">
+                <!-- DUA SUB-TAB MENU PRESENSI -->
+                <div class="flex border-b border-slate-200 bg-white rounded-2xl p-2 border border-slate-200/80 shadow-sm gap-2">
+                    <button type="button" id="btnPresensiSubInput" onclick="switchPresensiSubTab('input')" class="flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow">
+                        <i data-lucide="check-square" class="w-4 h-4"></i>
+                        1. Input Kehadiran Santri Harian
+                    </button>
+                    <button type="button" id="btnPresensiSubRekap" onclick="switchPresensiSubTab('rekap')" class="flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition flex items-center justify-center gap-2 text-slate-600 hover:bg-slate-100">
+                        <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+                        2. Rekapitulasi & Filter Presensi Santri
+                    </button>
+                </div>
+
+                <!-- SUB-TAB 1: FORM INPUT PRESENSI HARIAN -->
+                <div id="presensiSubInput" class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-3 mb-4 gap-3">
                         <div class="flex items-center gap-2">
                             <span class="text-amber-600 font-serif text-lg">۞</span>
                             <i data-lucide="user-check" class="w-5 h-5 text-blue-900"></i>
-                            <h3 class="text-base font-bold text-slate-800">1. Input Kehadiran Santri Harian</h3>
+                            <h3 class="text-base font-bold text-slate-800">Form Absensi Santri Harian</h3>
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
                             <div>
@@ -567,19 +580,18 @@
                     </form>
                 </div>
 
-                <!-- Section 2: Rekapitulasi & Statistik Kehadiran Santri -->
-                <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80">
+                <!-- SUB-TAB 2: REKAPITULASI & FILTER PRESENSI SANTRI -->
+                <div id="presensiSubRekap" class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-200/80 hidden">
                     <div class="flex flex-col lg:flex-row lg:items-center justify-between border-b border-slate-100 pb-3 mb-4 gap-3">
                         <div class="flex items-center gap-2">
                             <span class="text-blue-900 font-serif text-lg">۞</span>
                             <i data-lucide="bar-chart-2" class="w-5 h-5 text-blue-900"></i>
-                            <h3 class="text-base font-bold text-slate-800">2. Rekapitulasi & Filter Presensi Santri</h3>
+                            <h3 class="text-base font-bold text-slate-800">Statistik & Rekap Kehadiran Santri</h3>
                         </div>
 
-                        <!-- OPSI FILTER PERIODE & SORTIR -->
+                        <!-- OPSI FILTER PERIODE, SORTIR, DAN UNDUH -->
                         <div class="flex flex-wrap items-center gap-2">
                             <div>
-                                <label class="text-[11px] font-semibold text-slate-500 block sm:inline mr-1">Filter Periode:</label>
                                 <select id="presensiFilterPeriode" onchange="renderPresensiRekap()" class="px-3 py-1.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500">
                                     <option value="ALL">Semua Waktu</option>
                                     <option value="PEKAN">Perpekan (7 Hari Terakhir)</option>
@@ -589,13 +601,22 @@
                                 </select>
                             </div>
                             <div>
-                                <label class="text-[11px] font-semibold text-slate-500 block sm:inline mr-1">Urutkan:</label>
                                 <select id="presensiSortBy" onchange="renderPresensiRekap()" class="px-3 py-1.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500">
                                     <option value="NAMA_ASC">Nama Santri (A - Z)</option>
                                     <option value="PERSEN_DESC">Kehadiran Tertinggi (%)</option>
                                     <option value="PERSEN_ASC">Kehadiran Terendah (%)</option>
                                     <option value="ALPA_DESC">Alpa Terbanyak</option>
                                 </select>
+                            </div>
+
+                            <!-- TOMBOL UNDUH EXCEL DAN PDF -->
+                            <div class="flex items-center gap-1.5 ml-0 sm:ml-2">
+                                <button type="button" onclick="exportPresensiExcel()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs flex items-center gap-1 transition shadow-sm">
+                                    <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5"></i> Unduh Excel
+                                </button>
+                                <button type="button" onclick="exportPresensiPDF()" class="px-3 py-1.5 bg-rose-700 hover:bg-rose-800 text-white font-semibold rounded-xl text-xs flex items-center gap-1 transition shadow-sm">
+                                    <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Unduh PDF
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -679,7 +700,7 @@
                         <div class="flex items-center gap-2">
                             <span class="text-amber-600 font-serif text-lg">۞</span>
                             <i data-lucide="list" class="w-5 h-5 text-blue-900"></i>
-                            <h2 class="text-lg font-bold text-slate-800">Daftar Hasil Penilaian Santri</h2>
+                            <h2 class="text-lg font-bold text-slate-800">Daftar Hasil Penilaian Santri Binaan</h2>
                         </div>
 
                         <div class="flex flex-wrap items-center gap-3">
@@ -853,13 +874,14 @@
             </div>
 
             <div id="view-master-penguji" class="space-y-4 hidden">
-                <form onsubmit="addMasterPenguji(event)" class="bg-slate-50 p-3 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <form onsubmit="addMasterPenguji(event)" class="bg-slate-50 p-3 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-4 gap-2">
                     <input type="text" id="newNamaPenguji" placeholder="Nama Ustadz / Penguji" required class="px-3 py-1.5 text-xs rounded-lg border border-slate-300">
                     <select id="newKelompokPenguji" class="px-2 py-1.5 text-xs rounded-lg border border-slate-300">
                         <option value="Takhasus Ula (Tingkat Dasar)">Takhasus Ula (Dasar)</option>
                         <option value="Takhasus Wustha (Tingkat Menengah)">Takhasus Wustha (Menengah)</option>
                         <option value="Takhasus 'Ulya (Tingkat Lanjut)">Takhasus 'Ulya (Lanjut)</option>
                     </select>
+                    <input type="password" id="newPasswordPenguji" placeholder="Password" required class="px-3 py-1.5 text-xs rounded-lg border border-slate-300">
                     <button type="submit" class="px-4 py-1.5 bg-amber-500 text-slate-950 font-bold rounded-lg text-xs hover:bg-amber-600">+ Tambah</button>
                 </form>
 
