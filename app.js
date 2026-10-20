@@ -12,9 +12,36 @@ let presensiRecords = [];
 let isSidebarOpen = false;
 let showHijriDate = false;
 
+// DAFTAR 114 SURAT AL-QUR'AN
+const daftarSuratQuran = [
+    "1. Al-Fatihah", "2. Al-Baqarah", "3. Ali 'Imran", "4. An-Nisa'", "5. Al-Ma'idah",
+    "6. Al-An'am", "7. Al-A'raf", "8. Al-Anfal", "9. At-Taubah", "10. Yunus",
+    "11. Hud", "12. Yusuf", "13. Ar-Ra'd", "14. Ibrahim", "15. Al-Hijr",
+    "16. An-Nahl", "17. Al-Isra'", "18. Al-Kahf", "19. Maryam", "20. Tha-Ha",
+    "21. Al-Anbiya'", "22. Al-Hajj", "23. Al-Mu'minun", "24. An-Nur", "25. Al-Furqan",
+    "26. Asy-Syu'ara'", "27. An-Naml", "28. Al-Qasash", "29. Al-'Ankabut", "30. Ar-Rum",
+    "31. Luqman", "32. As-Sajdah", "33. Al-Ahzab", "34. Saba'", "35. Fathir",
+    "36. Ya-Sin", "37. Ash-Shaffat", "38. Shad", "39. Az-Zumar", "40. Ghafir",
+    "41. Fussilat", "42. Asy-Syura", "43. Az-Zukhruf", "44. Ad-Dukhan", "45. Al-Jatsiyah",
+    "46. Al-Ahqaf", "47. Muhammad", "48. Al-Fath", "49. Al-Hujurat", "50. Qaf",
+    "51. Adz-Dzariyat", "52. Ath-Thur", "53. An-Najm", "54. Al-Qamar", "55. Ar-Rahman",
+    "56. Al-Waqi'ah", "57. Al-Hadid", "58. Al-Mujadilah", "59. Al-Hasyr", "60. Al-Mumtahanah",
+    "61. Ash-Shaff", "62. Al-Jumu'ah", "63. Al-Munafiqun", "64. At-Taghabun", "65. Ath-Thalaq",
+    "66. At-Tahrim", "67. Al-Mulk", "68. Al-Qalam", "69. Al-Haqqah", "70. Al-Ma'arij",
+    "71. Nuh", "72. Al-Jin", "73. Al-Muzzammil", "74. Al-Muddatstsir", "75. Al-Qiyamah",
+    "76. Al-Insan", "77. Al-Mursalat", "78. An-Naba'", "79. An-Nazi'at", "80. 'Abasa",
+    "81. At-Takwir", "82. Al-Infitar", "83. Al-Muthaffifin", "84. Al-Insyiqaq", "85. Al-Buruj",
+    "86. Ath-Thariq", "87. Al-A'la", "88. Al-Ghasyiyah", "89. Al-Fajr", "90. Al-Balad",
+    "91. Asy-Syams", "92. Al-Lail", "93. Adh-Dhuha", "94. Asy-Syarh", "95. At-Tin",
+    "96. Al-'Alaq", "97. Al-Qadr", "98. Al-Bayyinah", "99. Az-Zalzalah", "100. Al-'Adiyat",
+    "101. Al-Qari'ah", "102. At-Takatsur", "103. Al-'Asr", "104. Al-Humazah", "105. Al-Fil",
+    "106. Quraisy", "107. Al-Ma'un", "108. Al-Kautsar", "109. Al-Kafirun", "110. An-Nasr",
+    "111. Al-Lahab", "112. Al-Ikhlas", "113. Al-Falaq", "114. An-Nas"
+];
+
 // Sesi Pengguna Aktif
 let currentUser = {
-    role: '', // 'admin' atau 'guru'
+    role: '',
     name: '',
     kelompok: ''
 };
@@ -44,6 +71,7 @@ window.onload = function() {
     const presensiTgl = document.getElementById('presensiTanggal');
     if (presensiTgl) presensiTgl.value = new Date().toISOString().split('T')[0];
 
+    populateSuratDropdowns();
     loadMasterData();
     loadDataFromStorage();
     loadPresensiFromStorage();
@@ -55,6 +83,19 @@ window.onload = function() {
     calculateMurajaahScore();
     calculateAdabScore();
 };
+
+function populateSuratDropdowns() {
+    const ziyadahSelect = document.getElementById('ziyadah_surat');
+    const murajaahSelect = document.getElementById('murajaah_surat');
+
+    let options = '<option value="">-- Pilih Surat --</option>';
+    daftarSuratQuran.forEach(s => {
+        options += `<option value="${s}">${s}</option>`;
+    });
+
+    if (ziyadahSelect) ziyadahSelect.innerHTML = options;
+    if (murajaahSelect) murajaahSelect.innerHTML = options;
+}
 
 // --- AUTH & MULTI-USER ACCESS CONTROL ---
 function checkUserSession() {
@@ -654,7 +695,7 @@ function handleFormSubmit(e) {
 
     const ziyadahDetail = {
         juz: document.getElementById('ziyadah_juz').value.trim(),
-        surat: document.getElementById('ziyadah_surat').value.trim(),
+        surat: document.getElementById('ziyadah_surat').value,
         ayatAwal: document.getElementById('ziyadah_ayat_awal').value.trim(),
         ayatAkhir: document.getElementById('ziyadah_ayat_akhir').value.trim(),
         baris: document.getElementById('ziyadah_baris').value.trim()
@@ -662,7 +703,7 @@ function handleFormSubmit(e) {
 
     const murajaahDetail = {
         juz: document.getElementById('murajaah_juz').value.trim(),
-        surat: document.getElementById('murajaah_surat').value.trim(),
+        surat: document.getElementById('murajaah_surat').value,
         ayatAwal: document.getElementById('murajaah_ayat_awal').value.trim(),
         ayatAkhir: document.getElementById('murajaah_ayat_akhir').value.trim(),
         baris: document.getElementById('murajaah_baris').value.trim()
