@@ -2,6 +2,7 @@
 const LOCAL_STORAGE_KEY = 'takhasus_quran_evaluations_v1';
 const MASTER_SANTRI_KEY = 'takhasus_master_santri_v1';
 const MASTER_PENGUJI_KEY = 'takhasus_master_penguji_v1';
+const CURRENT_USER_KEY = 'takhasus_current_user_v1';
 
 let evaluations = [];
 let masterSantri = [];
@@ -9,7 +10,14 @@ let masterPenguji = [];
 let isSidebarOpen = false;
 let showHijriDate = false;
 
-// Sample Master Data
+// Sesi Pengguna Aktif
+let currentUser = {
+    role: '', // 'admin' atau 'guru'
+    name: '',
+    kelompok: '' // Jika guru, kelompok binaannya
+};
+
+// Master Data Default
 const defaultSantri = [
     { id: 's_1', nama: 'Muhammad Al-Fatih', nis: 'TKH-2026-012', kelompok: "Takhasus 'Ulya (Tingkat Lanjut)" },
     { id: 's_2', nama: 'Aisyah Humaira', nis: 'TKH-2026-045', kelompok: 'Takhasus Wustha (Tingkat Menengah)' },
@@ -33,6 +41,7 @@ window.onload = function() {
 
     loadMasterData();
     loadDataFromStorage();
+    checkUserSession();
 
     if (window.lucide) lucide.createIcons();
 
@@ -40,6 +49,107 @@ window.onload = function() {
     calculateMurajaahScore();
     calculateAdabScore();
 };
+
+// --- AUTH & MULTI-USER ACCESS CONTROL ---
+function checkUserSession() {
+    const storedUser = sessionStorage.getItem(CURRENT_USER_KEY);
+    if (storedUser) {
+        currentUser = JSON.parse(storedUser);
+        document.getElementById('loginModal').classList.add('hidden');
+        applyRoleRestrictions();
+    } else {
+        document.getElementById('loginModal').classList.remove('hidden');
+    }
+}
+
+function switchLoginRole(role) {
+    const btnGuru = document.getElementById('btnRoleGuru');
+    const btnAdmin = document.getElementById('btnRoleAdmin');
+    const formGuru = document.getElementById('formLoginGuru');
+    const formAdmin = document.getElementById('formLoginAdmin');
+
+    if (role === 'guru') {
+        btnGuru.className = 'py-2 rounded-lg bg-amber-500 text-slate-950 shadow-sm transition';
+        btnAdmin.className = 'py-2 rounded-lg text-slate-600 hover:text-slate-900 transition';
+        formGuru.classList.remove('hidden');
+        formAdmin.classList.add('hidden');
+    } else {
+        btnAdmin.className = 'py-2 rounded-lg bg-blue-900 text-white shadow-sm transition';
+        btnGuru.className = 'py-2 rounded-lg text-slate-600 hover:text-slate-900 transition';
+        formAdmin.classList.remove('hidden');
+        formGuru.classList.add('hidden');
+    }
+}
+
+function handleLoginGuru(e) {
+    e.preventDefault();
+    const namaGuru = document.getElementById('loginSelectPenguji').value;
+    const kelompok = document.getElementById('loginKelompokGuru').value;
+
+    if (!namaGuru) {
+        showToast('Pilih nama guru penguji!', 'warning');
+        return;
+    }
+
+    currentUser = {
+        role: 'guru',
+        name: namaGuru,
+        kelompok: kelompok
+    };
+
+    sessionStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+    document.getElementById('loginModal').classList.add('hidden');
+    applyRoleRestrictions();
+    showToast(`Selamat datang Ust. ${namaGuru}`, 'success');
+}
+
+function handleLoginAdmin(e) {
+    e.preventDefault();
+    const pass = document.getElementById('loginAdminPassword').value;
+
+    if (pass === 'admin123') { // Kata sandi admin default
+        currentUser = {
+            role: 'admin',
+            name: 'Administrator',
+            kelompok: 'ALL'
+        };
+
+        sessionStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
+        document.getElementById('loginModal').classList.add('hidden');
+        applyRoleRestrictions();
+        showToast('Login Administrator Berhasil!', 'success');
+    } else {
+        showToast('Kata sandi admin salah!', 'warning');
+    }
+}
+
+function logoutUser() {
+    sessionStorage.removeItem(CURRENT_USER_KEY);
+    currentUser = { role: '', name: '', kelompok: '' };
+    document.getElementById('loginModal').classList.remove('hidden');
+    showToast('Sesi telah diakhiri.', 'info');
+}
+
+function applyRoleRestrictions() {
+    const userBadgeInfo = document.getElementById('userBadgeInfo');
+    const btnKelolaMaster = document.getElementById('btnKelolaMaster');
+
+    if (currentUser.role === 'admin') {
+        if (userBadgeInfo) {
+            userBadgeInfo.innerHTML = `<span class="bg-amber-500 text-slate-950 text-[10px] px-2 py-0.5 rounded font-extrabold uppercase">ADMIN</span> Akses Penuh Sistem`;
+        }
+        if (btnKelolaMaster) btnKelolaMaster.classList.remove('hidden');
+    } else {
+        if (userBadgeInfo) {
+            userBadgeInfo.innerHTML = `<span class="bg-blue-900 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase">GURU</span> ${currentUser.name} (${currentUser.kelompok})`;
+        }
+        if (btnKelolaMaster) btnKelolaMaster.classList.add('hidden');
+    }
+
+    populateMasterDropdowns();
+    renderTable();
+    populateRaporSelect();
+}
 
 // --- SIDEBAR TOGGLE ---
 function initSidebar() {
@@ -174,7 +284,6 @@ function getPredikatQuran(score) {
     }
 }
 
-// FORMAT MATERI UTILITY
 function formatMateriText(det) {
     if (!det) return '-';
     if (typeof det === 'string') return det;
@@ -194,7 +303,7 @@ function formatMateriText(det) {
     return parts.length > 0 ? parts.join(' ') : '-';
 }
 
-// --- MASTER DATA ---
+// --- MASTER DATA & DROPDOWN FILTERING ---
 function loadMasterData() {
     const santriStored = localStorage.getItem(MASTER_SANTRI_KEY);
     masterSantri = santriStored ? JSON.parse(santriStored) : defaultSantri;
@@ -211,19 +320,41 @@ function loadMasterData() {
 function populateMasterDropdowns() {
     const selSantri = document.getElementById('selectSantri');
     const selPenguji = document.getElementById('selectPenguji');
+    const loginPenguji = document.getElementById('loginSelectPenguji');
 
+    // Populasi Dropdown Login Guru
+    if (loginPenguji) {
+        loginPenguji.innerHTML = '<option value="">-- Pilih Nama Guru --</option>';
+        masterPenguji.forEach(p => {
+            loginPenguji.innerHTML += `<option value="${p.nama}">${p.nama}</option>`;
+        });
+    }
+
+    // Filter Dropdown Santri Sesuai Role
     if (selSantri) {
         selSantri.innerHTML = '<option value="">-- Pilih Santri --</option>';
-        masterSantri.forEach(s => {
+        
+        let filteredSantri = masterSantri;
+        if (currentUser.role === 'guru' && currentUser.kelompok) {
+            filteredSantri = masterSantri.filter(s => s.kelompok === currentUser.kelompok);
+        }
+
+        filteredSantri.forEach(s => {
             selSantri.innerHTML += `<option value="${s.id}">${s.nama} (${s.nis})</option>`;
         });
     }
 
+    // Populate Dropdown Penguji pada Form Input
     if (selPenguji) {
         selPenguji.innerHTML = '<option value="">-- Pilih Penguji --</option>';
         masterPenguji.forEach(p => {
             selPenguji.innerHTML += `<option value="${p.nama}">${p.nama}</option>`;
         });
+
+        // Autoselect jika logged in sebagai Guru
+        if (currentUser.role === 'guru' && currentUser.name) {
+            selPenguji.value = currentUser.name;
+        }
     }
 }
 
@@ -241,6 +372,10 @@ function onSantriSelected(santriId) {
 }
 
 function openMasterModal() {
+    if (currentUser.role !== 'admin') {
+        showToast('Hanya Administrator yang dapat mengelola master data!', 'warning');
+        return;
+    }
     document.getElementById('masterModal').classList.remove('hidden');
     renderMasterTables();
 }
@@ -575,12 +710,18 @@ function resetForm() {
     document.getElementById('evaluationForm').reset();
     document.getElementById('namaSantri').value = '';
     document.getElementById('tglEvaluasi').value = new Date().toISOString().split('T')[0];
+
+    // Reset pre-selected Penguji jika Guru
+    if (currentUser.role === 'guru' && currentUser.name) {
+        document.getElementById('selectPenguji').value = currentUser.name;
+    }
+
     calculateHafalanScore();
     calculateMurajaahScore();
     calculateAdabScore();
 }
 
-// --- REKAP & TABLE RENDER ---
+// --- REKAP TABLE & ROLE FILTER ---
 function renderTable() {
     const tbody = document.getElementById('rekapTableBody');
     if (!tbody) return;
@@ -590,7 +731,13 @@ function renderTable() {
 
     tbody.innerHTML = '';
 
-    let filtered = evaluations.filter(item => {
+    // Filter Data Berdasarkan Kelompok Guru (Jika Role Guru)
+    let baseData = evaluations;
+    if (currentUser.role === 'guru' && currentUser.kelompok) {
+        baseData = evaluations.filter(item => item.kelompokSantri === currentUser.kelompok);
+    }
+
+    let filtered = baseData.filter(item => {
         const matchSearch = item.namaSantri.toLowerCase().includes(search) || item.nisSantri.toLowerCase().includes(search);
         let matchStatus = true;
         const pred = getPredikatQuran(item.totalHafalan);
@@ -599,10 +746,10 @@ function renderTable() {
         return matchSearch && matchStatus;
     });
 
-    if (document.getElementById('statTotalSantri')) document.getElementById('statTotalSantri').innerText = evaluations.length;
-    const countLulus = evaluations.filter(i => i.totalHafalan >= 80).length;
-    const countRemedial = evaluations.filter(i => i.totalHafalan < 80 && i.totalHafalan >= 60).length;
-    const avgHafalan = evaluations.length > 0 ? (evaluations.reduce((acc, curr) => acc + curr.totalHafalan, 0) / evaluations.length).toFixed(1) : '0.0';
+    if (document.getElementById('statTotalSantri')) document.getElementById('statTotalSantri').innerText = baseData.length;
+    const countLulus = baseData.filter(i => i.totalHafalan >= 80).length;
+    const countRemedial = baseData.filter(i => i.totalHafalan < 80 && i.totalHafalan >= 60).length;
+    const avgHafalan = baseData.length > 0 ? (baseData.reduce((acc, curr) => acc + curr.totalHafalan, 0) / baseData.length).toFixed(1) : '0.0';
 
     if (document.getElementById('statLulus')) document.getElementById('statLulus').innerText = countLulus;
     if (document.getElementById('statRemedial')) document.getElementById('statRemedial').innerText = countRemedial;
@@ -684,26 +831,20 @@ function editEvaluation(id) {
     document.getElementById('selectPenguji').value = item.namaPenguji;
     document.getElementById('tglEvaluasi').value = item.tglEvaluasi;
 
-    // Load Ziyadah Detail
     if (item.ziyadahDetail) {
         document.getElementById('ziyadah_juz').value = item.ziyadahDetail.juz || '';
         document.getElementById('ziyadah_surat').value = item.ziyadahDetail.surat || '';
         document.getElementById('ziyadah_ayat_awal').value = item.ziyadahDetail.ayatAwal || '';
         document.getElementById('ziyadah_ayat_akhir').value = item.ziyadahDetail.ayatAkhir || '';
         document.getElementById('ziyadah_baris').value = item.ziyadahDetail.baris || '';
-    } else {
-        document.getElementById('ziyadah_surat').value = item.juzUjian || '';
     }
 
-    // Load Muraja'ah Detail
     if (item.murajaahDetail) {
         document.getElementById('murajaah_juz').value = item.murajaahDetail.juz || '';
         document.getElementById('murajaah_surat').value = item.murajaahDetail.surat || '';
         document.getElementById('murajaah_ayat_awal').value = item.murajaahDetail.ayatAwal || '';
         document.getElementById('murajaah_ayat_akhir').value = item.murajaahDetail.ayatAkhir || '';
         document.getElementById('murajaah_baris').value = item.murajaahDetail.baris || '';
-    } else {
-        document.getElementById('murajaah_surat').value = item.materiMurajaah || '';
     }
 
     document.getElementById('hafalan_kelancaran').value = item.hafalan.kelancaran;
@@ -748,7 +889,12 @@ function populateRaporSelect() {
 
     sel.innerHTML = '';
 
-    if (evaluations.length === 0) {
+    let baseData = evaluations;
+    if (currentUser.role === 'guru' && currentUser.kelompok) {
+        baseData = evaluations.filter(item => item.kelompokSantri === currentUser.kelompok);
+    }
+
+    if (baseData.length === 0) {
         sel.innerHTML = '<option value="">(Belum Ada Data Santri)</option>';
         if (document.getElementById('raporContainer')) {
             document.getElementById('raporContainer').innerHTML = '<p class="text-center py-10 text-slate-400">Belum ada data evaluasi santri.</p>';
@@ -756,7 +902,7 @@ function populateRaporSelect() {
         return;
     }
 
-    evaluations.forEach(item => {
+    baseData.forEach(item => {
         const opt = document.createElement('option');
         opt.value = item.id;
         const zStr = formatMateriText(item.ziyadahDetail || item.juzUjian);
@@ -782,7 +928,6 @@ function loadRaporView(id) {
     const murajaahStr = formatMateriText(item.murajaahDetail || item.materiMurajaah);
 
     container.innerHTML = `
-        <!-- Kop Rapor Islami -->
         <div class="border-b-2 border-blue-950 pb-4 mb-6 text-center">
             <div class="text-amber-600 font-serif text-lg mb-1">۞ بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ ۞</div>
             <img src="https://lh3.googleusercontent.com/d/1Zw8z1i2yixH-k6umwcDbOc7Xu6v3HTQl" alt="Logo Al Firdaus" class="w-20 h-20 mx-auto mb-2 object-contain">
@@ -791,7 +936,6 @@ function loadRaporView(id) {
             <p class="text-xs text-slate-500">Lembaga Pendidikan Al-Qur'an & Bimbingan Hafalan</p>
         </div>
 
-        <!-- Info Santri & Penguji -->
         <div class="grid grid-cols-2 gap-4 text-xs sm:text-sm mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
             <div>
                 <p class="text-slate-500">Nama Santri: <strong class="text-slate-800">${escapeHtml(item.namaSantri)}</strong></p>
@@ -804,7 +948,6 @@ function loadRaporView(id) {
             </div>
         </div>
 
-        <!-- Section A: Ziyadah -->
         <div class="mb-6">
             <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-amber-500 pl-2">A. Penilaian Hafalan Baru (Ziyadah): ${escapeHtml(ziyadahStr)}</h3>
             <table class="w-full text-xs sm:text-sm border-collapse border border-slate-300">
@@ -849,7 +992,6 @@ function loadRaporView(id) {
             </table>
         </div>
 
-        <!-- Section B: Muraja'ah -->
         <div class="mb-6">
             <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-blue-900 pl-2">B. Penilaian Muraja'ah: ${escapeHtml(murajaahStr)}</h3>
             <table class="w-full text-xs sm:text-sm border-collapse border border-slate-300">
@@ -888,7 +1030,6 @@ function loadRaporView(id) {
             </table>
         </div>
 
-        <!-- Section C & D: Adab & Status -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
                 <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-amber-500 pl-2">C. Skor Adab & Karakter</h3>
@@ -906,7 +1047,6 @@ function loadRaporView(id) {
             </div>
         </div>
 
-        <!-- Notes -->
         <div class="mb-8">
             <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-slate-600 pl-2">E. Catatan / Rekomendasi Ustadz Penguji</h3>
             <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs italic text-slate-700">
@@ -914,7 +1054,6 @@ function loadRaporView(id) {
             </div>
         </div>
 
-        <!-- Signatures -->
         <div class="grid grid-cols-2 text-center text-xs mt-12 pt-6 border-t border-slate-200">
             <div>
                 <p class="text-slate-500">Orang Tua / Wali Santri</p>
@@ -977,14 +1116,19 @@ function copyWaText() {
 
 // --- CSV EXPORT ---
 function exportCSV() {
-    if (evaluations.length === 0) {
+    let baseData = evaluations;
+    if (currentUser.role === 'guru' && currentUser.kelompok) {
+        baseData = evaluations.filter(item => item.kelompokSantri === currentUser.kelompok);
+    }
+
+    if (baseData.length === 0) {
         showToast('Tidak ada data untuk diekspor.', 'warning');
         return;
     }
 
     let csv = 'ID,Nama Santri,NIS,Kelompok,Ziyadah,Murajaah,Tanggal,Skor Ziyadah,Skor Murajaah,Predikat Ziyadah,Skor Adab,Penguji,Catatan\n';
 
-    evaluations.forEach(i => {
+    baseData.forEach(i => {
         const pred = getPredikatQuran(i.totalHafalan);
         const ziyadahStr = formatMateriText(i.ziyadahDetail || i.juzUjian);
         const murajaahStr = formatMateriText(i.murajaahDetail || i.materiMurajaah);
