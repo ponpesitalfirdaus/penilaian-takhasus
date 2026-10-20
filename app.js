@@ -922,11 +922,44 @@ function handlePresensiSubmit(e) {
     showToast('Data presensi berhasil disimpan!', 'success');
 }
 
+// --- REKAPITULASI PRESENSI DENGAN FILTER PERIODE & SORTIR ---
 function renderPresensiRekap() {
     const tbody = document.getElementById('presensiRekapTableBody');
+    const filterPeriode = document.getElementById('presensiFilterPeriode')?.value || 'ALL';
+    const sortBy = document.getElementById('presensiSortBy')?.value || 'NAMA_ASC';
+    const infoPeriodeText = document.getElementById('presensiInfoPeriodeText');
+    const infoTotalSesiText = document.getElementById('presensiInfoTotalSesiText');
+
     if (!tbody) return;
 
     tbody.innerHTML = '';
+
+    // Hitung tanggal batas berdasarkan filter
+    const now = new Date();
+    let cutoffDate = null;
+    let periodeLabel = 'Semua Waktu';
+
+    if (filterPeriode === 'PEKAN') {
+        cutoffDate = new Date();
+        cutoffDate.setDate(now.getDate() - 7);
+        periodeLabel = '7 Hari Terakhir (Perpekan)';
+    } else if (filterPeriode === 'BULAN') {
+        cutoffDate = new Date();
+        cutoffDate.setDate(now.getDate() - 30);
+        periodeLabel = '30 Hari Terakhir (Perbulan)';
+    } else if (filterPeriode === 'TENGAH_SEMESTER') {
+        cutoffDate = new Date();
+        cutoffDate.setDate(now.getDate() - 90);
+        periodeLabel = '3 Bulan Terakhir (Per Tengah Semester)';
+    } else if (filterPeriode === 'SEMESTER') {
+        cutoffDate = new Date();
+        cutoffDate.setDate(now.getDate() - 180);
+        periodeLabel = '6 Bulan Terakhir (Per Semester)';
+    }
+
+    if (infoPeriodeText) {
+        infoPeriodeText.innerHTML = `<i data-lucide="filter" class="w-4 h-4 text-amber-600 inline mr-1"></i> Periode Rekap: ${periodeLabel}`;
+    }
 
     let baseSantri = masterSantri;
     if (currentUser.role === 'guru' && currentUser.kelompok) {
@@ -935,11 +968,27 @@ function renderPresensiRekap() {
 
     if (baseSantri.length === 0) {
         tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">Belum ada data santri untuk rekapitulasi.</td></tr>`;
+        if (infoTotalSesiText) infoTotalSesiText.innerText = `Total Sesi Terlaksana: 0 Pertemuan`;
+        if (window.lucide) lucide.createIcons();
         return;
     }
 
-    baseSantri.forEach(santri => {
-        const records = presensiRecords.filter(p => p.santriId === santri.id);
+    // Filter presensi berdasarkan rentang tanggal
+    let filteredRecords = presensiRecords;
+    if (cutoffDate) {
+        const cutoffStr = cutoffDate.toISOString().split('T')[0];
+        filteredRecords = presensiRecords.filter(p => p.tanggal >= cutoffStr);
+    }
+
+    // Hitung total sesi/pertemuan unik dalam periode tersebut
+    const uniqueDates = [...new Set(filteredRecords.map(p => p.tanggal))];
+    if (infoTotalSesiText) {
+        infoTotalSesiText.innerText = `Total Sesi Terlaksana: ${uniqueDates.length} Pertemuan`;
+    }
+
+    // Hitung rekapitulasi kehadiran per santri
+    let santriStats = baseSantri.map(santri => {
+        const records = filteredRecords.filter(p => p.santriId === santri.id);
         const total = records.length;
 
         const hadir = records.filter(p => p.status === 'Hadir').length;
@@ -947,29 +996,57 @@ function renderPresensiRekap() {
         const sakit = records.filter(p => p.status === 'Sakit').length;
         const alpa = records.filter(p => p.status === 'Alpa').length;
 
-        const persen = total > 0 ? ((hadir / total) * 100).toFixed(1) : '0.0';
+        const persenVal = total > 0 ? (hadir / total) * 100 : 0;
+        const persenStr = persenVal.toFixed(1);
 
+        return {
+            santri,
+            hadir,
+            izin,
+            sakit,
+            alpa,
+            total,
+            persenVal,
+            persenStr
+        };
+    });
+
+    // Penyortiran
+    if (sortBy === 'NAMA_ASC') {
+        santriStats.sort((a, b) => a.santri.nama.localeCompare(b.santri.nama));
+    } else if (sortBy === 'PERSEN_DESC') {
+        santriStats.sort((a, b) => b.persenVal - a.persenVal);
+    } else if (sortBy === 'PERSEN_ASC') {
+        santriStats.sort((a, b) => a.persenVal - b.persenVal);
+    } else if (sortBy === 'ALPA_DESC') {
+        santriStats.sort((a, b) => b.alpa - a.alpa);
+    }
+
+    // Render tabel statistik
+    santriStats.forEach(stat => {
         let badgeClass = 'bg-emerald-100 text-emerald-800';
-        if (parseFloat(persen) < 80) badgeClass = 'bg-amber-100 text-amber-800';
-        if (parseFloat(persen) < 60) badgeClass = 'bg-rose-100 text-rose-800';
+        if (stat.persenVal < 80) badgeClass = 'bg-amber-100 text-amber-800';
+        if (stat.persenVal < 60) badgeClass = 'bg-rose-100 text-rose-800';
 
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50/80 transition';
         tr.innerHTML = `
             <td class="p-3">
-                <div class="font-bold text-slate-800">${escapeHtml(santri.nama)}</div>
+                <div class="font-bold text-slate-800">${escapeHtml(stat.santri.nama)}</div>
             </td>
-            <td class="p-3 text-center font-bold text-emerald-600">${hadir}</td>
-            <td class="p-3 text-center font-bold text-blue-600">${izin}</td>
-            <td class="p-3 text-center font-bold text-amber-600">${sakit}</td>
-            <td class="p-3 text-center font-bold text-rose-600">${alpa}</td>
-            <td class="p-3 text-center font-semibold text-slate-600">${total}</td>
+            <td class="p-3 text-center font-bold text-emerald-600">${stat.hadir}</td>
+            <td class="p-3 text-center font-bold text-blue-600">${stat.izin}</td>
+            <td class="p-3 text-center font-bold text-amber-600">${stat.sakit}</td>
+            <td class="p-3 text-center font-bold text-rose-600">${stat.alpa}</td>
+            <td class="p-3 text-center font-semibold text-slate-600">${stat.total}</td>
             <td class="p-3 text-center">
-                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold ${badgeClass}">${persen}%</span>
+                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold ${badgeClass}">${stat.persenStr}%</span>
             </td>
         `;
         tbody.appendChild(tr);
     });
+
+    if (window.lucide) lucide.createIcons();
 }
 
 // --- REKAP TABLE & ROLE FILTER ---
