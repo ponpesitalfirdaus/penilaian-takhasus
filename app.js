@@ -9,7 +9,7 @@ let masterPenguji = [];
 let isSidebarOpen = false;
 let showHijriDate = false;
 
-// Sample Master Data Default
+// Sample Master Data
 const defaultSantri = [
     { id: 's_1', nama: 'Muhammad Al-Fatih', nis: 'TKH-2026-012', kelompok: "Takhasus 'Ulya (Tingkat Lanjut)" },
     { id: 's_2', nama: 'Aisyah Humaira', nis: 'TKH-2026-045', kelompok: 'Takhasus Wustha (Tingkat Menengah)' },
@@ -22,7 +22,6 @@ const defaultPenguji = [
     { id: 'p_3', nama: 'Ust. Ahmad Fauzi, Lc.' }
 ];
 
-// Inisialisasi awal saat DOM siap
 document.addEventListener('DOMContentLoaded', function() {
     initSidebar();
     startClockAndWidget();
@@ -42,7 +41,7 @@ window.onload = function() {
     calculateAdabScore();
 };
 
-// --- SIDEBAR & TOGGLE LOGIC ---
+// --- SIDEBAR TOGGLE ---
 function initSidebar() {
     if (window.innerWidth >= 1024) {
         setSidebarState(true);
@@ -85,7 +84,7 @@ function toggleSidebar() {
     setSidebarState(!isSidebarOpen);
 }
 
-// --- CLOCK & ALTERNATING DATE WIDGET ---
+// --- CLOCK & WIDGET ---
 function startClockAndWidget() {
     updateClockAndDate();
     setInterval(updateClockAndDate, 1000);
@@ -175,7 +174,27 @@ function getPredikatQuran(score) {
     }
 }
 
-// --- MASTER DATA FUNCTIONS ---
+// FORMAT MATERI UTILITY
+function formatMateriText(det) {
+    if (!det) return '-';
+    if (typeof det === 'string') return det;
+
+    let parts = [];
+    if (det.juz) parts.push(`Juz ${det.juz}`);
+    if (det.surat) parts.push(`Surat ${det.surat}`);
+
+    let rangeStr = '';
+    if (det.ayatAwal && det.ayatAkhir) rangeStr = `Ayat ${det.ayatAwal}-${det.ayatAkhir}`;
+    else if (det.ayatAwal) rangeStr = `Ayat ${det.ayatAwal}`;
+    else if (det.ayatAkhir) rangeStr = `s.d. Ayat ${det.ayatAkhir}`;
+
+    if (rangeStr) parts.push(rangeStr);
+    if (det.baris) parts.push(`(${det.baris} Baris)`);
+
+    return parts.length > 0 ? parts.join(' ') : '-';
+}
+
+// --- MASTER DATA ---
 function loadMasterData() {
     const santriStored = localStorage.getItem(MASTER_SANTRI_KEY);
     masterSantri = santriStored ? JSON.parse(santriStored) : defaultSantri;
@@ -317,7 +336,7 @@ function renderMasterTables() {
     if (window.lucide) lucide.createIcons();
 }
 
-// --- STORAGE HANDLING ---
+// --- STORAGE ---
 function loadDataFromStorage() {
     const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (stored) {
@@ -368,7 +387,7 @@ function switchTab(tabKey) {
     if (window.lucide) lucide.createIcons();
 }
 
-// --- REAL-TIME CALCULATIONS (ZIYADAH, MURAJAAH, ADAB) ---
+// --- REAL-TIME CALCULATIONS ---
 function calculateHafalanScore() {
     const kelancaran = parseFloat(document.getElementById('hafalan_kelancaran')?.value) || 0;
     const tajwid = parseFloat(document.getElementById('hafalan_tajwid')?.value) || 0;
@@ -473,6 +492,22 @@ function handleFormSubmit(e) {
     const totalHafalan = parseFloat(document.getElementById('totalHafalanDisplay').innerText);
     const totalMurajaah = parseFloat(document.getElementById('totalMurajaahDisplay').innerText);
 
+    const ziyadahDetail = {
+        juz: document.getElementById('ziyadah_juz').value.trim(),
+        surat: document.getElementById('ziyadah_surat').value.trim(),
+        ayatAwal: document.getElementById('ziyadah_ayat_awal').value.trim(),
+        ayatAkhir: document.getElementById('ziyadah_ayat_akhir').value.trim(),
+        baris: document.getElementById('ziyadah_baris').value.trim()
+    };
+
+    const murajaahDetail = {
+        juz: document.getElementById('murajaah_juz').value.trim(),
+        surat: document.getElementById('murajaah_surat').value.trim(),
+        ayatAwal: document.getElementById('murajaah_ayat_awal').value.trim(),
+        ayatAkhir: document.getElementById('murajaah_ayat_akhir').value.trim(),
+        baris: document.getElementById('murajaah_baris').value.trim()
+    };
+
     const fieldsAdab = ['allah', 'guru', 'quran', 'teman', 'tanggungjawab', 'lingkungan', 'kejujuran', 'kemandirian', 'emosi'];
     let sumAdab = 0;
     const adabObj = {};
@@ -497,8 +532,10 @@ function handleFormSubmit(e) {
         namaSantri: namaSantri,
         nisSantri: nisSantri,
         kelompokSantri: kelompokSantri,
-        juzUjian: document.getElementById('juzUjian').value.trim(),
-        materiMurajaah: document.getElementById('materiMurajaah').value.trim() || 'Juz Pengulangan Mandiri',
+        ziyadahDetail: ziyadahDetail,
+        juzUjian: formatMateriText(ziyadahDetail),
+        murajaahDetail: murajaahDetail,
+        materiMurajaah: formatMateriText(murajaahDetail),
         tglEvaluasi: document.getElementById('tglEvaluasi').value,
         namaPenguji: namaPenguji,
         hafalan: {
@@ -586,6 +623,8 @@ function renderTable() {
 
     filtered.forEach(item => {
         const pred = getPredikatQuran(item.totalHafalan);
+        const ziyadahStr = formatMateriText(item.ziyadahDetail || item.juzUjian);
+        const murajaahStr = formatMateriText(item.murajaahDetail || item.materiMurajaah);
 
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50/80 transition';
@@ -595,8 +634,8 @@ function renderTable() {
                 <div class="text-[11px] text-slate-400">${escapeHtml(item.nisSantri)} | ${escapeHtml(item.kelompokSantri)}</div>
             </td>
             <td class="p-3.5 font-medium text-slate-700">
-                <div><span class="text-amber-700 font-bold">Ziyadah:</span> ${escapeHtml(item.juzUjian)}</div>
-                <div class="text-[11px] text-slate-500 mt-0.5"><span class="text-blue-900 font-bold">Muraja'ah:</span> ${escapeHtml(item.materiMurajaah || '-')}</div>
+                <div><span class="text-amber-700 font-bold">Ziyadah:</span> ${escapeHtml(ziyadahStr)}</div>
+                <div class="text-[11px] text-slate-500 mt-0.5"><span class="text-blue-900 font-bold">Muraja'ah:</span> ${escapeHtml(murajaahStr)}</div>
             </td>
             <td class="p-3.5 text-center font-bold text-amber-700 text-base">${item.totalHafalan.toFixed(1)}</td>
             <td class="p-3.5 text-center font-bold text-blue-900 text-base">${(item.totalMurajaah || 0).toFixed(1)}</td>
@@ -643,9 +682,29 @@ function editEvaluation(id) {
     }
 
     document.getElementById('selectPenguji').value = item.namaPenguji;
-    document.getElementById('juzUjian').value = item.juzUjian;
-    document.getElementById('materiMurajaah').value = item.materiMurajaah || '';
     document.getElementById('tglEvaluasi').value = item.tglEvaluasi;
+
+    // Load Ziyadah Detail
+    if (item.ziyadahDetail) {
+        document.getElementById('ziyadah_juz').value = item.ziyadahDetail.juz || '';
+        document.getElementById('ziyadah_surat').value = item.ziyadahDetail.surat || '';
+        document.getElementById('ziyadah_ayat_awal').value = item.ziyadahDetail.ayatAwal || '';
+        document.getElementById('ziyadah_ayat_akhir').value = item.ziyadahDetail.ayatAkhir || '';
+        document.getElementById('ziyadah_baris').value = item.ziyadahDetail.baris || '';
+    } else {
+        document.getElementById('ziyadah_surat').value = item.juzUjian || '';
+    }
+
+    // Load Muraja'ah Detail
+    if (item.murajaahDetail) {
+        document.getElementById('murajaah_juz').value = item.murajaahDetail.juz || '';
+        document.getElementById('murajaah_surat').value = item.murajaahDetail.surat || '';
+        document.getElementById('murajaah_ayat_awal').value = item.murajaahDetail.ayatAwal || '';
+        document.getElementById('murajaah_ayat_akhir').value = item.murajaahDetail.ayatAkhir || '';
+        document.getElementById('murajaah_baris').value = item.murajaahDetail.baris || '';
+    } else {
+        document.getElementById('murajaah_surat').value = item.materiMurajaah || '';
+    }
 
     document.getElementById('hafalan_kelancaran').value = item.hafalan.kelancaran;
     document.getElementById('hafalan_tajwid').value = item.hafalan.tajwid;
@@ -700,7 +759,8 @@ function populateRaporSelect() {
     evaluations.forEach(item => {
         const opt = document.createElement('option');
         opt.value = item.id;
-        opt.innerText = `${item.namaSantri} - ${item.juzUjian} (${item.tglEvaluasi})`;
+        const zStr = formatMateriText(item.ziyadahDetail || item.juzUjian);
+        opt.innerText = `${item.namaSantri} - ${zStr} (${item.tglEvaluasi})`;
         sel.appendChild(opt);
     });
 
@@ -718,7 +778,8 @@ function loadRaporView(id) {
     }
 
     const pred = getPredikatQuran(item.totalHafalan);
-    const predMurajaah = getPredikatQuran(item.totalMurajaah || 0);
+    const ziyadahStr = formatMateriText(item.ziyadahDetail || item.juzUjian);
+    const murajaahStr = formatMateriText(item.murajaahDetail || item.materiMurajaah);
 
     container.innerHTML = `
         <!-- Kop Rapor Islami -->
@@ -745,7 +806,7 @@ function loadRaporView(id) {
 
         <!-- Section A: Ziyadah -->
         <div class="mb-6">
-            <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-amber-500 pl-2">A. Penilaian Hafalan Baru (Ziyadah): ${escapeHtml(item.juzUjian)}</h3>
+            <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-amber-500 pl-2">A. Penilaian Hafalan Baru (Ziyadah): ${escapeHtml(ziyadahStr)}</h3>
             <table class="w-full text-xs sm:text-sm border-collapse border border-slate-300">
                 <thead>
                     <tr class="bg-slate-100 text-slate-700 font-bold">
@@ -790,7 +851,7 @@ function loadRaporView(id) {
 
         <!-- Section B: Muraja'ah -->
         <div class="mb-6">
-            <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-blue-900 pl-2">B. Penilaian Muraja'ah: ${escapeHtml(item.materiMurajaah || '-')}</h3>
+            <h3 class="text-sm font-bold text-slate-800 mb-2 border-l-4 border-blue-900 pl-2">B. Penilaian Muraja'ah: ${escapeHtml(murajaahStr)}</h3>
             <table class="w-full text-xs sm:text-sm border-collapse border border-slate-300">
                 <thead>
                     <tr class="bg-slate-100 text-slate-700 font-bold">
@@ -877,6 +938,9 @@ function openWaModalFor(id) {
     const pred = getPredikatQuran(item.totalHafalan);
     const predMurajaah = getPredikatQuran(item.totalMurajaah || 0);
 
+    const ziyadahStr = formatMateriText(item.ziyadahDetail || item.juzUjian);
+    const murajaahStr = formatMateriText(item.murajaahDetail || item.materiMurajaah);
+
     const text = `*RAPOR EVALUASI TAKHASUS AL-QUR'AN* 📖\n` +
         `*AL FIRDAUS BANDAR LAMPUNG*\n` +
         `----------------------------------------\n` +
@@ -884,9 +948,11 @@ function openWaModalFor(id) {
         `*NIS:* ${item.nisSantri}\n` +
         `*Kelompok:* ${item.kelompokSantri}\n` +
         `*Tanggal Evaluasi:* ${item.tglEvaluasi}\n\n` +
-        `📖 *HAFALAN BARU (ZIYADAH):* ${item.juzUjian}\n` +
+        `📖 *HAFALAN BARU (ZIYADAH):*\n` +
+        `   ${ziyadahStr}\n` +
         `📊 *Skor Ziyadah:* ${item.totalHafalan.toFixed(1)} / 100 (${pred.title})\n\n` +
-        `🔄 *MURAJA'AH:* ${item.materiMurajaah || '-'}\n` +
+        `🔄 *MURAJA'AH:*\n` +
+        `   ${murajaahStr}\n` +
         `📊 *Skor Muraja'ah:* ${(item.totalMurajaah || 0).toFixed(1)} / 100 (${predMurajaah.title})\n\n` +
         `🤲 *Skor Adab & Karakter:* ${item.totalAdab} / 100 (${getAdabPredikatText(item.totalAdab)})\n\n` +
         `📌 *Status/Rekomendasi:* ${pred.statusText}\n\n` +
@@ -916,11 +982,14 @@ function exportCSV() {
         return;
     }
 
-    let csv = 'ID,Nama Santri,NIS,Kelompok,Juz Ziyadah,Materi Murajaah,Tanggal,Skor Ziyadah,Skor Murajaah,Predikat Ziyadah,Skor Adab,Penguji,Catatan\n';
+    let csv = 'ID,Nama Santri,NIS,Kelompok,Ziyadah,Murajaah,Tanggal,Skor Ziyadah,Skor Murajaah,Predikat Ziyadah,Skor Adab,Penguji,Catatan\n';
 
     evaluations.forEach(i => {
         const pred = getPredikatQuran(i.totalHafalan);
-        csv += `"${i.id}","${i.namaSantri}","${i.nisSantri}","${i.kelompokSantri}","${i.juzUjian}","${i.materiMurajaah || ''}","${i.tglEvaluasi}",${i.totalHafalan.toFixed(1)},${(i.totalMurajaah || 0).toFixed(1)},"${pred.title}",${i.totalAdab},"${i.namaPenguji}","${(i.catatan || '').replace(/"/g, '""')}"\n`;
+        const ziyadahStr = formatMateriText(i.ziyadahDetail || i.juzUjian);
+        const murajaahStr = formatMateriText(i.murajaahDetail || i.materiMurajaah);
+
+        csv += `"${i.id}","${i.namaSantri}","${i.nisSantri}","${i.kelompokSantri}","${ziyadahStr}","${murajaahStr}","${i.tglEvaluasi}",${i.totalHafalan.toFixed(1)},${(i.totalMurajaah || 0).toFixed(1)},"${pred.title}",${i.totalAdab},"${i.namaPenguji}","${(i.catatan || '').replace(/"/g, '""')}"\n`;
     });
 
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
