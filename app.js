@@ -3,10 +3,12 @@ const LOCAL_STORAGE_KEY = 'takhasus_quran_evaluations_v1';
 const MASTER_SANTRI_KEY = 'takhasus_master_santri_v1';
 const MASTER_PENGUJI_KEY = 'takhasus_master_penguji_v1';
 const CURRENT_USER_KEY = 'takhasus_current_user_v1';
+const PRESENSI_STORAGE_KEY = 'takhasus_quran_presensi_v1';
 
 let evaluations = [];
 let masterSantri = [];
 let masterPenguji = [];
+let presensiRecords = [];
 let isSidebarOpen = false;
 let showHijriDate = false;
 
@@ -14,7 +16,7 @@ let showHijriDate = false;
 let currentUser = {
     role: '', // 'admin' atau 'guru'
     name: '',
-    kelompok: '' // Jika guru, kelompok binaannya
+    kelompok: ''
 };
 
 // Master Data Default
@@ -39,8 +41,12 @@ window.onload = function() {
     const tglInput = document.getElementById('tglEvaluasi');
     if (tglInput) tglInput.value = new Date().toISOString().split('T')[0];
 
+    const presensiTgl = document.getElementById('presensiTanggal');
+    if (presensiTgl) presensiTgl.value = new Date().toISOString().split('T')[0];
+
     loadMasterData();
     loadDataFromStorage();
+    loadPresensiFromStorage();
     checkUserSession();
 
     if (window.lucide) lucide.createIcons();
@@ -107,7 +113,7 @@ function handleLoginAdmin(e) {
     e.preventDefault();
     const pass = document.getElementById('loginAdminPassword').value;
 
-    if (pass === 'admin123') { // Kata sandi admin default
+    if (pass === 'admin123') {
         currentUser = {
             role: 'admin',
             name: 'Administrator',
@@ -133,22 +139,30 @@ function logoutUser() {
 function applyRoleRestrictions() {
     const userBadgeInfo = document.getElementById('userBadgeInfo');
     const btnKelolaMaster = document.getElementById('btnKelolaMaster');
+    const presensiSelectKelompok = document.getElementById('presensiSelectKelompok');
 
     if (currentUser.role === 'admin') {
         if (userBadgeInfo) {
             userBadgeInfo.innerHTML = `<span class="bg-amber-500 text-slate-950 text-[10px] px-2 py-0.5 rounded font-extrabold uppercase">ADMIN</span> Akses Penuh Sistem`;
         }
         if (btnKelolaMaster) btnKelolaMaster.classList.remove('hidden');
+        if (presensiSelectKelompok) presensiSelectKelompok.disabled = false;
     } else {
         if (userBadgeInfo) {
             userBadgeInfo.innerHTML = `<span class="bg-blue-900 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase">GURU</span> ${currentUser.name} (${currentUser.kelompok})`;
         }
         if (btnKelolaMaster) btnKelolaMaster.classList.add('hidden');
+        if (presensiSelectKelompok) {
+            presensiSelectKelompok.value = currentUser.kelompok;
+            presensiSelectKelompok.disabled = true;
+        }
     }
 
     populateMasterDropdowns();
     renderTable();
     populateRaporSelect();
+    renderPresensiForm();
+    renderPresensiRekap();
 }
 
 // --- SIDEBAR TOGGLE ---
@@ -322,7 +336,6 @@ function populateMasterDropdowns() {
     const selPenguji = document.getElementById('selectPenguji');
     const loginPenguji = document.getElementById('loginSelectPenguji');
 
-    // Populasi Dropdown Login Guru
     if (loginPenguji) {
         loginPenguji.innerHTML = '<option value="">-- Pilih Nama Guru --</option>';
         masterPenguji.forEach(p => {
@@ -330,7 +343,6 @@ function populateMasterDropdowns() {
         });
     }
 
-    // Filter Dropdown Santri Sesuai Role
     if (selSantri) {
         selSantri.innerHTML = '<option value="">-- Pilih Santri --</option>';
         
@@ -344,14 +356,12 @@ function populateMasterDropdowns() {
         });
     }
 
-    // Populate Dropdown Penguji pada Form Input
     if (selPenguji) {
         selPenguji.innerHTML = '<option value="">-- Pilih Penguji --</option>';
         masterPenguji.forEach(p => {
             selPenguji.innerHTML += `<option value="${p.nama}">${p.nama}</option>`;
         });
 
-        // Autoselect jika logged in sebagai Guru
         if (currentUser.role === 'guru' && currentUser.name) {
             selPenguji.value = currentUser.name;
         }
@@ -412,6 +422,7 @@ function addMasterSantri(e) {
 
     populateMasterDropdowns();
     renderMasterTables();
+    renderPresensiForm();
     showToast('Santri berhasil ditambahkan.', 'success');
 }
 
@@ -420,6 +431,7 @@ function deleteMasterSantri(id) {
     localStorage.setItem(MASTER_SANTRI_KEY, JSON.stringify(masterSantri));
     populateMasterDropdowns();
     renderMasterTables();
+    renderPresensiForm();
 }
 
 function addMasterPenguji(e) {
@@ -475,11 +487,7 @@ function renderMasterTables() {
 function loadDataFromStorage() {
     const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (stored) {
-        try {
-            evaluations = JSON.parse(stored);
-        } catch(e) {
-            evaluations = [];
-        }
+        try { evaluations = JSON.parse(stored); } catch(e) { evaluations = []; }
     }
     renderTable();
     populateRaporSelect();
@@ -489,6 +497,19 @@ function saveDataToStorage() {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(evaluations));
     renderTable();
     populateRaporSelect();
+}
+
+function loadPresensiFromStorage() {
+    const stored = localStorage.getItem(PRESENSI_STORAGE_KEY);
+    if (stored) {
+        try { presensiRecords = JSON.parse(stored); } catch(e) { presensiRecords = []; }
+    }
+    renderPresensiRekap();
+}
+
+function savePresensiToStorage() {
+    localStorage.setItem(PRESENSI_STORAGE_KEY, JSON.stringify(presensiRecords));
+    renderPresensiRekap();
 }
 
 // --- TAB NAVIGATION ---
@@ -509,6 +530,10 @@ function switchTab(tabKey) {
     }
 
     if (tabKey === 'rekap') renderTable();
+    if (tabKey === 'presensi') {
+        renderPresensiForm();
+        renderPresensiRekap();
+    }
     if (tabKey === 'print') {
         populateRaporSelect();
         const sel = document.getElementById('raporSelectSantri');
@@ -619,7 +644,7 @@ function calculateAdabScore() {
     }
 }
 
-// --- FORM SUBMIT LOGIC ---
+// --- FORM EVALUASI SUBMIT ---
 function handleFormSubmit(e) {
     e.preventDefault();
 
@@ -711,7 +736,6 @@ function resetForm() {
     document.getElementById('namaSantri').value = '';
     document.getElementById('tglEvaluasi').value = new Date().toISOString().split('T')[0];
 
-    // Reset pre-selected Penguji jika Guru
     if (currentUser.role === 'guru' && currentUser.name) {
         document.getElementById('selectPenguji').value = currentUser.name;
     }
@@ -719,6 +743,156 @@ function resetForm() {
     calculateHafalanScore();
     calculateMurajaahScore();
     calculateAdabScore();
+}
+
+// --- PRESENSI / DAFTAR HADIR LOGIC ---
+function renderPresensiForm() {
+    const tbody = document.getElementById('presensiInputTableBody');
+    const selectKelompok = document.getElementById('presensiSelectKelompok');
+    const inputTgl = document.getElementById('presensiTanggal');
+
+    if (!tbody || !selectKelompok || !inputTgl) return;
+
+    const kelompok = selectKelompok.value;
+    const tanggal = inputTgl.value;
+
+    const santriInKelompok = masterSantri.filter(s => s.kelompok === kelompok);
+
+    if (santriInKelompok.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-400">Tidak ada santri pada kelompok ini.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = santriInKelompok.map(santri => {
+        const existing = presensiRecords.find(p => p.santriId === santri.id && p.tanggal === tanggal);
+        const currentStatus = existing ? existing.status : 'Hadir';
+        const currentNote = existing ? existing.catatan : '';
+
+        return `
+            <tr class="hover:bg-slate-50">
+                <td class="p-3">
+                    <strong class="text-slate-800 block">${escapeHtml(santri.nama)}</strong>
+                    <span class="text-[11px] text-slate-400">${escapeHtml(santri.nis)}</span>
+                </td>
+                <td class="p-3 text-center">
+                    <div class="inline-flex items-center gap-2 text-xs font-semibold">
+                        <label class="flex items-center gap-1 cursor-pointer">
+                            <input type="radio" name="status_${santri.id}" value="Hadir" ${currentStatus === 'Hadir' ? 'checked' : ''} class="text-emerald-600 focus:ring-emerald-500">
+                            <span class="text-emerald-700">H</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer">
+                            <input type="radio" name="status_${santri.id}" value="Izin" ${currentStatus === 'Izin' ? 'checked' : ''} class="text-blue-600 focus:ring-blue-500">
+                            <span class="text-blue-700">I</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer">
+                            <input type="radio" name="status_${santri.id}" value="Sakit" ${currentStatus === 'Sakit' ? 'checked' : ''} class="text-amber-600 focus:ring-amber-500">
+                            <span class="text-amber-700">S</span>
+                        </label>
+                        <label class="flex items-center gap-1 cursor-pointer">
+                            <input type="radio" name="status_${santri.id}" value="Alpa" ${currentStatus === 'Alpa' ? 'checked' : ''} class="text-rose-600 focus:ring-rose-500">
+                            <span class="text-rose-700">A</span>
+                        </label>
+                    </div>
+                </td>
+                <td class="p-3">
+                    <input type="text" id="note_${santri.id}" value="${escapeHtml(currentNote)}" placeholder="Catatan (Opsional)" class="w-full px-2.5 py-1 text-xs border border-slate-300 rounded-lg focus:ring-1 focus:ring-amber-500">
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function handlePresensiSubmit(e) {
+    e.preventDefault();
+
+    const selectKelompok = document.getElementById('presensiSelectKelompok');
+    const inputTgl = document.getElementById('presensiTanggal');
+    const kelompok = selectKelompok.value;
+    const tanggal = inputTgl.value;
+
+    const santriInKelompok = masterSantri.filter(s => s.kelompok === kelompok);
+
+    santriInKelompok.forEach(santri => {
+        const selectedRadio = document.querySelector(`input[name="status_${santri.id}"]:checked`);
+        const noteInput = document.getElementById(`note_${santri.id}`);
+
+        const status = selectedRadio ? selectedRadio.value : 'Hadir';
+        const catatan = noteInput ? noteInput.value.trim() : '';
+
+        const recordIndex = presensiRecords.findIndex(p => p.santriId === santri.id && p.tanggal === tanggal);
+
+        const newRecord = {
+            id: recordIndex !== -1 ? presensiRecords[recordIndex].id : 'p_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+            santriId: santri.id,
+            namaSantri: santri.nama,
+            nisSantri: santri.nis,
+            kelompok: santri.kelompok,
+            tanggal: tanggal,
+            status: status,
+            catatan: catatan,
+            pencatat: currentUser.name || 'Admin'
+        };
+
+        if (recordIndex !== -1) {
+            presensiRecords[recordIndex] = newRecord;
+        } else {
+            presensiRecords.unshift(newRecord);
+        }
+    });
+
+    savePresensiToStorage();
+    showToast('Data presensi berhasil disimpan!', 'success');
+}
+
+function renderPresensiRekap() {
+    const tbody = document.getElementById('presensiRekapTableBody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    let baseSantri = masterSantri;
+    if (currentUser.role === 'guru' && currentUser.kelompok) {
+        baseSantri = masterSantri.filter(s => s.kelompok === currentUser.kelompok);
+    }
+
+    if (baseSantri.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">Belum ada data santri untuk rekapitulasi.</td></tr>`;
+        return;
+    }
+
+    baseSantri.forEach(santri => {
+        const records = presensiRecords.filter(p => p.santriId === santri.id);
+        const total = records.length;
+
+        const hadir = records.filter(p => p.status === 'Hadir').length;
+        const izin = records.filter(p => p.status === 'Izin').length;
+        const sakit = records.filter(p => p.status === 'Sakit').length;
+        const alpa = records.filter(p => p.status === 'Alpa').length;
+
+        const persen = total > 0 ? ((hadir / total) * 100).toFixed(1) : '0.0';
+
+        let badgeClass = 'bg-emerald-100 text-emerald-800';
+        if (parseFloat(persen) < 80) badgeClass = 'bg-amber-100 text-amber-800';
+        if (parseFloat(persen) < 60) badgeClass = 'bg-rose-100 text-rose-800';
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50/80 transition';
+        tr.innerHTML = `
+            <td class="p-3">
+                <div class="font-bold text-slate-800">${escapeHtml(santri.nama)}</div>
+                <div class="text-[11px] text-slate-400">${escapeHtml(santri.nis)} | ${escapeHtml(santri.kelompok)}</div>
+            </td>
+            <td class="p-3 text-center font-bold text-emerald-600">${hadir}</td>
+            <td class="p-3 text-center font-bold text-blue-600">${izin}</td>
+            <td class="p-3 text-center font-bold text-amber-600">${sakit}</td>
+            <td class="p-3 text-center font-bold text-rose-600">${alpa}</td>
+            <td class="p-3 text-center font-semibold text-slate-600">${total}</td>
+            <td class="p-3 text-center">
+                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold ${badgeClass}">${persen}%</span>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
 }
 
 // --- REKAP TABLE & ROLE FILTER ---
@@ -731,7 +905,6 @@ function renderTable() {
 
     tbody.innerHTML = '';
 
-    // Filter Data Berdasarkan Kelompok Guru (Jika Role Guru)
     let baseData = evaluations;
     if (currentUser.role === 'guru' && currentUser.kelompok) {
         baseData = evaluations.filter(item => item.kelompokSantri === currentUser.kelompok);
