@@ -38,17 +38,13 @@
             <form id="formLoginGuru" onsubmit="handleLoginGuru(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih Penguji / Ustadz <span class="text-rose-500">*</span></label>
-                    <select id="loginSelectPenguji" required class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500">
+                    <select id="loginSelectPenguji" onchange="onLoginGuruSelected(this.value)" required class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500">
                         <option value="">-- Pilih Nama Guru --</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Kelompok Binaan <span class="text-rose-500">*</span></label>
-                    <select id="loginKelompokGuru" required class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500">
-                        <option value="Takhasus Ula (Tingkat Dasar)">Takhasus Ula (Tingkat Dasar)</option>
-                        <option value="Takhasus Wustha (Tingkat Menengah)">Takhasus Wustha (Tingkat Menengah)</option>
-                        <option value="Takhasus 'Ulya (Tingkat Lanjut)">Takhasus 'Ulya (Tingkat Lanjut)</option>
-                    </select>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Kelompok Binaan</label>
+                    <input type="text" id="loginKelompokGuru" readonly placeholder="Otomatis mengikuti nama Guru" class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-200 bg-slate-100 text-slate-700 font-medium focus:outline-none">
                 </div>
                 <button type="submit" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs shadow-md transition">Masuk Sesi Guru</button>
             </form>
@@ -192,23 +188,15 @@
                             </button>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             <div class="lg:col-span-2">
                                 <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih Santri <span class="text-rose-500">*</span></label>
                                 <select id="selectSantri" required onchange="onSantriSelected(this.value)" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                                     <option value="">-- Pilih Santri --</option>
                                 </select>
                                 <input type="hidden" id="namaSantri" value="">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">ID / NIS</label>
-                                <input type="text" id="nisSantri" readonly placeholder="Otomatis" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 bg-slate-50 text-slate-600 focus:outline-none">
-                            </div>
-
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-600 mb-1">Kelompok</label>
-                                <input type="text" id="kelompokSantri" readonly placeholder="Otomatis" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 bg-slate-50 text-slate-600 focus:outline-none">
+                                <input type="hidden" id="nisSantri" value="">
+                                <input type="hidden" id="kelompokSantri" value="">
                             </div>
 
                             <div>
@@ -216,9 +204,9 @@
                                 <input type="date" id="tglEvaluasi" required class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                             </div>
 
-                            <div class="lg:col-span-2">
+                            <div>
                                 <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih Penguji / Ustadz <span class="text-rose-500">*</span></label>
-                                <select id="selectPenguji" required class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
+                                <select id="selectPenguji" required onchange="onFormPengujiSelected(this.value)" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
                                     <option value="">-- Pilih Penguji --</option>
                                 </select>
                             </div>
@@ -541,11 +529,11 @@
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
                             <div>
-                                <label class="text-[11px] font-semibold text-slate-500 block sm:inline mr-1">Kelompok:</label>
+                                <label class="text-[11px] font-semibold text-slate-500 block sm:inline mr-1">Kelompok / Guru:</label>
                                 <select id="presensiSelectKelompok" onchange="renderPresensiForm()" class="px-3 py-1.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500">
-                                    <option value="Takhasus Ula (Tingkat Dasar)">Takhasus Ula</option>
-                                    <option value="Takhasus Wustha (Tingkat Menengah)">Takhasus Wustha</option>
-                                    <option value="Takhasus 'Ulya (Tingkat Lanjut)">Takhasus 'Ulya</option>
+                                    <option value="Takhasus Ula (Tingkat Dasar)">Takhasus Ula (Ust. Ahmad Dahlan)</option>
+                                    <option value="Takhasus Wustha (Tingkat Menengah)">Takhasus Wustha (Ustadzah Fatimah)</option>
+                                    <option value="Takhasus 'Ulya (Tingkat Lanjut)">Takhasus 'Ulya (Ust. Ahmad Fauzi)</option>
                                 </select>
                             </div>
                             <div>
@@ -560,7 +548,7 @@
                             <table class="w-full text-left border-collapse text-xs">
                                 <thead>
                                     <tr class="bg-slate-100 text-slate-700 font-bold uppercase text-[11px]">
-                                        <th class="p-3">Santri / NIS</th>
+                                        <th class="p-3">Santri</th>
                                         <th class="p-3 text-center w-64">Status Kehadiran</th>
                                         <th class="p-3">Catatan / Keterangan</th>
                                     </tr>
@@ -593,7 +581,7 @@
                         <table class="w-full text-left border-collapse text-xs">
                             <thead>
                                 <tr class="bg-slate-50 text-slate-700 font-bold uppercase text-[11px] border-b border-slate-200">
-                                    <th class="p-3">Santri / Kelompok</th>
+                                    <th class="p-3">Santri</th>
                                     <th class="p-3 text-center">Hadir (H)</th>
                                     <th class="p-3 text-center">Izin (I)</th>
                                     <th class="p-3 text-center">Sakit (S)</th>
@@ -664,7 +652,7 @@
                         <div class="flex flex-wrap items-center gap-3">
                             <div class="relative">
                                 <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                                <input type="text" id="searchInput" oninput="renderTable()" placeholder="Cari nama / NIS..." class="pl-9 pr-3 py-1.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 w-48 sm:w-60">
+                                <input type="text" id="searchInput" oninput="renderTable()" placeholder="Cari nama santri..." class="pl-9 pr-3 py-1.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 w-48 sm:w-60">
                             </div>
                             <select id="filterStatus" onchange="renderTable()" class="px-3 py-1.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500">
                                 <option value="ALL">Semua Predikat</option>
@@ -684,7 +672,7 @@
                         <table class="w-full text-left border-collapse text-xs sm:text-sm">
                             <thead>
                                 <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold uppercase tracking-wider text-[11px]">
-                                    <th class="p-3.5">Santri / ID</th>
+                                    <th class="p-3.5">Nama Santri</th>
                                     <th class="p-3.5">Materi Ziyadah & Muraja'ah</th>
                                     <th class="p-3.5 text-center">Skor Ziyadah</th>
                                     <th class="p-3.5 text-center">Skor Muraja'ah</th>
@@ -805,12 +793,12 @@
             <div id="view-master-santri" class="space-y-4">
                 <form onsubmit="addMasterSantri(event)" class="bg-slate-50 p-3 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <input type="text" id="newNamaSantri" placeholder="Nama Santri" required class="px-3 py-1.5 text-xs rounded-lg border border-slate-300">
-                    <input type="text" id="newNisSantri" placeholder="NIS / ID" required class="px-3 py-1.5 text-xs rounded-lg border border-slate-300">
+                    <input type="text" id="newNisSantri" placeholder="NIS / ID (untuk Rapor)" required class="px-3 py-1.5 text-xs rounded-lg border border-slate-300">
                     <div class="flex gap-2">
                         <select id="newKelompokSantri" class="w-full px-2 py-1.5 text-xs rounded-lg border border-slate-300">
-                            <option value="Takhasus Ula (Tingkat Dasar)">Takhasus Ula</option>
-                            <option value="Takhasus Wustha (Tingkat Menengah)">Takhasus Wustha</option>
-                            <option value="Takhasus 'Ulya (Tingkat Lanjut)">Takhasus 'Ulya</option>
+                            <option value="Takhasus Ula (Tingkat Dasar)">Takhasus Ula (Ust. Dahlan)</option>
+                            <option value="Takhasus Wustha (Tingkat Menengah)">Takhasus Wustha (Ustzh. Fatimah)</option>
+                            <option value="Takhasus 'Ulya (Tingkat Lanjut)">Takhasus 'Ulya (Ust. Fauzi)</option>
                         </select>
                         <button type="submit" class="px-3 py-1.5 bg-amber-500 text-slate-950 font-bold rounded-lg text-xs hover:bg-amber-600 whitespace-nowrap">+ Tambah</button>
                     </div>
@@ -832,8 +820,13 @@
             </div>
 
             <div id="view-master-penguji" class="space-y-4 hidden">
-                <form onsubmit="addMasterPenguji(event)" class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex gap-2">
-                    <input type="text" id="newNamaPenguji" placeholder="Nama Ustadz / Penguji" required class="flex-grow px-3 py-1.5 text-xs rounded-lg border border-slate-300">
+                <form onsubmit="addMasterPenguji(event)" class="bg-slate-50 p-3 rounded-xl border border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <input type="text" id="newNamaPenguji" placeholder="Nama Ustadz / Penguji" required class="px-3 py-1.5 text-xs rounded-lg border border-slate-300">
+                    <select id="newKelompokPenguji" class="px-2 py-1.5 text-xs rounded-lg border border-slate-300">
+                        <option value="Takhasus Ula (Tingkat Dasar)">Takhasus Ula (Dasar)</option>
+                        <option value="Takhasus Wustha (Tingkat Menengah)">Takhasus Wustha (Menengah)</option>
+                        <option value="Takhasus 'Ulya (Tingkat Lanjut)">Takhasus 'Ulya (Lanjut)</option>
+                    </select>
                     <button type="submit" class="px-4 py-1.5 bg-amber-500 text-slate-950 font-bold rounded-lg text-xs hover:bg-amber-600">+ Tambah</button>
                 </form>
 
@@ -842,6 +835,7 @@
                         <thead class="bg-slate-100 text-slate-600 sticky top-0">
                             <tr>
                                 <th class="p-2">Nama Penguji</th>
+                                <th class="p-2">Kelompok Binaan</th>
                                 <th class="p-2 text-center">Aksi</th>
                             </tr>
                         </thead>
