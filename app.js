@@ -46,7 +46,7 @@ let currentUser = {
     kelompok: ''
 };
 
-// Master Data Default
+// Master Data Default (Guru terikat dengan Kelompok Binaan)
 const defaultSantri = [
     { id: 's_1', nama: 'Muhammad Al-Fatih', nis: 'TKH-2026-012', kelompok: "Takhasus 'Ulya (Tingkat Lanjut)" },
     { id: 's_2', nama: 'Aisyah Humaira', nis: 'TKH-2026-045', kelompok: 'Takhasus Wustha (Tingkat Menengah)' },
@@ -54,9 +54,9 @@ const defaultSantri = [
 ];
 
 const defaultPenguji = [
-    { id: 'p_1', nama: 'Ust. Ahmad Dahlan, M.Ag' },
-    { id: 'p_2', nama: 'Ustadzah Fatimah, S.Pd.I' },
-    { id: 'p_3', nama: 'Ust. Ahmad Fauzi, Lc.' }
+    { id: 'p_1', nama: 'Ust. Ahmad Dahlan, M.Ag', kelompok: 'Takhasus Ula (Tingkat Dasar)' },
+    { id: 'p_2', nama: 'Ustadzah Fatimah, S.Pd.I', kelompok: 'Takhasus Wustha (Tingkat Menengah)' },
+    { id: 'p_3', nama: 'Ust. Ahmad Fauzi, Lc.', kelompok: "Takhasus 'Ulya (Tingkat Lanjut)" }
 ];
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -128,6 +128,16 @@ function switchLoginRole(role) {
     }
 }
 
+function onLoginGuruSelected(namaGuru) {
+    const inputKelompok = document.getElementById('loginKelompokGuru');
+    const guruObj = masterPenguji.find(p => p.nama === namaGuru);
+    if (guruObj && inputKelompok) {
+        inputKelompok.value = guruObj.kelompok;
+    } else if (inputKelompok) {
+        inputKelompok.value = '';
+    }
+}
+
 function handleLoginGuru(e) {
     e.preventDefault();
     const namaGuru = document.getElementById('loginSelectPenguji').value;
@@ -190,7 +200,7 @@ function applyRoleRestrictions() {
         if (presensiSelectKelompok) presensiSelectKelompok.disabled = false;
     } else {
         if (userBadgeInfo) {
-            userBadgeInfo.innerHTML = `<span class="bg-blue-900 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase">GURU</span> ${currentUser.name} (${currentUser.kelompok})`;
+            userBadgeInfo.innerHTML = `<span class="bg-blue-900 text-white text-[10px] px-2 py-0.5 rounded font-bold uppercase">GURU</span> ${currentUser.name}`;
         }
         if (btnKelolaMaster) btnKelolaMaster.classList.add('hidden');
         if (presensiSelectKelompok) {
@@ -392,8 +402,9 @@ function populateMasterDropdowns() {
             filteredSantri = masterSantri.filter(s => s.kelompok === currentUser.kelompok);
         }
 
+        // NIS DIHILANGKAN DARI DROPDOWN SEUAI PERMINTAAN
         filteredSantri.forEach(s => {
-            selSantri.innerHTML += `<option value="${s.id}">${s.nama} (${s.nis})</option>`;
+            selSantri.innerHTML += `<option value="${s.id}">${s.nama}</option>`;
         });
     }
 
@@ -405,7 +416,15 @@ function populateMasterDropdowns() {
 
         if (currentUser.role === 'guru' && currentUser.name) {
             selPenguji.value = currentUser.name;
+            onFormPengujiSelected(currentUser.name);
         }
+    }
+}
+
+function onFormPengujiSelected(namaPenguji) {
+    const guruObj = masterPenguji.find(p => p.nama === namaPenguji);
+    if (guruObj) {
+        // Jika admin mengganti penguji, kelompok santri yang difilter bisa menyesuaikan
     }
 }
 
@@ -478,9 +497,12 @@ function deleteMasterSantri(id) {
 function addMasterPenguji(e) {
     e.preventDefault();
     const nama = document.getElementById('newNamaPenguji').value.trim();
-    masterPenguji.unshift({ id: 'p_' + Date.now(), nama });
+    const kelompok = document.getElementById('newKelompokPenguji').value;
+
+    masterPenguji.unshift({ id: 'p_' + Date.now(), nama, kelompok });
     localStorage.setItem(MASTER_PENGUJI_KEY, JSON.stringify(masterPenguji));
     document.getElementById('newNamaPenguji').value = '';
+
     populateMasterDropdowns();
     renderMasterTables();
     showToast('Penguji berhasil ditambahkan.', 'success');
@@ -514,6 +536,7 @@ function renderMasterTables() {
         tbPenguji.innerHTML = masterPenguji.map(p => `
             <tr>
                 <td class="p-2 font-semibold">${escapeHtml(p.nama)}</td>
+                <td class="p-2 text-slate-500">${escapeHtml(p.kelompok || '-')}</td>
                 <td class="p-2 text-center">
                     <button onclick="deleteMasterPenguji('${p.id}')" class="text-rose-600 hover:text-rose-800"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
                 </td>
@@ -775,6 +798,8 @@ function resetForm() {
     document.getElementById('edit-id').value = '';
     document.getElementById('evaluationForm').reset();
     document.getElementById('namaSantri').value = '';
+    document.getElementById('nisSantri').value = '';
+    document.getElementById('kelompokSantri').value = '';
     document.getElementById('tglEvaluasi').value = new Date().toISOString().split('T')[0];
 
     if (currentUser.role === 'guru' && currentUser.name) {
@@ -813,7 +838,6 @@ function renderPresensiForm() {
             <tr class="hover:bg-slate-50">
                 <td class="p-3">
                     <strong class="text-slate-800 block">${escapeHtml(santri.nama)}</strong>
-                    <span class="text-[11px] text-slate-400">${escapeHtml(santri.nis)}</span>
                 </td>
                 <td class="p-3 text-center">
                     <div class="inline-flex items-center gap-2 text-xs font-semibold">
@@ -921,7 +945,6 @@ function renderPresensiRekap() {
         tr.innerHTML = `
             <td class="p-3">
                 <div class="font-bold text-slate-800">${escapeHtml(santri.nama)}</div>
-                <div class="text-[11px] text-slate-400">${escapeHtml(santri.nis)} | ${escapeHtml(santri.kelompok)}</div>
             </td>
             <td class="p-3 text-center font-bold text-emerald-600">${hadir}</td>
             <td class="p-3 text-center font-bold text-blue-600">${izin}</td>
@@ -952,7 +975,7 @@ function renderTable() {
     }
 
     let filtered = baseData.filter(item => {
-        const matchSearch = item.namaSantri.toLowerCase().includes(search) || item.nisSantri.toLowerCase().includes(search);
+        const matchSearch = item.namaSantri.toLowerCase().includes(search);
         let matchStatus = true;
         const pred = getPredikatQuran(item.totalHafalan);
         if (filter !== 'ALL') matchStatus = pred.code === filter;
@@ -992,7 +1015,6 @@ function renderTable() {
         tr.innerHTML = `
             <td class="p-3.5">
                 <div class="font-bold text-slate-800">${escapeHtml(item.namaSantri)}</div>
-                <div class="text-[11px] text-slate-400">${escapeHtml(item.nisSantri)} | ${escapeHtml(item.kelompokSantri)}</div>
             </td>
             <td class="p-3.5 font-medium text-slate-700">
                 <div><span class="text-amber-700 font-bold">Ziyadah:</span> ${escapeHtml(ziyadahStr)}</div>
