@@ -19,6 +19,52 @@
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex antialiased overflow-x-hidden">
 
+    <!-- MODAL LOGIN MULTI-USER (ADMIN / GURU) -->
+    <div id="loginModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-amber-500/30 flex flex-col space-y-5">
+            <div class="text-center space-y-2">
+                <img src="https://lh3.googleusercontent.com/d/1Zw8z1i2yixH-k6umwcDbOc7Xu6v3HTQl" alt="Logo Al Firdaus" class="w-16 h-16 mx-auto object-contain">
+                <span class="font-serif text-amber-600 text-sm block" style="font-family: 'Amiri', serif;">۞ بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ ۞</span>
+                <h2 class="text-xl font-extrabold text-blue-950">Login Sistem Penilaian</h2>
+                <p class="text-xs text-slate-500">Aplikasi Takhasus Al-Qur'an LPQ Al Firdaus</p>
+            </div>
+
+            <!-- Role Selector Tabs -->
+            <div class="grid grid-cols-2 bg-slate-100 p-1 rounded-xl text-xs font-bold text-center">
+                <button type="button" id="btnRoleGuru" onclick="switchLoginRole('guru')" class="py-2 rounded-lg bg-amber-500 text-slate-950 shadow-sm transition">Guru / Penguji</button>
+                <button type="button" id="btnRoleAdmin" onclick="switchLoginRole('admin')" class="py-2 rounded-lg text-slate-600 hover:text-slate-900 transition">Administrator</button>
+            </div>
+
+            <!-- Form Login Guru -->
+            <form id="formLoginGuru" onsubmit="handleLoginGuru(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih Penguji / Ustadz <span class="text-rose-500">*</span></label>
+                    <select id="loginSelectPenguji" required class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500">
+                        <option value="">-- Pilih Nama Guru --</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Kelompok Binaan <span class="text-rose-500">*</span></label>
+                    <select id="loginKelompokGuru" required class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500">
+                        <option value="Takhasus Ula (Tingkat Dasar)">Takhasus Ula (Tingkat Dasar)</option>
+                        <option value="Takhasus Wustha (Tingkat Menengah)">Takhasus Wustha (Tingkat Menengah)</option>
+                        <option value="Takhasus 'Ulya (Tingkat Lanjut)">Takhasus 'Ulya (Tingkat Lanjut)</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-xs shadow-md transition">Masuk Sesi Guru</button>
+            </form>
+
+            <!-- Form Login Admin -->
+            <form id="formLoginAdmin" onsubmit="handleLoginAdmin(event)" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Kata Sandi Admin <span class="text-rose-500">*</span></label>
+                    <input type="password" id="loginAdminPassword" placeholder="Masukkan kata sandi (Default: admin123)" required class="w-full px-3.5 py-2.5 text-xs rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500">
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-blue-900 hover:bg-blue-950 text-white font-bold rounded-xl text-xs shadow-md transition">Masuk Sesi Admin</button>
+            </form>
+        </div>
+    </div>
+
     <!-- SIDEBAR OVERLAY BACKDROP (Mobile / Tablet) -->
     <div id="sidebarBackdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 hidden no-print transition-opacity"></div>
 
@@ -37,7 +83,6 @@
                     <p class="text-[11px] text-amber-300 font-semibold tracking-wide">Al Firdaus Bandar Lampung</p>
                 </div>
             </div>
-            <!-- Mobile Close Button -->
             <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-white p-1">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
@@ -63,10 +108,12 @@
             </button>
         </nav>
 
-        <!-- Sidebar Footer -->
-        <div class="p-4 border-t border-white/10 text-center text-[11px] text-slate-400 flex flex-col items-center gap-1">
+        <!-- Sidebar Footer & Logout -->
+        <div class="p-4 border-t border-white/10 text-center text-[11px] text-slate-400 flex flex-col items-center gap-2">
             <span class="font-serif text-amber-400/80 text-sm">۞ LPQ Al Firdaus ۞</span>
-            <span>Bandar Lampung &copy; 2026</span>
+            <button onclick="logoutUser()" class="px-3 py-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-400/30 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
+                <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Keluar / Ganti Akun
+            </button>
         </div>
     </aside>
 
@@ -77,7 +124,6 @@
         <header class="bg-gradient-to-r from-slate-950 via-blue-950 to-slate-900 text-white shadow-md sticky top-0 z-30 border-b-2 border-amber-500/40 no-print">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-3">
                 
-                <!-- Left: Toggle & Title -->
                 <div class="flex items-center gap-3">
                     <button id="sidebarToggleBtn" onclick="toggleSidebar()" title="Buka/Tutup Menu" class="p-2 bg-white/10 hover:bg-white/20 text-amber-300 border border-amber-400/30 rounded-xl transition flex items-center justify-center">
                         <i id="iconHamburger" data-lucide="menu" class="w-6 h-6"></i>
@@ -86,21 +132,19 @@
                     <div>
                         <h2 class="text-sm sm:text-base font-extrabold text-white leading-tight flex items-center gap-1.5">
                             <span class="text-amber-400 font-serif text-base hidden sm:inline">۞</span>
-                            Aplikasi Penilaian Takhasus Al-Qur'an
-                            <span class="text-amber-400 font-serif text-base hidden sm:inline">۞</span>
+                            Aplikasi Penilaian Takhasus
                         </h2>
-                        <p class="text-[11px] sm:text-xs text-amber-300 font-semibold flex items-center gap-1">
-                            <span>LPQ Al Firdaus Bandar Lampung</span>
+                        <!-- Logged User Info Badge -->
+                        <p id="userBadgeInfo" class="text-[11px] sm:text-xs text-amber-300 font-semibold flex items-center gap-1">
+                            --
                         </p>
                     </div>
                 </div>
 
-                <!-- Center: Kaligrafi Bismillah -->
                 <div class="hidden md:flex flex-col items-center justify-center px-4">
                     <span class="font-serif text-amber-300 text-sm sm:text-base tracking-widest leading-none" style="font-family: 'Amiri', serif;">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</span>
                 </div>
 
-                <!-- Right: Widget Jam & Tanggal -->
                 <div class="flex items-center gap-2 bg-slate-900/90 px-3 py-1.5 rounded-xl border border-amber-500/30 shadow-inner">
                     <div class="p-1 bg-amber-500/20 rounded-lg text-amber-400">
                         <i data-lucide="clock" class="w-4 h-4 animate-pulse"></i>
@@ -114,7 +158,6 @@
             </div>
         </header>
 
-        <!-- Notification Toast Container -->
         <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 no-print"></div>
 
         <!-- MAIN CONTENT AREA -->
@@ -125,7 +168,6 @@
                 <form id="evaluationForm" onsubmit="handleFormSubmit(event)">
                     <input type="hidden" id="edit-id" value="">
 
-                    <!-- Header Banner Islami -->
                     <div class="bg-gradient-to-r from-blue-950 via-slate-900 to-blue-950 rounded-2xl p-4 sm:p-5 text-white border border-amber-500/30 flex items-center justify-between shadow-md">
                         <div class="flex items-center gap-3">
                             <div class="p-2.5 bg-amber-500/20 rounded-xl border border-amber-400/30 text-amber-300">
@@ -139,9 +181,6 @@
                                 <p class="text-xs text-slate-300">Isi rincian materi Ziyadah, Muraja'ah, dan skor adab santri di bawah ini.</p>
                             </div>
                         </div>
-                        <div class="hidden lg:block font-serif text-amber-300 text-lg opacity-80" style="font-family: 'Amiri', serif;">
-                            Khairukum man ta'allamal Qur'ana wa 'allamah
-                        </div>
                     </div>
 
                     <!-- Card 1: Data Santri & Penguji -->
@@ -152,13 +191,13 @@
                                 <i data-lucide="user-check" class="w-5 h-5 text-blue-900"></i>
                                 <h2 class="text-lg font-bold text-slate-800">1. Data Santri & Penguji</h2>
                             </div>
-                            <button type="button" onclick="openMasterModal()" class="px-3.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition">
+                            <!-- Hanya Tampil untuk Role ADMIN -->
+                            <button type="button" id="btnKelolaMaster" onclick="openMasterModal()" class="px-3.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition">
                                 <i data-lucide="database" class="w-3.5 h-3.5"></i> Kelola Master Santri & Guru
                             </button>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                            <!-- Dropdown Santri -->
                             <div class="lg:col-span-2">
                                 <label class="block text-xs font-semibold text-slate-600 mb-1">Pilih Santri <span class="text-rose-500">*</span></label>
                                 <select id="selectSantri" required onchange="onSantriSelected(this.value)" class="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 transition">
@@ -191,7 +230,7 @@
                         </div>
                     </div>
 
-                    <!-- Grid 2-Column for Hafalan Ziyadah & Muraja'ah -->
+                    <!-- Grid 2-Column for Ziyadah & Muraja'ah -->
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
 
                         <!-- Column 1: Hafalan Baru (Ziyadah) -->
@@ -206,7 +245,6 @@
                                     <span class="text-xs bg-amber-50 text-amber-800 font-semibold px-2.5 py-1 rounded-full border border-amber-200">Bobot 100%</span>
                                 </div>
 
-                                <!-- RINCIAN MATERI ZIYADAH TERPISAH -->
                                 <div class="bg-amber-50/60 p-3.5 rounded-xl border border-amber-200/80 mb-4">
                                     <span class="block text-xs font-bold text-amber-950 mb-2 flex items-center gap-1">
                                         <i data-lucide="book-marked" class="w-3.5 h-3.5 text-amber-600"></i> Rincian Materi Ziyadah
@@ -284,7 +322,6 @@
                                 </div>
                             </div>
 
-                            <!-- Total Score Ziyadah -->
                             <div class="mt-5 pt-3 border-t border-slate-200 bg-gradient-to-r from-slate-950 via-blue-950 to-slate-900 text-white rounded-xl p-3.5 shadow-md border-l-4 border-amber-400">
                                 <div class="flex items-center justify-between">
                                     <div>
@@ -310,7 +347,6 @@
                                     <span class="text-xs bg-blue-50 text-blue-900 font-semibold px-2.5 py-1 rounded-full border border-blue-200">Bobot 100%</span>
                                 </div>
 
-                                <!-- RINCIAN MATERI MURAJA'AH TERPISAH -->
                                 <div class="bg-blue-50/60 p-3.5 rounded-xl border border-blue-200/80 mb-4">
                                     <span class="block text-xs font-bold text-blue-950 mb-2 flex items-center gap-1">
                                         <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-blue-900"></i> Rincian Materi Muraja'ah
@@ -377,7 +413,6 @@
                                 </div>
                             </div>
 
-                            <!-- Total Score Murajaah -->
                             <div class="mt-5 pt-3 border-t border-slate-200 bg-gradient-to-r from-blue-950 via-slate-900 to-blue-950 text-white rounded-xl p-3.5 shadow-md border-l-4 border-blue-400">
                                 <div class="flex items-center justify-between">
                                     <div>
@@ -442,7 +477,6 @@
                             </div>
                         </div>
 
-                        <!-- Total Skor Adab Box -->
                         <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between bg-amber-50/80 p-3.5 rounded-xl border border-amber-200">
                             <div>
                                 <span class="text-xs uppercase font-bold text-amber-900 block">Total Skor Adab</span>
@@ -466,7 +500,6 @@
                             <textarea id="catatanPenguji" rows="3" placeholder="Tuliskan bagian ayat/surat yang perlu diperkuat, rekomendasi bimbingan, atau saran motivasi untuk santri..." class="w-full p-3.5 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"></textarea>
                         </div>
 
-                        <!-- Action Buttons -->
                         <div class="mt-6 flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-100">
                             <button type="button" onclick="resetForm()" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-100 font-semibold text-sm flex items-center gap-2 transition">
                                 <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Reset Form
@@ -532,7 +565,6 @@
                             <h2 class="text-lg font-bold text-slate-800">Daftar Hasil Penilaian Santri</h2>
                         </div>
 
-                        <!-- Filters & Search -->
                         <div class="flex flex-wrap items-center gap-3">
                             <div class="relative">
                                 <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
@@ -552,7 +584,6 @@
                         </div>
                     </div>
 
-                    <!-- Table Content -->
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse text-xs sm:text-sm">
                             <thead>
@@ -568,7 +599,7 @@
                                 </tr>
                             </thead>
                             <tbody id="rekapTableBody" class="divide-y divide-slate-100 text-slate-700">
-                                <!-- Injected dynamically via JS -->
+                                <!-- Dynamic Rows Injected -->
                             </tbody>
                         </table>
                     </div>
@@ -596,7 +627,7 @@
 
                 <!-- RAPOR PRINT CARD -->
                 <div id="raporContainer" class="bg-white p-8 sm:p-10 rounded-2xl border border-slate-300 shadow-md max-w-4xl mx-auto print-card">
-                    <!-- Template populated dynamically via JS -->
+                    <!-- Injected via JS -->
                 </div>
             </section>
 
@@ -613,7 +644,6 @@
                         </p>
                     </div>
 
-                    <!-- Section 1: Standar Predikat -->
                     <div class="space-y-3">
                         <h3 class="text-sm font-bold text-amber-900 bg-amber-50 px-3 py-1.5 rounded-lg inline-block border border-amber-200">1. Skala Predikat Evaluasi Hafalan</h3>
                         <div class="space-y-2 text-xs">
@@ -674,7 +704,6 @@
                 </button>
             </div>
 
-            <!-- Tabs Modal Master -->
             <div class="flex border-b border-slate-200 text-xs font-semibold gap-2">
                 <button onclick="switchMasterTab('santri')" id="tab-master-santri" class="px-4 py-2 border-b-2 border-amber-500 text-amber-900 font-bold">Data Master Santri</button>
                 <button onclick="switchMasterTab('penguji')" id="tab-master-penguji" class="px-4 py-2 text-slate-500 hover:text-slate-700">Data Master Penguji / Ustadz</button>
